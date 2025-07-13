@@ -355,10 +355,10 @@ fn main() {
         0x40115093, // srai x1, x2, 1
         0x00008003, // lb x0, 0(x1)
         0x0000c003, // lbu x0, 0(x1)
+        0x00009003, // lh x0, 0(x1)
     ];
 
   // TODO
-  // lh
   // lw
   // ld
   // lhu
@@ -685,4 +685,25 @@ fn test_disassemble_lb() {
     assert_eq!(disassemble(0xffe40403), "lb x8, -2(x8)");
     assert_eq!(disassemble(0x7ff48483), "lb x9, 2047(x9)");
 }
+
+#[test]
+fn test_disassemble_lh() {
+    assert_eq!(disassemble(0x00009003), "lh x0, 0(x1)");
+    assert_eq!(disassemble(0x00111083), "lh x1, 1(x2)");
+    assert_eq!(disassemble(0x00219103), "lh x2, 2(x3)");
+    assert_eq!(disassemble(0x00421203), "lh x4, 4(x4)");
+    assert_eq!(disassemble(0x00829283), "lh x5, 8(x5)");
+    assert_eq!(disassemble(0xfff31303), "lh x6, -1(x6)");
+    assert_eq!(disassemble(0x80039383), "lh x7, -2048(x7)");
+    assert_eq!(disassemble(0xffe41403), "lh x8, -2(x8)");
+    assert_eq!(disassemble(0x7ff49483), "lh x9, 2047(x9)"); 
+}
+
+
+
+
+
+
+
+
 
