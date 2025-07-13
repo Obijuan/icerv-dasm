@@ -221,7 +221,7 @@ fn inst_type_i_arith(func3: u32) -> String {
       "slti",  //-- 010
       "sltiu", //-- 011
       "xori",  //-- 100
-      "srli",  //-- 101
+      "srli",  //-- 101  srli, srai (Bit 30 a 1)
       "ori",   //-- 110
       "andi",  //-- 111
     ];
@@ -258,6 +258,8 @@ fn disassemble(inst: u32) -> String {
 
             //-- Nombre de la instruccion            
             let name = inst_type_i_arith(func3);
+
+            //-- Devolver la instruccion completa en ensamblador
             format!("{} x{}, x{}, {}", name, rd, rs1, imm)
 
         } else if is_type_i_load(opcode) {
@@ -290,8 +292,22 @@ fn main() {
         0x00111093, // slli x1, x2, 1
         0x00112093, // slti x1, x2, 1
         0x00113093, // sltiu x1, x2, 1
+        0x00114093, // xori x1, x2, 1
+        0x00115093, // srli x1, x2, 1 
+
+        0x00116093, // ori x1, x2, 1
+        0x00006013, // ori x0, x0, 0
+        0x0020ef93, // ori x31, x1, 2
+        0x00416f13, // ori x30, x2, 4
+        0x0081ee93, // ori x29, x3, 8
+        0x01026e13, // ori x28, x4, 16
+        0x0112ed93, // ori x27, x5, 17
+        0x01e36d13, // ori x26, x6, 30
+        0x01f3ec93, // ori x25, x7, 31
 
     ];
+
+
 
     for i in 0..insts.len() {
 
@@ -304,6 +320,7 @@ fn main() {
         println!("🟢 [{machine_code:#010X}]: {inst}");
 
     }
+
 
 }
 
@@ -519,4 +536,44 @@ fn test_disassemble_sltiu()
     assert_eq!(disassemble(0x0112bd93), "sltiu x27, x5, 17");
     assert_eq!(disassemble(0x01e33d13), "sltiu x26, x6, 30");
     assert_eq!(disassemble(0x01f3bc93), "sltiu x25, x7, 31");
+}
+
+#[test]
+fn test_disassemble_xori() {
+    assert_eq!(disassemble(0x00114093), "xori x1, x2, 1");
+    assert_eq!(disassemble(0x00004013), "xori x0, x0, 0");
+    assert_eq!(disassemble(0x0020cf93), "xori x31, x1, 2");
+    assert_eq!(disassemble(0x00414f13), "xori x30, x2, 4");
+    assert_eq!(disassemble(0x0081ce93), "xori x29, x3, 8");
+    assert_eq!(disassemble(0x01024e13), "xori x28, x4, 16");
+    assert_eq!(disassemble(0x0112cd93), "xori x27, x5, 17");
+    assert_eq!(disassemble(0x01e34d13), "xori x26, x6, 30");
+    assert_eq!(disassemble(0x01f3cc93), "xori x25, x7, 31");
+}
+
+#[test]
+fn test_disassemble_srli() {
+    assert_eq!(disassemble(0x00115093), "srli x1, x2, 1"); 
+    assert_eq!(disassemble(0x00005013), "srli x0, x0, 0");
+    assert_eq!(disassemble(0x0020df93), "srli x31, x1, 2");
+    assert_eq!(disassemble(0x00415f13), "srli x30, x2, 4");
+    assert_eq!(disassemble(0x0081de93), "srli x29, x3, 8");
+    assert_eq!(disassemble(0x01025e13), "srli x28, x4, 16");
+    assert_eq!(disassemble(0x0112dd93), "srli x27, x5, 17");
+    assert_eq!(disassemble(0x01e35d13), "srli x26, x6, 30");
+    assert_eq!(disassemble(0x01f3dc93), "srli x25, x7, 31");
+}
+
+#[test]
+fn test_disassemble_ori() {
+
+    assert_eq!(disassemble(0x00116093), "ori x1, x2, 1");
+    assert_eq!(disassemble(0x00006013), "ori x0, x0, 0");
+    assert_eq!(disassemble(0x0020ef93), "ori x31, x1, 2");
+    assert_eq!(disassemble(0x00416f13), "ori x30, x2, 4");
+    assert_eq!(disassemble(0x0081ee93), "ori x29, x3, 8");
+    assert_eq!(disassemble(0x01026e13), "ori x28, x4, 16");
+    assert_eq!(disassemble(0x0112ed93), "ori x27, x5, 17");
+    assert_eq!(disassemble(0x01e36d13), "ori x26, x6, 30");
+    assert_eq!(disassemble(0x01f3ec93), "ori x25, x7, 31");
 }
