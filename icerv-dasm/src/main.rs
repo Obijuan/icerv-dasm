@@ -358,11 +358,9 @@ fn main() {
         0x00009003, // lh x0, 0(x1)
         0x0000a003, // lw x0, 0(x1)
         0x0000b003, // ld x0, 0(x1)
+        0x0000d003, // lhu x0, 0(x1)
+        0x0000e003, // lwu x0, 0(x1)
     ];
-
-  // TODO
-  // lhu
-  // lwu
 
     for i in 0..insts.len() {
 
@@ -724,3 +722,31 @@ fn test_disassemble_ld() {
     assert_eq!(disassemble(0xffe43403), "ld x8, -2(x8)");
     assert_eq!(disassemble(0x7ff4b483), "ld x9, 2047(x9)");
 }
+
+#[test]
+fn test_disassemble_lhu() {
+    assert_eq!(disassemble(0x0000d003), "lhu x0, 0(x1)");
+    assert_eq!(disassemble(0x00115083), "lhu x1, 1(x2)");
+    assert_eq!(disassemble(0x0021d103), "lhu x2, 2(x3)");
+    assert_eq!(disassemble(0x00425203), "lhu x4, 4(x4)");
+    assert_eq!(disassemble(0x0082d283), "lhu x5, 8(x5)");
+    assert_eq!(disassemble(0xfff35303), "lhu x6, -1(x6)");
+    assert_eq!(disassemble(0x8003d383), "lhu x7, -2048(x7)");
+    assert_eq!(disassemble(0xffe45403), "lhu x8, -2(x8)");
+    assert_eq!(disassemble(0x7ff4d483), "lhu x9, 2047(x9)");
+}
+
+#[test]
+fn test_disassemble_lwu() {
+    assert_eq!(disassemble(0x0000e003), "lwu x0, 0(x1)");
+    assert_eq!(disassemble(0x00116083), "lwu x1, 1(x2)");
+    assert_eq!(disassemble(0x0021e103), "lwu x2, 2(x3)");
+    assert_eq!(disassemble(0x00426203), "lwu x4, 4(x4)");
+    assert_eq!(disassemble(0x0082e283), "lwu x5, 8(x5)");
+    assert_eq!(disassemble(0xfff36303), "lwu x6, -1(x6)");
+    assert_eq!(disassemble(0x8003e383), "lwu x7, -2048(x7)");
+    assert_eq!(disassemble(0xffe46403), "lwu x8, -2(x8)");
+    assert_eq!(disassemble(0x7ff4e483), "lwu x9, 2047(x9)");
+}
+
+
