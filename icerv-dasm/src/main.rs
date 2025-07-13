@@ -33,6 +33,10 @@ const RS2_POS: u8 = 20;
 const FUNC7_POS: u8 = 25;  
 const IMM12_POS: u8 = 20;  
 //────────────────────────────────────────────────
+//  POSICIONES Bits aislados
+//────────────────────────────────────────────────
+const BIT10: u32 = 1 << 10;
+//────────────────────────────────────────────────
 //  CALCULAR LAS MASCARAS DE ACCESO A LOS CAMPOS
 //────────────────────────────────────────────────
 //  Se calculan desplazando los campos de la anchura correspondiente
@@ -231,7 +235,7 @@ fn inst_type_i_arith(func3: u32, imm: i32) -> String {
     let bit_srali:u32 = imm as u32 >> 10; 
 
     //-- Caso especial
-    if (bit_srali==1) & (func3==0b101) {
+    if (bit_srali==1) && (func3==0b101) {
       "srai".to_string()
 
     //-- Caso general
@@ -271,8 +275,17 @@ fn disassemble(inst: u32) -> String {
             //-- Nombre de la instruccion            
             let name = inst_type_i_arith(func3, imm);
 
+            //-- Caso especial: srai
+            //-- El 10 de imm está a 1 (en caso de srai)
+            //-- Este bit hay que ponerlo a 0
+            let imm2: i32 = if (imm as u32 & BIT10==0x400) && (func3==0b101) {
+                (imm as u32 & !BIT10) as i32
+            } else {
+              imm
+            };
+
             //-- Devolver la instruccion completa en ensamblador
-            format!("{} x{}, x{}, {}", name, rd, rs1, imm)
+            format!("{} x{}, x{}, {}", name, rd, rs1, imm2)
 
         } else if is_type_i_load(opcode) {
             let rd = get_rd(inst);
