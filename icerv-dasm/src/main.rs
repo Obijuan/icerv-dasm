@@ -246,6 +246,32 @@ fn inst_type_i_arith(func3: u32, imm: i32) -> String {
 
 }
 
+fn inst_type_i_load(func3: u32) -> String {
+//────────────────────────────────────────────────
+//  Obtener el nombre de la instruccion load
+//  de tipo i cuyo codigo func3 es el dado
+//  ENTRADA: Codigo func3
+//  SALIDA: nemonico
+//────────────────────────────────────────────────
+
+    //-- Tabla de las instrucciones aritméticas
+    //-- y lógicas con valores inmediatos
+    let name = 
+    [          //-- Func3
+      "lb",    //-- 000
+      "lh",    //-- 001
+      "lw",    //-- 010
+      "ld",    //-- 011
+      "lbu",   //-- 100
+      "lhu",   //-- 101
+      "lwu",   //-- 110
+      "xxx",   //-- 111
+    ];
+
+    name[func3 as usize].to_string()
+
+}
+
 
 fn disassemble(inst: u32) -> String {
 //────────────────────────────────────────────────
@@ -291,7 +317,11 @@ fn disassemble(inst: u32) -> String {
             let rd = get_rd(inst);
             let rs1 = get_rs1(inst);
             let imm = get_imm12(inst);
-            format!("     * I-LOAD: x{} = Mem[x{} + {:#X}]", rd, rs1, imm)
+
+            //-- Nombre de la instrucción
+            let name: String = inst_type_i_load(func3);
+
+            format!("{} x{}, {}(x{})", name, rd, imm, rs1)
         } else {
             println!("   - Instrucción: DESCONOCIDA");
             print_fields(inst);
@@ -322,18 +352,17 @@ fn main() {
         0x00115093, // srli x1, x2, 1 
         0x00116093, // ori x1, x2, 1
         0x00117093, // andi x1, x2, 1
-
         0x40115093, // srai x1, x2, 1
-        0x40005013, // srai x0, x0, 0
-        0x4020df93, // srai x31, x1, 2
-        0x40415f13, // srai x30, x2, 4
-        0x4081de93, // srai x29, x3, 8
-        0x41025e13, // srai x28, x4, 16
-        0x4112dd93, // srai x27, x5, 17
-        0x41e35d13, // srai x26, x6, 30
-        0x41f3dc93, // srai x25, x7, 31
-
+        0x00008003, // lb x0, 0(x1)
+        0x0000c003, // lbu x0, 0(x1)
     ];
+
+  // TODO
+  // lh
+  // lw
+  // ld
+  // lhu
+  // lwu
 
     for i in 0..insts.len() {
 
@@ -630,3 +659,30 @@ fn test_disassemble_srai() {
     assert_eq!(disassemble(0x41e35d13), "srai x26, x6, 30");
     assert_eq!(disassemble(0x41f3dc93), "srai x25, x7, 31");
 }
+
+#[test]
+fn test_disassemble_lbu() {
+    assert_eq!(disassemble(0x0000c003), "lbu x0, 0(x1)");
+    assert_eq!(disassemble(0x00114083), "lbu x1, 1(x2)");
+    assert_eq!(disassemble(0x0021c103), "lbu x2, 2(x3)");
+    assert_eq!(disassemble(0x00424203), "lbu x4, 4(x4)");
+    assert_eq!(disassemble(0x0082c283), "lbu x5, 8(x5)");
+    assert_eq!(disassemble(0xfff34303), "lbu x6, -1(x6)");
+    assert_eq!(disassemble(0x8003c383), "lbu x7, -2048(x7)");
+    assert_eq!(disassemble(0xffe44403), "lbu x8, -2(x8)");
+    assert_eq!(disassemble(0x7ff4c483), "lbu x9, 2047(x9)");
+}
+
+#[test]
+fn test_disassemble_lb() {
+    assert_eq!(disassemble(0x00008003), "lb x0, 0(x1)");
+    assert_eq!(disassemble(0x00110083), "lb x1, 1(x2)");
+    assert_eq!(disassemble(0x00218103), "lb x2, 2(x3)");
+    assert_eq!(disassemble(0x00420203), "lb x4, 4(x4)");
+    assert_eq!(disassemble(0x00828283), "lb x5, 8(x5)");
+    assert_eq!(disassemble(0xfff30303), "lb x6, -1(x6)");
+    assert_eq!(disassemble(0x80038383), "lb x7, -2048(x7)");
+    assert_eq!(disassemble(0xffe40403), "lb x8, -2(x8)");
+    assert_eq!(disassemble(0x7ff48483), "lb x9, 2047(x9)");
+}
+
