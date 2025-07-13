@@ -204,7 +204,7 @@ fn is_type_i_load(opcode: u32) -> bool {
   }
 }
 
-fn inst_type_i_arith(func3: u32) -> String {
+fn inst_type_i_arith(func3: u32, imm: i32) -> String {
 //────────────────────────────────────────────────
 //  Obtener el nombre de la instruccion aritmetica
 //  de tipo i cuyo codigo func3 es el dado
@@ -226,8 +226,20 @@ fn inst_type_i_arith(func3: u32) -> String {
       "andi",  //-- 111
     ];
 
-    //-- Devolver la cadena a partir del código
-    name[func3 as usize].to_string()
+    //-- Caso especial: srli y srai tienen el mismo codigo func3
+    //-- Se diferenencias por el bit 30 del opcode (bit 10 del valor imm)
+    let bit_srali:u32 = imm as u32 >> 10; 
+
+    //-- Caso especial
+    if (bit_srali==1) & (func3==0b101) {
+      "srai".to_string()
+
+    //-- Caso general
+    } else {
+      //-- Devolver la cadena a partir del código
+      name[func3 as usize].to_string()
+    }
+
 }
 
 
@@ -257,7 +269,7 @@ fn disassemble(inst: u32) -> String {
             let imm = get_imm12(inst) as i32;
 
             //-- Nombre de la instruccion            
-            let name = inst_type_i_arith(func3);
+            let name = inst_type_i_arith(func3, imm);
 
             //-- Devolver la instruccion completa en ensamblador
             format!("{} x{}, x{}, {}", name, rd, rs1, imm)
@@ -288,6 +300,7 @@ fn main() {
 
     //-- Instrucciones RISC-V a desensamblar
     let insts = [
+        0x40115093, // srai x1, x2, 1
         0x00100093, // addi x1, x0, 1
         0x00111093, // slli x1, x2, 1
         0x00112093, // slti x1, x2, 1
@@ -296,8 +309,18 @@ fn main() {
         0x00115093, // srli x1, x2, 1 
         0x00116093, // ori x1, x2, 1
         0x00117093, // andi x1, x2, 1
-    ];
 
+        0x40115093, // srai x1, x2, 1
+        0x40005013, // srai x0, x0, 0
+        0x4020df93, // srai x31, x1, 2
+        0x40415f13, // srai x30, x2, 4
+        0x4081de93, // srai x29, x3, 8
+        0x41025e13, // srai x28, x4, 16
+        0x4112dd93, // srai x27, x5, 17
+        0x41e35d13, // srai x26, x6, 30
+        0x41f3dc93, // srai x25, x7, 31
+
+    ];
 
     for i in 0..insts.len() {
 
@@ -582,3 +605,15 @@ fn test_disassemble_andi() {
     assert_eq!(disassemble(0x01f3fc93), "andi x25, x7, 31");
 }
 
+#[test]
+fn test_disassemble_srai() {
+    assert_eq!(disassemble(0x40115093), "srai x1, x2, 1");
+    assert_eq!(disassemble(0x40005013), "srai x0, x0, 0");
+    assert_eq!(disassemble(0x4020df93), "srai x31, x1, 2");
+    assert_eq!(disassemble(0x40415f13), "srai x30, x2, 4");
+    assert_eq!(disassemble(0x4081de93), "srai x29, x3, 8");
+    assert_eq!(disassemble(0x41025e13), "srai x28, x4, 16");
+    assert_eq!(disassemble(0x4112dd93), "srai x27, x5, 17");
+    assert_eq!(disassemble(0x41e35d13), "srai x26, x6, 30");
+    assert_eq!(disassemble(0x41f3dc93), "srai x25, x7, 31");
+}
