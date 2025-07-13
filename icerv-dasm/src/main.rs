@@ -294,19 +294,9 @@ fn main() {
         0x00113093, // sltiu x1, x2, 1
         0x00114093, // xori x1, x2, 1
         0x00115093, // srli x1, x2, 1 
-
         0x00116093, // ori x1, x2, 1
-        0x00006013, // ori x0, x0, 0
-        0x0020ef93, // ori x31, x1, 2
-        0x00416f13, // ori x30, x2, 4
-        0x0081ee93, // ori x29, x3, 8
-        0x01026e13, // ori x28, x4, 16
-        0x0112ed93, // ori x27, x5, 17
-        0x01e36d13, // ori x26, x6, 30
-        0x01f3ec93, // ori x25, x7, 31
-
+        0x00117093, // andi x1, x2, 1
     ];
-
 
 
     for i in 0..insts.len() {
@@ -577,3 +567,18 @@ fn test_disassemble_ori() {
     assert_eq!(disassemble(0x01e36d13), "ori x26, x6, 30");
     assert_eq!(disassemble(0x01f3ec93), "ori x25, x7, 31");
 }
+
+
+#[test]
+fn test_disassemble_andi() {
+    assert_eq!(disassemble(0x00117093), "andi x1, x2, 1");
+    assert_eq!(disassemble(0x00007013), "andi x0, x0, 0");
+    assert_eq!(disassemble(0x0020ff93), "andi x31, x1, 2");
+    assert_eq!(disassemble(0x00417f13), "andi x30, x2, 4");
+    assert_eq!(disassemble(0x0081fe93), "andi x29, x3, 8");
+    assert_eq!(disassemble(0x01027e13), "andi x28, x4, 16");
+    assert_eq!(disassemble(0x0112fd93), "andi x27, x5, 17");
+    assert_eq!(disassemble(0x01e37d13), "andi x26, x6, 30");
+    assert_eq!(disassemble(0x01f3fc93), "andi x25, x7, 31");
+}
+
