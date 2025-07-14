@@ -435,6 +435,16 @@ fn main() {
         0x40208033, // sub x0, x1, x2
     ];
 
+    //-- TODO
+    //-- Instrucciones tipo R por implementar
+    // sll  
+    // slt
+    // sltu
+    // xor
+    // srl
+    // or 
+    // sra 
+
 
     for i in 0..insts.len() {
 
