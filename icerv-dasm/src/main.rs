@@ -36,6 +36,7 @@ const IMM12_POS: u8 = 20;
 //  POSICIONES Bits aislados
 //────────────────────────────────────────────────
 const BIT10: u32 = 1 << 10;
+const BIT5: u32 = 1 << 5;
 //────────────────────────────────────────────────
 //  CALCULAR LAS MASCARAS DE ACCESO A LOS CAMPOS
 //────────────────────────────────────────────────
@@ -293,14 +294,41 @@ fn inst_type_r(func7: u32, func3: u32) -> String {
 //────────────────────────────────────────────────
     let name = [
 
-             //-- Func3   Func7
+      //-- Bloque 1: Bit 5 de func7 a 0
+              //-- Func3    Func7
       "add",  //-- 000     0000000
+      "sll",  //-- 001     0000000
+      "slt",  //-- 010     0000000
+      "sltu", //-- 011     0000000
+      "xor",  //-- 100     0000000
+      "srl",  //-- 101     0000000
+      "or",   //-- 110     0000000
+      "and",  //-- 111     0000000
+
+      //-- Bloque 2: Bit 5 de func7 a 1
+      "sub",  //-- 000     0100000
+      "xxx",  //-- 001     xxxxxxx  No existe
+      "xxx",  //-- 010     xxxxxxx  No existe
+      "xxx",  //-- 011     xxxxxxx  No existe
+      "xxx",  //-- 100     xxxxxxx  No existe
+      "sra",  //-- 101     0100000 
+      "xxx",  //-- 110     xxxxxxx  No existe
+      "xxx",  //-- 111     xxxxxxx  No existe
     ];
 
-    //-- Devolver el nombre del nemonico
-    name[func3 as usize].to_string()
+    //-- Obtener el bit 5 de func7
+    let especial: u32 = func7 & BIT5;
 
-    //"TIPO-R".to_string()
+    //-- Moverlo al bit 3
+    //-- Si es instruccion especial (sub, sra), entonces
+    //-- especial vale 8, de lo contrario 0
+    let especial: u32 = especial >> 2;
+
+    //-- Sumar func3 + special para acceder a la tabla
+
+    //-- Devolver el nombre del nemonico
+    name[(func3 + especial) as usize].to_string()
+
 }
 
 
@@ -371,18 +399,6 @@ fn disassemble(inst: u32) -> String {
         let name: String = inst_type_r(func7, func3);
 
         format!("{} x{}, x{}, x{}", name, rd, rs1, rs2)
-        //String::from("TIPO-R")
-        //-- Instrucciones tipo R
-        //-- add: Opcode: 0b_01100_11. func3=000, func7=00000_00
-        //-- sub: Opcode: 0b_01100_11. func3=000, func7=01000_00
-        //-- sll: Opcode: 0b_01100_11. func3=001, func7=00000_00
-        //-- slt: Opcode: 0b_01100_11. func3=010, func7=00000_00
-        //-- sltu: Opcode: 0b_01100_11. func3=011, func7=00000_00
-        //-- xor: Opcode: 0b_01100_11. func3=100, func7=00000_00
-        //-- srl: Opcode: 0b_01100_11. func3=101, func7=00000_00
-        //-- sra: Opcode: 0b_01100_11. func3=101, func7=01000_00
-        //-- or:  Opcode: 0b_01100_11. func3=110, func7=00000_00
-        //-- and: Opcode: 0b_01100_11. func3=111, func7=00000_00
     } else {
       println!("   - Instrucción: DESCONOCIDA");
       print_fields(inst);
@@ -415,9 +431,10 @@ fn main() {
         0x0000b003, // ld x0, 0(x1)
         0x0000d003, // lhu x0, 0(x1)
         0x0000e003, // lwu x0, 0(x1)
-
         0x00208033, // add x0, x1, x2
+        0x40208033, // sub x0, x1, x2
     ];
+
 
     for i in 0..insts.len() {
 
@@ -822,6 +839,20 @@ fn test_disassemble_add() {
       assert_eq!(disassemble(0x01ff8f33), "add x30, x31, x31");
 }
 
+#[test]
+fn test_disassemble_sub() {
+    assert_eq!(disassemble(0x40208033), "sub x0, x1, x2");
+    assert_eq!(disassemble(0x405201b3), "sub x3, x4, x5");
+    assert_eq!(disassemble(0x40838333), "sub x6, x7, x8");
+    assert_eq!(disassemble(0x40b504b3), "sub x9, x10, x11");
+    assert_eq!(disassemble(0x40e60633), "sub x12, x12, x14");
+    assert_eq!(disassemble(0x411807b3), "sub x15, x16, x17");
+    assert_eq!(disassemble(0x41498933), "sub x18, x19, x20");
+    assert_eq!(disassemble(0x417b0ab3), "sub x21, x22, x23");
+    assert_eq!(disassemble(0x41ac8c33), "sub x24, x25, x26");
+    assert_eq!(disassemble(0x41de0db3), "sub x27, x28, x29");
+    assert_eq!(disassemble(0x41ff8f33), "sub x30, x31, x31");
+}
 
 
 
