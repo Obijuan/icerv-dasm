@@ -32,6 +32,8 @@ const RS1_POS: u8 = 15;
 const RS2_POS: u8 = 20;  
 const FUNC7_POS: u8 = 25;  
 const IMM12_POS: u8 = 20;  
+const OFFSET7_POS: u8 = 25;
+const OFFSET5_POS: u8 = 7;
 //────────────────────────────────────────────────
 //  POSICIONES Bits aislados
 //────────────────────────────────────────────────
@@ -50,6 +52,8 @@ const RS1_MASK: u32 = FIELD_5B << RS1_POS;
 const RS2_MASK: u32 = FIELD_5B << RS2_POS;
 const FUNC7_MASK: u32 = FIELD_7B << FUNC7_POS;
 const IMM12_MASK: u32 = FIELD_12B << IMM12_POS;  
+const OFFSET7_MASK: u32 = FIELD_7B << OFFSET7_POS;
+const OFFSET5_MASK: u32 = FIELD_5B << OFFSET5_POS;
 //────────────────────────────────────────────────
 //  DEFINICION DE LOS OPCODES
 //────────────────────────────────────────────────
@@ -63,6 +67,9 @@ const OPCODE_I_LOAD: u32 = 0x03;    //-- LW: lw rd, imm12(rs1)
 //  Instrucciones tipo-R
 //────────────────────────────
 const OPCODE_R: u32 = 0b_01100_11;  //-- 0x33
+//  Instrucciones tipo-S
+//────────────────────────────
+const OPCODE_S: u32 = 0b_01000_11;  //-- 0x23 
 
 fn get_opcode(inst: u32) -> u32 {
 //────────────────────────────────────────────────
@@ -136,6 +143,19 @@ fn get_func7(inst: u32) -> u32 {
   //-- Aplicar la máscara para extraer el campo
   //-- y desplazarlo a la posición 0
   (inst & FUNC7_MASK) >> FUNC7_POS
+}
+
+fn get_offset_s(inst: u32) -> i32 {
+//────────────────────────────────────────────────
+// Entrada: Instrucción RISC-V
+// Salida: Valor del offset para instrucciones s
+//────────────────────────────────────────────────
+//-- Extraer el campo offset7
+let offset7: u32 = (inst & OFFSET7_MASK) >> OFFSET7_POS;
+let offset5: u32 = (inst & OFFSET5_MASK) >> OFFSET5_POS;
+let offset: u32 = offset7 << 5 | offset5;
+
+sign_ext(offset as i32)
 }
 
 fn print_fields(inst: u32) {
@@ -220,6 +240,16 @@ fn is_type_r(opcode: u32) -> bool {
       false
     }
 }
+
+fn is_type_s(opcode: u32) -> bool {
+    if opcode == OPCODE_S {
+      true
+    }
+    else {
+      false
+    }
+}
+
 
 fn inst_type_i_arith(func3: u32, imm: i32) -> String {
 //────────────────────────────────────────────────
@@ -331,6 +361,24 @@ fn inst_type_r(func7: u32, func3: u32) -> String {
 
 }
 
+fn inst_type_s(func3: u32) -> String {
+//────────────────────────────────────────────────
+//  Obtener el nombre de la instruccion de tipo S
+//  a partir de func3
+//  ENTRADA: Codigos func3
+//  SALIDA: nemonico
+//────────────────────────────────────────────────
+    let name = [
+             //-- func3
+      "sb",  //-- 000
+      "sh",  //-- 001
+      "sw",  //-- 010
+      "sd",  //-- 011
+    ];
+
+    name[func3 as usize].to_string()
+}
+
 
 fn disassemble(inst: u32) -> String {
 //────────────────────────────────────────────────
@@ -399,6 +447,17 @@ fn disassemble(inst: u32) -> String {
         let name: String = inst_type_r(func7, func3);
 
         format!("{} x{}, x{}, x{}", name, rd, rs1, rs2)
+    } else if is_type_s(opcode) {
+        //-- Sabemos el formato, podemos obtener todos los campos
+        let rs1 = get_rs1(inst);
+        let rs2 = get_rs2(inst);
+        let func3 = get_func3(inst);
+        let offset:i32 = get_offset_s(inst);
+        //-- TODO: Valores inmediatos...
+
+        let name: String = inst_type_s(func3);
+
+        format!("{} x{}, {}(x{})", name, rs2, offset, rs1)
     } else {
       println!("   - Instrucción: DESCONOCIDA");
       print_fields(inst);
@@ -438,14 +497,57 @@ fn main() {
         0x0020b033, // sltu x0, x1, x2
         0x0020c033, // xor x0, x1, x2
         0x0020d033, // srl x0, x1, x2
+        0x0020e033, // or x0, x1, x2
+        0x4020d033, // sra x0, x1, x2
+        0x00008023, // sb x0, 0(x1)
     ];
 
-
-
     //-- TODO
-    //-- Instrucciones tipo R por implementar
-    // or 
-    // sra 
+    //---- Tipo S
+    //-- sh (func3=001)
+    //-- sw (func3=010)
+    //-- sd (func3=011)
+    //---- Tipo B
+    //-- beq
+    //-- bne
+    //-- blt
+    //-- bge
+    //-- bltu
+    //-- bgeu
+    //----- Tipo U
+    //-- lui
+    //-- auipc
+    //----- Tipo J
+    //-- jal
+    //-- jalr
+    //----- Otros
+    //-- fence
+    //-- fence.i
+    //-- csrrw
+    //-- csrrs
+    //-- csrrc
+    //-- csrrwi
+    //-- csrrsi
+    //-- csrrci
+    //-- ecall
+    //-- ebreak
+    //-- uret
+    //-- sret
+    //-- mret
+    //-- wfi
+    //-- sfence.vma
+    //----RV64I
+    //-- addiw
+    //-- slliw
+    //-- srliw
+    //-- sraiw
+    //-- addw
+    //-- subw
+    //-- sllw
+    //-- srlw
+    //-- sraw
+    //-- lwu
+    //-- 
 
     for i in 0..insts.len() {
 
@@ -938,5 +1040,49 @@ fn test_disassemble_srl() {
     assert_eq!(disassemble(0x01acdc33), "srl x24, x25, x26");
     assert_eq!(disassemble(0x01de5db3), "srl x27, x28, x29");
     assert_eq!(disassemble(0x01ffdf33), "srl x30, x31, x31");
+}
+
+#[test]
+fn test_disassemble_or() {
+    assert_eq!(disassemble(0x0020e033), "or x0, x1, x2");
+    assert_eq!(disassemble(0x005261b3), "or x3, x4, x5");
+    assert_eq!(disassemble(0x0083e333), "or x6, x7, x8");
+    assert_eq!(disassemble(0x00b564b3), "or x9, x10, x11");
+    assert_eq!(disassemble(0x00e66633), "or x12, x12, x14");
+    assert_eq!(disassemble(0x011867b3), "or x15, x16, x17");
+    assert_eq!(disassemble(0x0149e933), "or x18, x19, x20");
+    assert_eq!(disassemble(0x017b6ab3), "or x21, x22, x23");
+    assert_eq!(disassemble(0x01acec33), "or x24, x25, x26");
+    assert_eq!(disassemble(0x01de6db3), "or x27, x28, x29");
+    assert_eq!(disassemble(0x01ffef33), "or x30, x31, x31");
+}
+
+#[test]
+fn test_disassemble_sra() {
+    assert_eq!(disassemble(0x4020d033), "sra x0, x1, x2");
+    assert_eq!(disassemble(0x405251b3), "sra x3, x4, x5");
+    assert_eq!(disassemble(0x4083d333), "sra x6, x7, x8");
+    assert_eq!(disassemble(0x40b554b3), "sra x9, x10, x11");
+    assert_eq!(disassemble(0x40e65633), "sra x12, x12, x14");
+    assert_eq!(disassemble(0x411857b3), "sra x15, x16, x17");
+    assert_eq!(disassemble(0x4149d933), "sra x18, x19, x20");
+    assert_eq!(disassemble(0x417b5ab3), "sra x21, x22, x23");
+    assert_eq!(disassemble(0x41acdc33), "sra x24, x25, x26");
+    assert_eq!(disassemble(0x41de5db3), "sra x27, x28, x29");
+    assert_eq!(disassemble(0x41ffdf33), "sra x30, x31, x31");
+}
+
+#[test]
+fn test_disassemble_sb() {
+      assert_eq!(disassemble(0x00008023), "sb x0, 0(x1)");
+      assert_eq!(disassemble(0xfe218fa3), "sb x2, -1(x3)");
+      assert_eq!(disassemble(0x7e428fa3), "sb x4, 2047(x5)");
+      assert_eq!(disassemble(0x80530023), "sb x5, -2048(x6)");
+      assert_eq!(disassemble(0x00638123), "sb x6, 2(x7)");
+      assert_eq!(disassemble(0x00848223), "sb x8, 4(x9)");
+      assert_eq!(disassemble(0x00a58423), "sb x10, 8(x11)");
+      assert_eq!(disassemble(0x00c68823), "sb x12, 16(x13)");
+      assert_eq!(disassemble(0x02e78023), "sb x14, 32(x15)");
+      assert_eq!(disassemble(0x05088023), "sb x16, 64(x17)");
 }
 
