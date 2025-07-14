@@ -59,6 +59,9 @@ const IMM12_MASK: u32 = FIELD_12B << IMM12_POS;
 //  - Instrucciones de carga (LW, LH, LB,...)
 const OPCODE_I_ARITH: u32 = 0x13;   //-- ADDI: addi rd, rs1, imm12
 const OPCODE_I_LOAD: u32 = 0x03;    //-- LW: lw rd, imm12(rs1)
+//  Instrucciones tipo-R
+//────────────────────────────
+const OPCODE_R: u32 = 0b_01100_11;  //-- 0x33
 
 fn get_opcode(inst: u32) -> u32 {
 //────────────────────────────────────────────────
@@ -200,12 +203,21 @@ fn is_type_i_arith(opcode: u32) -> bool {
 }
 
 fn is_type_i_load(opcode: u32) -> bool {
-  if opcode == OPCODE_I_LOAD {
-    true
-  }
-  else {
-    false
-  }
+    if opcode == OPCODE_I_LOAD {
+      true
+    }
+    else {
+      false
+    }
+}
+
+fn is_type_r(opcode: u32) -> bool {
+    if opcode == OPCODE_R {
+      true
+    }
+    else {
+      false
+    }
 }
 
 fn inst_type_i_arith(func3: u32, imm: i32) -> String {
@@ -272,6 +284,25 @@ fn inst_type_i_load(func3: u32) -> String {
 
 }
 
+fn inst_type_r(func7: u32, func3: u32) -> String {
+//────────────────────────────────────────────────
+//  Obtener el nombre de la instruccion de tipo R
+//  a partir de func3 y func7
+//  ENTRADA: Codigos func7 y func3
+//  SALIDA: nemonico
+//────────────────────────────────────────────────
+    let name = [
+
+             //-- Func3   Func7
+      "add",  //-- 000     0000000
+    ];
+
+    //-- Devolver el nombre del nemonico
+    name[func3 as usize].to_string()
+
+    //"TIPO-R".to_string()
+}
+
 
 fn disassemble(inst: u32) -> String {
 //────────────────────────────────────────────────
@@ -328,10 +359,34 @@ fn disassemble(inst: u32) -> String {
             String::from("DESCONOCIDA")
         }
 
+    } else if is_type_r(opcode) {
+
+        //-- Sabemos el formato, podemos obtener todos los campos
+        let rd = get_rd(inst);
+        let rs1 = get_rs1(inst);
+        let rs2 = get_rs2(inst);
+        let func3 = get_func3(inst);
+        let func7: u32 = get_func7(inst);
+
+        let name: String = inst_type_r(func7, func3);
+
+        format!("{} x{}, x{}, x{}", name, rd, rs1, rs2)
+        //String::from("TIPO-R")
+        //-- Instrucciones tipo R
+        //-- add: Opcode: 0b_01100_11. func3=000, func7=00000_00
+        //-- sub: Opcode: 0b_01100_11. func3=000, func7=01000_00
+        //-- sll: Opcode: 0b_01100_11. func3=001, func7=00000_00
+        //-- slt: Opcode: 0b_01100_11. func3=010, func7=00000_00
+        //-- sltu: Opcode: 0b_01100_11. func3=011, func7=00000_00
+        //-- xor: Opcode: 0b_01100_11. func3=100, func7=00000_00
+        //-- srl: Opcode: 0b_01100_11. func3=101, func7=00000_00
+        //-- sra: Opcode: 0b_01100_11. func3=101, func7=01000_00
+        //-- or:  Opcode: 0b_01100_11. func3=110, func7=00000_00
+        //-- and: Opcode: 0b_01100_11. func3=111, func7=00000_00
     } else {
-        println!("   - Instrucción: DESCONOCIDA");
-        print_fields(inst);
-        String::from("DESCONOCIDA")
+      println!("   - Instrucción: DESCONOCIDA");
+      print_fields(inst);
+      String::from("DESCONOCIDA")
     }
 }
 
@@ -360,6 +415,8 @@ fn main() {
         0x0000b003, // ld x0, 0(x1)
         0x0000d003, // lhu x0, 0(x1)
         0x0000e003, // lwu x0, 0(x1)
+
+        0x00208033, // add x0, x1, x2
     ];
 
     for i in 0..insts.len() {
@@ -748,5 +805,23 @@ fn test_disassemble_lwu() {
     assert_eq!(disassemble(0xffe46403), "lwu x8, -2(x8)");
     assert_eq!(disassemble(0x7ff4e483), "lwu x9, 2047(x9)");
 }
+
+
+#[test]
+fn test_disassemble_add() {
+      assert_eq!(disassemble(0x00208033), "add x0, x1, x2");
+      assert_eq!(disassemble(0x005201b3), "add x3, x4, x5");
+      assert_eq!(disassemble(0x00838333), "add x6, x7, x8");
+      assert_eq!(disassemble(0x00b504b3), "add x9, x10, x11");
+      assert_eq!(disassemble(0x00e60633), "add x12, x12, x14");
+      assert_eq!(disassemble(0x011807b3), "add x15, x16, x17");
+      assert_eq!(disassemble(0x01498933), "add x18, x19, x20");
+      assert_eq!(disassemble(0x017b0ab3), "add x21, x22, x23");
+      assert_eq!(disassemble(0x01ac8c33), "add x24, x25, x26");
+      assert_eq!(disassemble(0x01de0db3), "add x27, x28, x29");
+      assert_eq!(disassemble(0x01ff8f33), "add x30, x31, x31");
+}
+
+
 
 
