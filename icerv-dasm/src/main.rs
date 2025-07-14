@@ -500,11 +500,11 @@ fn main() {
         0x0020e033, // or x0, x1, x2
         0x4020d033, // sra x0, x1, x2
         0x00008023, // sb x0, 0(x1)
+        0xfe219fa3, // sh x2, -1(x3)
     ];
 
     //-- TODO
     //---- Tipo S
-    //-- sh (func3=001)
     //-- sw (func3=010)
     //-- sd (func3=011)
     //---- Tipo B
@@ -547,7 +547,6 @@ fn main() {
     //-- srlw
     //-- sraw
     //-- lwu
-    //-- 
 
     for i in 0..insts.len() {
 
