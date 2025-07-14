@@ -437,12 +437,13 @@ fn main() {
         0x0020a033, // slt x0, x1, x2
         0x0020b033, // sltu x0, x1, x2
         0x0020c033, // xor x0, x1, x2
+        0x0020d033, // srl x0, x1, x2
     ];
+
 
 
     //-- TODO
     //-- Instrucciones tipo R por implementar
-    // srl
     // or 
     // sra 
 
@@ -923,3 +924,19 @@ fn test_disassemble_xor() {
     assert_eq!(disassemble(0x01de4db3), "xor x27, x28, x29");
     assert_eq!(disassemble(0x01ffcf33), "xor x30, x31, x31");  
 }
+
+#[test]
+fn test_disassemble_srl() {
+    assert_eq!(disassemble(0x0020d033), "srl x0, x1, x2");
+    assert_eq!(disassemble(0x005251b3), "srl x3, x4, x5");
+    assert_eq!(disassemble(0x0083d333), "srl x6, x7, x8");
+    assert_eq!(disassemble(0x00b554b3), "srl x9, x10, x11");
+    assert_eq!(disassemble(0x00e65633), "srl x12, x12, x14");
+    assert_eq!(disassemble(0x011857b3), "srl x15, x16, x17");
+    assert_eq!(disassemble(0x0149d933), "srl x18, x19, x20");
+    assert_eq!(disassemble(0x017b5ab3), "srl x21, x22, x23");
+    assert_eq!(disassemble(0x01acdc33), "srl x24, x25, x26");
+    assert_eq!(disassemble(0x01de5db3), "srl x27, x28, x29");
+    assert_eq!(disassemble(0x01ffdf33), "srl x30, x31, x31");
+}
+
