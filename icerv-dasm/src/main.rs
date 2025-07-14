@@ -501,12 +501,11 @@ fn main() {
         0x4020d033, // sra x0, x1, x2
         0x00008023, // sb x0, 0(x1)
         0xfe219fa3, // sh x2, -1(x3)
+        0x7e42afa3, // sw x4, 2047(x5)
+        0x80533023, // sd x5, -2048(x6)
     ];
 
     //-- TODO
-    //---- Tipo S
-    //-- sw (func3=010)
-    //-- sd (func3=011)
     //---- Tipo B
     //-- beq
     //-- bne
@@ -1084,4 +1083,35 @@ fn test_disassemble_sb() {
       assert_eq!(disassemble(0x02e78023), "sb x14, 32(x15)");
       assert_eq!(disassemble(0x05088023), "sb x16, 64(x17)");
 }
+
+#[test]
+fn test_disassemble_sw() {
+    assert_eq!(disassemble(0x0000a023), "sw x0, 0(x1)");
+    assert_eq!(disassemble(0xfe21afa3), "sw x2, -1(x3)");
+    assert_eq!(disassemble(0x7e42afa3), "sw x4, 2047(x5)");
+    assert_eq!(disassemble(0x80532023), "sw x5, -2048(x6)");
+    assert_eq!(disassemble(0x0063a123), "sw x6, 2(x7)");
+    assert_eq!(disassemble(0x0084a223), "sw x8, 4(x9)");
+    assert_eq!(disassemble(0x00a5a423), "sw x10, 8(x11)");
+    assert_eq!(disassemble(0x00c6a823), "sw x12, 16(x13)");
+    assert_eq!(disassemble(0x02e7a023), "sw x14, 32(x15)");
+    assert_eq!(disassemble(0x0508a023), "sw x16, 64(x17)");
+}
+
+
+#[test]
+fn test_disassemble_sd() {
+    assert_eq!(disassemble(0x0000b023), "sd x0, 0(x1)");
+    assert_eq!(disassemble(0xfe21bfa3), "sd x2, -1(x3)");
+    assert_eq!(disassemble(0x7e42bfa3), "sd x4, 2047(x5)");
+    assert_eq!(disassemble(0x80533023), "sd x5, -2048(x6)");
+    assert_eq!(disassemble(0x0063b123), "sd x6, 2(x7)");
+    assert_eq!(disassemble(0x0084b223), "sd x8, 4(x9)");
+    assert_eq!(disassemble(0x00a5b423), "sd x10, 8(x11)");
+    assert_eq!(disassemble(0x00c6b823), "sd x12, 16(x13)");
+    assert_eq!(disassemble(0x02e7b023), "sd x14, 32(x15)");
+    assert_eq!(disassemble(0x0508b023), "sd x16, 64(x17)");
+}
+
+
 
