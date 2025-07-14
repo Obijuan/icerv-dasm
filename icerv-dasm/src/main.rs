@@ -433,12 +433,12 @@ fn main() {
         0x0000e003, // lwu x0, 0(x1)
         0x00208033, // add x0, x1, x2
         0x40208033, // sub x0, x1, x2
+        0x00209033, // sll x0, x1, x2
+        0x0020a033, // slt x0, x1, x2
     ];
 
     //-- TODO
     //-- Instrucciones tipo R por implementar
-    // sll  
-    // slt
     // sltu
     // xor
     // srl
@@ -864,5 +864,33 @@ fn test_disassemble_sub() {
     assert_eq!(disassemble(0x41ff8f33), "sub x30, x31, x31");
 }
 
+#[test]
+fn test_disassemble_sll() {
+    assert_eq!(disassemble(0x00209033), "sll x0, x1, x2");
+    assert_eq!(disassemble(0x005211b3), "sll x3, x4, x5");
+    assert_eq!(disassemble(0x00839333), "sll x6, x7, x8");
+    assert_eq!(disassemble(0x00b514b3), "sll x9, x10, x11");
+    assert_eq!(disassemble(0x00e61633), "sll x12, x12, x14");
+    assert_eq!(disassemble(0x011817b3), "sll x15, x16, x17");
+    assert_eq!(disassemble(0x01499933), "sll x18, x19, x20");
+    assert_eq!(disassemble(0x017b1ab3), "sll x21, x22, x23");
+    assert_eq!(disassemble(0x01ac9c33), "sll x24, x25, x26");
+    assert_eq!(disassemble(0x01de1db3), "sll x27, x28, x29");
+    assert_eq!(disassemble(0x01ff9f33), "sll x30, x31, x31");
+}
 
+#[test]
+fn test_disassemble_slt() {
+    assert_eq!(disassemble(0x0020a033), "slt x0, x1, x2");
+    assert_eq!(disassemble(0x005221b3), "slt x3, x4, x5");
+    assert_eq!(disassemble(0x0083a333), "slt x6, x7, x8");
+    assert_eq!(disassemble(0x00b524b3), "slt x9, x10, x11");
+    assert_eq!(disassemble(0x00e62633), "slt x12, x12, x14");
+    assert_eq!(disassemble(0x011827b3), "slt x15, x16, x17");
+    assert_eq!(disassemble(0x0149a933), "slt x18, x19, x20");
+    assert_eq!(disassemble(0x017b2ab3), "slt x21, x22, x23");
+    assert_eq!(disassemble(0x01acac33), "slt x24, x25, x26");
+    assert_eq!(disassemble(0x01de2db3), "slt x27, x28, x29");
+    assert_eq!(disassemble(0x01ffaf33), "slt x30, x31, x31");
+}
 
