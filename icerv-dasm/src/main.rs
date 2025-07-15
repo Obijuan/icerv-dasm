@@ -19,7 +19,9 @@
 //  ANCHURAS de LOS CAMPOS
 //───────────────────────────
 const FIELD_3B: u32 = 0x07;  //-- Campo de 3 bits de ancho
+const FIELD_4B: u32 = 0x0F;  //-- Campo de 4 bits
 const FIELD_5B: u32 = 0x1F;  //-- Campo de 5 bits
+const FIELD_6B: u32 = 0x3F;  //-- Campo de 6 bits
 const FIELD_7B: u32 = 0x7F;  //-- Campo de 7 bits
 const FIELD_12B: u32 = 0xFFF;  //-- Campo de 12 bits
 //────────────────────────────────────────────────
@@ -33,7 +35,9 @@ const RS2_POS: u8 = 20;
 const FUNC7_POS: u8 = 25;  
 const IMM12_POS: u8 = 20;  
 const OFFSET7_POS: u8 = 25;
+const OFFSET6_POS: u8 = 25;
 const OFFSET5_POS: u8 = 7;
+const OFFSET4_POS: u8 = 8;
 //────────────────────────────────────────────────
 //  POSICIONES Bits aislados
 //────────────────────────────────────────────────
@@ -53,7 +57,9 @@ const RS2_MASK: u32 = FIELD_5B << RS2_POS;
 const FUNC7_MASK: u32 = FIELD_7B << FUNC7_POS;
 const IMM12_MASK: u32 = FIELD_12B << IMM12_POS;  
 const OFFSET7_MASK: u32 = FIELD_7B << OFFSET7_POS;
+const OFFSET6_MASK: u32 = FIELD_6B << OFFSET6_POS;
 const OFFSET5_MASK: u32 = FIELD_5B << OFFSET5_POS;
+const OFFSET4_MASK: u32 = FIELD_4B << OFFSET4_POS;
 //────────────────────────────────────────────────
 //  DEFINICION DE LOS OPCODES
 //────────────────────────────────────────────────
@@ -69,7 +75,11 @@ const OPCODE_I_LOAD: u32 = 0x03;    //-- LW: lw rd, imm12(rs1)
 const OPCODE_R: u32 = 0b_01100_11;  //-- 0x33
 //  Instrucciones tipo-S
 //────────────────────────────
-const OPCODE_S: u32 = 0b_01000_11;  //-- 0x23 
+const OPCODE_S: u32 = 0b_01000_11;  //-- 0x23
+//  Instrucciones tipo-B
+//────────────────────────────
+const OPCODE_B: u32 = 0b_11000_11;  //-- 0x63
+
 
 fn get_opcode(inst: u32) -> u32 {
 //────────────────────────────────────────────────
@@ -150,12 +160,33 @@ fn get_offset_s(inst: u32) -> i32 {
 // Entrada: Instrucción RISC-V
 // Salida: Valor del offset para instrucciones s
 //────────────────────────────────────────────────
-//-- Extraer el campo offset7
-let offset7: u32 = (inst & OFFSET7_MASK) >> OFFSET7_POS;
-let offset5: u32 = (inst & OFFSET5_MASK) >> OFFSET5_POS;
-let offset: u32 = offset7 << 5 | offset5;
+    //-- Extraer el campo offset7
+    let offset7: u32 = (inst & OFFSET7_MASK) >> OFFSET7_POS;
+    let offset5: u32 = (inst & OFFSET5_MASK) >> OFFSET5_POS;
+    let offset: u32 = offset7 << 5 | offset5;
 
-sign_ext(offset as i32)
+    sign_ext(offset as i32)
+}
+
+fn get_offset_b(inst: u32) -> i32 {
+//────────────────────────────────────────────────
+// Entrada: Instrucción RISC-V
+// Salida: Valor del offset para instrucciones b
+//────────────────────────────────────────────────
+    //-- Extraer el bit de signo
+    let sign: u32 = (inst & 0x8000_0000) >> 31;
+
+    //-- Extraer el bit 11, de la posicion 7
+    let b11: u32 = (inst & 0x0000_0080) >> 7;
+
+    let offset6: u32 = (inst & OFFSET6_MASK) >> OFFSET6_POS;
+
+    let offset4: u32 = (inst & OFFSET4_MASK) >> OFFSET4_POS;
+
+    //-- Construir el offset final a partir de todos sus componentes
+    let offset: u32 = (sign << 12) | (b11 << 11) |  
+                      (offset6 << 5) | offset4<<1;    
+    sign_ext13(offset as i32)
 }
 
 fn print_fields(inst: u32) {
@@ -195,6 +226,23 @@ fn sign_ext(value: i32) -> i32 {
     //-- En caso de ser negativo, extender el signo
     if sign_bit {
         value | !0xFFF  //-- Extender el signo a 32 bits
+    } else {
+        value  //-- No es negativo, devolver el valor original
+    }
+}
+
+fn sign_ext13(value: i32) -> i32 {
+//────────────────────────────────────────────────
+// Entrada: Valor de 13 bits  
+// Salida: Valor extendido a 32 bits con signo
+//────────────────────────────────────────────────
+    //-- Obtener el bit de signo
+    //-- sign_bit = true --> negativo
+    let sign_bit = (value & 0x1000) != 0;
+
+    //-- En caso de ser negativo, extender el signo
+    if sign_bit {
+        value | !0x1FFF  //-- Extender el signo a 32 bits
     } else {
         value  //-- No es negativo, devolver el valor original
     }
@@ -243,6 +291,15 @@ fn is_type_r(opcode: u32) -> bool {
 
 fn is_type_s(opcode: u32) -> bool {
     if opcode == OPCODE_S {
+      true
+    }
+    else {
+      false
+    }
+}
+
+fn is_type_b(opcode: u32) -> bool {
+    if opcode == OPCODE_B {
       true
     }
     else {
@@ -379,6 +436,28 @@ fn inst_type_s(func3: u32) -> String {
     name[func3 as usize].to_string()
 }
 
+fn inst_type_b(func3: u32) -> String {
+//────────────────────────────────────────────────
+//  Obtener el nombre de la instruccion de tipo B
+//  a partir de func3
+//  ENTRADA: Codigos func3
+//  SALIDA: nemonico
+//────────────────────────────────────────────────
+    let name = [
+             //-- func3
+      "beq",  //-- 000
+      "bne",  //-- 001
+      "xxx",  //-- 010
+      "xxx",  //-- 011
+      "blt",  //-- 100
+      "bge",  //-- 101
+      "bltu", //-- 110
+      "bgeu", //-- 111
+    ];
+
+    name[func3 as usize].to_string()
+}
+
 
 fn disassemble(inst: u32) -> String {
 //────────────────────────────────────────────────
@@ -458,6 +537,16 @@ fn disassemble(inst: u32) -> String {
         let name: String = inst_type_s(func3);
 
         format!("{} x{}, {}(x{})", name, rs2, offset, rs1)
+    } else if is_type_b(opcode) {
+
+        let rs1 = get_rs1(inst);
+        let rs2 = get_rs2(inst);
+        let func3 = get_func3(inst);
+
+        let name: String = inst_type_b(func3);
+        let offset: i32 = get_offset_b(inst);
+
+        format!("{} x{}, x{}, {}", name, rs1, rs2, offset)
     } else {
       println!("   - Instrucción: DESCONOCIDA");
       print_fields(inst);
@@ -503,16 +592,16 @@ fn main() {
         0xfe219fa3, // sh x2, -1(x3)
         0x7e42afa3, // sw x4, 2047(x5)
         0x80533023, // sd x5, -2048(x6)
+        0xfe208ee3, // beq x1, x2, -4
     ];
 
     //-- TODO
-    //---- Tipo B
-    //-- beq
-    //-- bne
-    //-- blt
-    //-- bge
-    //-- bltu
-    //-- bgeu
+    //---- Tipo B:
+    //-- bne. func3=001
+    //-- blt. func3=100
+    //-- bge. func3=101
+    //-- bltu. func3=110
+    //-- bgeu. func3=111
     //----- Tipo U
     //-- lui
     //-- auipc
@@ -1113,5 +1202,17 @@ fn test_disassemble_sd() {
     assert_eq!(disassemble(0x0508b023), "sd x16, 64(x17)");
 }
 
-
+#[test]
+fn test_disassemble_beq() {
+    assert_eq!(disassemble(0x00000063), "beq x0, x0, 0"); 
+    assert_eq!(disassemble(0xfe208ee3), "beq x1, x2, -4"); 
+    assert_eq!(disassemble(0xfe418ce3), "beq x3, x4, -8"); 
+    assert_eq!(disassemble(0xfe628ae3), "beq x5, x6, -12"); 
+    assert_eq!(disassemble(0x00838c63), "beq x7, x8, 24"); 
+    assert_eq!(disassemble(0x00a48a63), "beq x9, x10, 20"); 
+    assert_eq!(disassemble(0x00c58863), "beq x11, x12, 16"); 
+    assert_eq!(disassemble(0x00e68663), "beq x13, x14, 12"); 
+    assert_eq!(disassemble(0x01078463), "beq x15, x16, 8"); 
+    assert_eq!(disassemble(0x01288263), "beq x17, x18, 4"); 
+}
 
