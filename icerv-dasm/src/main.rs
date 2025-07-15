@@ -593,15 +593,15 @@ fn main() {
         0x7e42afa3, // sw x4, 2047(x5)
         0x80533023, // sd x5, -2048(x6)
         0xfe208ee3, // beq x1, x2, -4
+        0xfe419ce3, // bne x3, x4, -8
+        0xfe62cae3, // blt x5, x6, -12
     ];
 
     //-- TODO
     //---- Tipo B:
-    //-- bne. func3=001
-    //-- blt. func3=100
-    //-- bge. func3=101
-    //-- bltu. func3=110
-    //-- bgeu. func3=111
+    //-- bge
+    //-- bltu
+    //-- bgeu
     //----- Tipo U
     //-- lui
     //-- auipc
@@ -1214,5 +1214,33 @@ fn test_disassemble_beq() {
     assert_eq!(disassemble(0x00e68663), "beq x13, x14, 12"); 
     assert_eq!(disassemble(0x01078463), "beq x15, x16, 8"); 
     assert_eq!(disassemble(0x01288263), "beq x17, x18, 4"); 
+}
+
+#[test]
+fn test_disassemble_bne() {
+    assert_eq!(disassemble(0x00001063), "bne x0, x0, 0");
+    assert_eq!(disassemble(0xfe209ee3), "bne x1, x2, -4");
+    assert_eq!(disassemble(0xfe419ce3), "bne x3, x4, -8");
+    assert_eq!(disassemble(0xfe629ae3), "bne x5, x6, -12");
+    assert_eq!(disassemble(0x00839c63), "bne x7, x8, 24");
+    assert_eq!(disassemble(0x00a49a63), "bne x9, x10, 20");
+    assert_eq!(disassemble(0x00c59863), "bne x11, x12, 16");
+    assert_eq!(disassemble(0x00e69663), "bne x13, x14, 12");
+    assert_eq!(disassemble(0x01079463), "bne x15, x16, 8");
+    assert_eq!(disassemble(0x01289263), "bne x17, x18, 4");
+}
+
+#[test]
+fn test_disassemble_blt() {
+    assert_eq!(disassemble(0x00004063), "blt x0, x0, 0");
+    assert_eq!(disassemble(0xfe20cee3), "blt x1, x2, -4");
+    assert_eq!(disassemble(0xfe41cce3), "blt x3, x4, -8");
+    assert_eq!(disassemble(0xfe62cae3), "blt x5, x6, -12");
+    assert_eq!(disassemble(0x0083cc63), "blt x7, x8, 24");
+    assert_eq!(disassemble(0x00a4ca63), "blt x9, x10, 20");
+    assert_eq!(disassemble(0x00c5c863), "blt x11, x12, 16");
+    assert_eq!(disassemble(0x00e6c663), "blt x13, x14, 12");
+    assert_eq!(disassemble(0x0107c463), "blt x15, x16, 8");
+    assert_eq!(disassemble(0x0128c263), "blt x17, x18, 4"); 
 }
 
