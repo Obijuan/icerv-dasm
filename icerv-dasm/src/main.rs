@@ -597,12 +597,11 @@ fn main() {
         0xfe62cae3, // blt x5, x6, -12
         0x0083dc63, // bge x7, x8, 24
         0x00a4ea63, // bltu x9, x10, 20
+        0x00c5f863, // bgeu x11, x12, 16
 
-    ];
+];
 
     //-- TODO
-    //---- Tipo B:
-    //-- bgeu
     //----- Tipo U
     //-- lui
     //-- auipc
@@ -1271,5 +1270,19 @@ fn test_disassemble_bltu() {
     assert_eq!(disassemble(0x00e6e663), "bltu x13, x14, 12");
     assert_eq!(disassemble(0x0107e463), "bltu x15, x16, 8");
     assert_eq!(disassemble(0x0128e263), "bltu x17, x18, 4"); 
+}
+
+#[test]
+fn test_disassemble_bgeu() {
+    assert_eq!(disassemble(0x00007063), "bgeu x0, x0, 0");
+    assert_eq!(disassemble(0xfe20fee3), "bgeu x1, x2, -4");
+    assert_eq!(disassemble(0xfe41fce3), "bgeu x3, x4, -8");
+    assert_eq!(disassemble(0xfe62fae3), "bgeu x5, x6, -12");
+    assert_eq!(disassemble(0x0083fc63), "bgeu x7, x8, 24");
+    assert_eq!(disassemble(0x00a4fa63), "bgeu x9, x10, 20");
+    assert_eq!(disassemble(0x00c5f863), "bgeu x11, x12, 16");
+    assert_eq!(disassemble(0x00e6f663), "bgeu x13, x14, 12");
+    assert_eq!(disassemble(0x0107f463), "bgeu x15, x16, 8");
+    assert_eq!(disassemble(0x0128f263), "bgeu x17, x18, 4"); 
 }
 
