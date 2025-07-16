@@ -85,7 +85,9 @@ const OPCODE_B: u32 = 0b_11000_11; //-- 0x63
 //  Instruccion tipo-U: LUI
 //────────────────────────────
 const OPCODE_U_LUI: u32 = 0b_01101_11; //--0x37 
-
+//  Instruccion tipo-U: AUIPC
+//────────────────────────────
+const OPCODE_U_AUIPC: u32 = 0b_00101_11; //--0x17 
 
 fn get_opcode(inst: u32) -> u32 {
 //────────────────────────────────────────────────
@@ -321,6 +323,15 @@ fn is_type_i_load(opcode: u32) -> bool {
 
 fn is_type_u_lui(opcode: u32) -> bool {
     if opcode == OPCODE_U_LUI {
+        true
+    }
+    else {
+        false
+    }
+}
+
+fn is_type_u_auipc(opcode: u32) -> bool {
+    if opcode == OPCODE_U_AUIPC {
         true
     }
     else {
@@ -600,6 +611,10 @@ fn disassemble(inst: u32) -> String {
         let imm20: i32 = get_imm20(inst);
         let rd = get_rd(inst);
         format!("lui x{}, {:#07X}", rd, imm20 & 0xFFFFF)
+    } else if is_type_u_auipc(opcode) {
+        let imm20: i32 = get_imm20(inst);
+        let rd = get_rd(inst);
+        format!("auipc x{}, {:#07X}", rd, imm20 & 0xFFFFF)
     }
     else {
         println!("   - Instrucción: DESCONOCIDA");
@@ -653,11 +668,10 @@ fn main() {
         0x00a4ea63, // bltu x9, x10, 20
         0x00c5f863, // bgeu x11, x12, 16
         0x80000337, // lui x6, 0x80000
+        0x08000217, // auipc x4, 0x08000
 ];
 
     //-- TODO
-    //----- Tipo U
-    //-- auipc: 0b_00101_11
     //----- Tipo J
     //-- jal:   0b_11011_11
     //-- jalr:  0b_11001_11
@@ -1350,4 +1364,16 @@ fn test_disassemble_lui() {
     assert_eq!(disassemble(0x7ffff2b7), "lui x5, 0x7FFFF");
     assert_eq!(disassemble(0x80000337), "lui x6, 0x80000");
     assert_eq!(disassemble(0xfffff3b7), "lui x7, 0xFFFFF");
+}
+
+#[test]
+fn test_disassemble_auipc() {
+    assert_eq!(disassemble(0x00000017), "auipc x0, 0x00000");
+    assert_eq!(disassemble(0x00001097), "auipc x1, 0x00001");
+    assert_eq!(disassemble(0x00020117), "auipc x2, 0x00020");
+    assert_eq!(disassemble(0x00400197), "auipc x3, 0x00400");
+    assert_eq!(disassemble(0x08000217), "auipc x4, 0x08000");
+    assert_eq!(disassemble(0x7ffff297), "auipc x5, 0x7FFFF");
+    assert_eq!(disassemble(0x80000317), "auipc x6, 0x80000");
+    assert_eq!(disassemble(0xfffff397), "auipc x7, 0xFFFFF");
 }
