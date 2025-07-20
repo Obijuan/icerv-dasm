@@ -100,6 +100,9 @@ const OPCODE_U_AUIPC: u32 = 0b_00101_11; //--0x17
 //  Instruccion tipo-J: jal
 //────────────────────────────
 const OPCODE_J_JAL: u32 = 0b_11011_11; //--0x6F
+//  Instruccion tipo-J: jalr
+//────────────────────────────
+const OPCODE_J_JALR: u32 = 0b_11001_11; //--0x67
 
 
 fn get_opcode(inst: u32) -> u32 {
@@ -431,6 +434,15 @@ fn is_type_j_jal(opcode: u32) -> bool {
     }
 }
 
+fn is_type_j_jalr(opcode: u32) -> bool {
+    if opcode == OPCODE_J_JALR {
+      true
+    }
+    else {
+      false
+    }
+}
+
 
 fn inst_type_i_arith(func3: u32, imm: i32) -> String {
 //────────────────────────────────────────────────
@@ -685,7 +697,14 @@ fn disassemble(inst: u32) -> String {
         let offset: i32 = get_offset_jal(inst);
         format!("jal x{}, {}", rd, offset)
     }
-    else 
+    else if is_type_j_jalr(opcode) {
+        //-- Instrucción jalr
+        let rd: u32 = get_rd(inst);
+        let rs1: u32 = get_rs1(inst);
+        let offset: i32 = get_imm12(inst);
+
+        format!("jalr x{}, {}(x{})", rd, offset, rs1)
+    } else
     {
         println!("   - Instrucción: DESCONOCIDA");
         print_fields(inst);
@@ -742,9 +761,8 @@ fn main() {
         0xff1ff26f, // jal x4, -16
 ];
 
+
     //-- TODO
-    //----- Tipo J
-    //-- jalr:  0b_11001_11
     //----- Llamadas al sistema
     //-- ecall
     //-- ebreak
@@ -1461,5 +1479,19 @@ fn test_disassemble_jal() {
     assert_eq!(disassemble(0x00c003ef), "jal x7, 12");
     assert_eq!(disassemble(0x0080046f), "jal x8, 8");
     assert_eq!(disassemble(0x004004ef), "jal x9, 4");
+}
+
+#[test]
+fn test_disassemble_jalr() {
+    assert_eq!(disassemble(0x00000067), "jalr x0, 0(x0)");
+    assert_eq!(disassemble(0xfff500e7), "jalr x1, -1(x10)");
+    assert_eq!(disassemble(0xffe58167), "jalr x2, -2(x11)");
+    assert_eq!(disassemble(0xffc601e7), "jalr x3, -4(x12)");
+    assert_eq!(disassemble(0xff868267), "jalr x4, -8(x13)");
+    assert_eq!(disassemble(0x800702e7), "jalr x5, -2048(x14)");
+    assert_eq!(disassemble(0x7ff78367), "jalr x6, 2047(x15)");
+    assert_eq!(disassemble(0x010803e7), "jalr x7, 16(x16)");
+    assert_eq!(disassemble(0x00888467), "jalr x8, 8(x17)");
+    assert_eq!(disassemble(0x004904e7), "jalr x9, 4(x18)");
 }
 
