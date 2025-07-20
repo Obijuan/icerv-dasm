@@ -18,11 +18,14 @@
 //───────────────────────────
 //  ANCHURAS de LOS CAMPOS
 //───────────────────────────
+const FIELD_1B: u32 = 0x01;  //-- Campo de 1 bit
 const FIELD_3B: u32 = 0x07;  //-- Campo de 3 bits de ancho
 const FIELD_4B: u32 = 0x0F;  //-- Campo de 4 bits
 const FIELD_5B: u32 = 0x1F;  //-- Campo de 5 bits
 const FIELD_6B: u32 = 0x3F;  //-- Campo de 6 bits
 const FIELD_7B: u32 = 0x7F;  //-- Campo de 7 bits
+const FIELD_8B: u32 = 0xFF;  //-- Campo de 8 bits
+const FIELD_10B: u32 = 0x3FF; //-- Campo de 10 bits
 const FIELD_12B: u32 = 0xFFF;  //-- Campo de 12 bits
 const FIELD_20B: u32 = 0xFFFFF; //-- Campo de 20 bits
 //────────────────────────────────────────────────
@@ -36,10 +39,13 @@ const RS2_POS: u8 = 20;
 const FUNC7_POS: u8 = 25;  
 const IMM12_POS: u8 = 20; 
 const IMM20_POS: u8 = 12; 
+const OFFSET10_POS: u8 = 21;
+const OFFSET8_POS: u8 = 12;
 const OFFSET7_POS: u8 = 25;
 const OFFSET6_POS: u8 = 25;
 const OFFSET5_POS: u8 = 7;
 const OFFSET4_POS: u8 = 8;
+const OFFSET1_POS: u8 = 20;
 //────────────────────────────────────────────────
 //  POSICIONES Bits aislados
 //────────────────────────────────────────────────
@@ -60,9 +66,12 @@ const FUNC7_MASK: u32 = FIELD_7B << FUNC7_POS;
 const IMM12_MASK: u32 = FIELD_12B << IMM12_POS;  
 const IMM20_MASK: u32 = FIELD_20B << IMM20_POS; 
 const OFFSET7_MASK: u32 = FIELD_7B << OFFSET7_POS;
+const OFFSET8_MASK: u32 = FIELD_8B << OFFSET8_POS; 
+const OFFSET10_MASK: u32 = FIELD_10B << OFFSET10_POS;
 const OFFSET6_MASK: u32 = FIELD_6B << OFFSET6_POS;
 const OFFSET5_MASK: u32 = FIELD_5B << OFFSET5_POS;
 const OFFSET4_MASK: u32 = FIELD_4B << OFFSET4_POS;
+const OFFSET1_MASK: u32 = FIELD_1B << OFFSET1_POS;
 //────────────────────────────────────────────────
 //  DEFINICION DE LOS OPCODES
 //────────────────────────────────────────────────
@@ -87,7 +96,11 @@ const OPCODE_B: u32 = 0b_11000_11; //-- 0x63
 const OPCODE_U_LUI: u32 = 0b_01101_11; //--0x37 
 //  Instruccion tipo-U: AUIPC
 //────────────────────────────
-const OPCODE_U_AUIPC: u32 = 0b_00101_11; //--0x17 
+const OPCODE_U_AUIPC: u32 = 0b_00101_11; //--0x17
+//  Instruccion tipo-J: jal
+//────────────────────────────
+const OPCODE_J_JAL: u32 = 0b_11011_11; //--0x6F
+
 
 fn get_opcode(inst: u32) -> u32 {
 //────────────────────────────────────────────────
@@ -211,6 +224,32 @@ fn get_offset_b(inst: u32) -> i32 {
     sign_ext13(offset as i32)
 }
 
+fn get_offset_jal(inst: u32) -> i32 {
+//────────────────────────────────────────────────
+// Entrada: Instrucción RISC-V
+// Salida: Valor del offset para instrucciones jal
+// offset[20|10:1|11|19:12]
+//────────────────────────────────────────────────
+    //-- Extraer el bit de signo
+    let sign: u32 = (inst & 0x8000_0000) >> 31;
+
+    //-- Extraer los bits 19-12
+    let offset8: u32 = (inst & OFFSET8_MASK) >> OFFSET8_POS;
+
+    //-- Extraer el bit 11
+    let b11: u32 = (inst & OFFSET1_MASK) >> OFFSET1_POS;
+
+    //-- Extraer los bits 10-1
+    let offset10: u32 = (inst & OFFSET10_MASK) >> OFFSET10_POS;
+
+    //-- Construir el offset final a partir de todos sus componentes
+    let offset: u32 = (sign << 20) | (offset8 << 12) | b11 << 11 |
+                      (offset10 << 1); 
+                      
+
+    sign_ext21(offset as i32)
+}
+
 fn print_fields(inst: u32) {
 //────────────────────────────────────────────────
 // Entrada: Instrucción RISC-V
@@ -282,6 +321,23 @@ fn sign_ext20(value: i32) -> i32 {
     //-- En caso de ser negativo, extender el signo
     if sign_bit {
         value | !0xFFFFF  //-- Extender el signo a 32 bits
+    } else {
+        value  //-- No es negativo, devolver el valor original
+    }
+}
+
+fn sign_ext21(value: i32) -> i32 {
+//────────────────────────────────────────────────
+// Entrada: Valor de 21 bits  
+// Salida: Valor extendido a 32 bits con signo
+//────────────────────────────────────────────────
+    //-- Obtener el bit de signo
+    //-- sign_bit = true --> negativo
+    let sign_bit = (value & 0x100000) != 0;
+
+    //-- En caso de ser negativo, extender el signo
+    if sign_bit {
+        value | !0x1FFFFF  //-- Extender el signo a 32 bits
     } else {
         value  //-- No es negativo, devolver el valor original
     }
@@ -359,6 +415,15 @@ fn is_type_s(opcode: u32) -> bool {
 
 fn is_type_b(opcode: u32) -> bool {
     if opcode == OPCODE_B {
+      true
+    }
+    else {
+      false
+    }
+}
+
+fn is_type_j_jal(opcode: u32) -> bool {
+    if opcode == OPCODE_J_JAL {
       true
     }
     else {
@@ -615,8 +680,13 @@ fn disassemble(inst: u32) -> String {
         let imm20: i32 = get_imm20(inst);
         let rd = get_rd(inst);
         format!("auipc x{}, {:#07X}", rd, imm20 & 0xFFFFF)
+    } else if is_type_j_jal(opcode) {
+        let rd: u32 = get_rd(inst);
+        let offset: i32 = get_offset_jal(inst);
+        format!("jal x{}, {}", rd, offset)
     }
-    else {
+    else 
+    {
         println!("   - Instrucción: DESCONOCIDA");
         print_fields(inst);
         String::from("DESCONOCIDA")
@@ -669,11 +739,11 @@ fn main() {
         0x00c5f863, // bgeu x11, x12, 16
         0x80000337, // lui x6, 0x80000
         0x08000217, // auipc x4, 0x08000
+        0xff1ff26f, // jal x4, -16
 ];
 
     //-- TODO
     //----- Tipo J
-    //-- jal:   0b_11011_11
     //-- jalr:  0b_11001_11
     //----- Llamadas al sistema
     //-- ecall
@@ -1377,3 +1447,19 @@ fn test_disassemble_auipc() {
     assert_eq!(disassemble(0x80000317), "auipc x6, 0x80000");
     assert_eq!(disassemble(0xfffff397), "auipc x7, 0xFFFFF");
 }
+
+
+#[test]
+fn test_disassemble_jal() {
+    assert_eq!(disassemble(0x0000006f), "jal x0, 0");
+    assert_eq!(disassemble(0xffdff0ef), "jal x1, -4");
+    assert_eq!(disassemble(0xff9ff16f), "jal x2, -8");
+    assert_eq!(disassemble(0xff5ff1ef), "jal x3, -12");
+    assert_eq!(disassemble(0xff1ff26f), "jal x4, -16");
+    assert_eq!(disassemble(0x014002ef), "jal x5, 20");
+    assert_eq!(disassemble(0x0100036f), "jal x6, 16");
+    assert_eq!(disassemble(0x00c003ef), "jal x7, 12");
+    assert_eq!(disassemble(0x0080046f), "jal x8, 8");
+    assert_eq!(disassemble(0x004004ef), "jal x9, 4");
+}
+
