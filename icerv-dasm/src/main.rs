@@ -103,6 +103,9 @@ const OPCODE_J_JAL: u32 = 0b_11011_11; //--0x6F
 //  Instruccion tipo-J: jalr
 //────────────────────────────
 const OPCODE_J_JALR: u32 = 0b_11001_11; //--0x67
+//  Instruccion tipo ecall/ebreak
+//────────────────────────────
+const OPCODE_ECALL_EBREAK: u32 = 0b_11100_11; //--0x73
 
 
 fn get_opcode(inst: u32) -> u32 {
@@ -443,6 +446,15 @@ fn is_type_j_jalr(opcode: u32) -> bool {
     }
 }
 
+fn is_ecall_ebreak(opcode: u32) -> bool {
+    if opcode == OPCODE_ECALL_EBREAK {
+      true
+    }
+    else {
+      false
+    }
+}
+
 
 fn inst_type_i_arith(func3: u32, imm: i32) -> String {
 //────────────────────────────────────────────────
@@ -704,6 +716,16 @@ fn disassemble(inst: u32) -> String {
         let offset: i32 = get_imm12(inst);
 
         format!("jalr x{}, {}(x{})", rd, offset, rs1)
+    } else if is_ecall_ebreak(opcode) {
+        let imm: i32 = get_imm12(inst);
+        if imm == 0 {
+            format!("ecall")
+        } else if imm == 1 {
+            format!("ebreak")
+        } else {
+            format!("DESCONOCIDA")
+        }
+
     } else
     {
         println!("   - Instrucción: DESCONOCIDA");
@@ -759,12 +781,14 @@ fn main() {
         0x80000337, // lui x6, 0x80000
         0x08000217, // auipc x4, 0x08000
         0xff1ff26f, // jal x4, -16
+        0x00000073, // ecall
+        0x00100073, // ebreak
 ];
 
 
     //-- TODO
     //----- Llamadas al sistema
-    //-- ecall
+    //-- ecall   11100
     //-- ebreak
     //----- Modo privilegiado
     //-- csrrw
