@@ -86,11 +86,11 @@ enum OpcodeRV {
 
   //-- Instrucciones de carga (tipo I)
   TipoILoad = 0x03,    //-- Ex: LW: lw rd, imm12(rs1)
+
+  //-- Instrucciones tipo-R
+  TipoR = 0x33,        //-- Ex: ADD: add rd, rs1, rs2
 }
 
-//  Instrucciones tipo-R
-//────────────────────────────
-const OPCODE_R: u32 = 0b_01100_11;  //-- 0x33
 //  Instrucciones tipo-S
 //────────────────────────────
 const OPCODE_S: u32 = 0b_01000_11;  //-- 0x23
@@ -409,7 +409,7 @@ fn is_type_u_auipc(opcode: u32) -> bool {
 }
 
 fn is_type_r(opcode: u32) -> bool {
-    if opcode == OPCODE_R {
+    if opcode == OpcodeRV::TipoR as u32 {
       true
     }
     else {
