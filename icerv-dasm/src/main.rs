@@ -110,8 +110,36 @@ enum OpcodeRV {
 
   //-- Instruccion ecall/ebreak
   TipoEcallEbreak = 0b_11100_11, //-- Ex: ECALL: ecall
+
+  //-- Instrucción desconocida
+  Unknown,
 }
 
+
+fn get_opcode2(inst: u32) -> OpcodeRV {
+//────────────────────────────────────────────────
+// Entrada: Instrucción RISC-V
+// Salida: Opcode de la instrucción
+//────────────────────────────────────────────────
+  //-- Aplicar la máscara para extraer el campo
+  //-- y desplazarlo a la posición 0
+  let opcode: u32 = (inst & OPCODE_MASK) >> OPCODE_POS;
+
+  //-- Devolver el opcode como un valor del enum OpcodeRV
+  match opcode {
+    0b_00100_11 => OpcodeRV::TipoIArith,
+    0b_00000_11 => OpcodeRV::TipoILoad,
+    0b_01100_11 => OpcodeRV::TipoR,
+    0b_01000_11 => OpcodeRV::TipoS,
+    0b_11000_11 => OpcodeRV::TipoB,
+    0b_01101_11 => OpcodeRV::TipoULui,
+    0b_00101_11 => OpcodeRV::TipoUAuipc,
+    0b_11011_11 => OpcodeRV::TipoJJal,
+    0b_11001_11 => OpcodeRV::TipoJJalr,
+    0b_11100_11 => OpcodeRV::TipoEcallEbreak,
+    _ => OpcodeRV::Unknown,
+  }
+}
 
 fn get_opcode(inst: u32) -> u32 {
 //────────────────────────────────────────────────
@@ -612,8 +640,102 @@ fn inst_type_b(func3: u32) -> String {
     name[func3 as usize].to_string()
 }
 
-
 fn disassemble(inst: u32) -> String {
+
+  //-- Obtener el opcode y todos los campos de la instrucción
+  let opcode:OpcodeRV = get_opcode2(inst);
+  let func7: u32 = get_func7(inst);
+  let func3 = get_func3(inst);
+  let rd = get_rd(inst);
+  let rs1 = get_rs1(inst);
+  let rs2 = get_rs2(inst);
+  let imm = get_imm12(inst) as i32;
+  let offset:i32 = get_offset_s(inst);
+  let imm20: i32 = get_imm20(inst);
+  let offset_b: i32 = get_offset_b(inst);
+  let offset_jalr: i32 = get_imm12(inst);
+  let offset_jal: i32 = get_offset_jal(inst);
+  
+  match opcode {
+    OpcodeRV::TipoIArith => {
+      //-- Nombre de la instrucción
+      let name = inst_type_i_arith(func3, imm);
+
+      //-- Caso especial: srai
+      //-- El 10 de imm está a 1 (en caso de srai)
+      //-- Este bit hay que ponerlo a 0
+      let imm2: i32 = if (imm as u32 & BIT10==0x400) && (func3==0b101) {
+        (imm as u32 & !BIT10) as i32
+      } else {
+        imm
+      };
+
+      format!("{} x{}, x{}, {}", name, rd, rs1, imm2)
+    },
+
+    OpcodeRV::TipoILoad => {
+      //-- Nombre de la instrucción
+      let name: String = inst_type_i_load(func3);
+
+      format!("{} x{}, {}(x{})", name, rd, imm, rs1)
+    },
+
+    OpcodeRV::TipoR => {
+      let name: String = inst_type_r(func7, func3);
+      format!("{} x{}, x{}, x{}", name, rd, rs1, rs2)
+    },
+
+    OpcodeRV::TipoS => {
+      //-- Nombre de la instrucción
+      let name: String = inst_type_s(func3);
+      format!("{} x{}, {}(x{})", name, rs2, offset, rs1)
+    },
+
+    OpcodeRV::TipoB => {
+      //-- Nombre de la instrucción
+      let name: String = inst_type_b(func3);
+      format!("{} x{}, x{}, {}", name, rs1, rs2, offset_b)
+    },
+
+    OpcodeRV::TipoULui => {
+      format!("lui x{}, {:#07X}", rd, imm20 & 0xFFFFF)
+    },
+
+    OpcodeRV::TipoUAuipc => {
+      format!("auipc x{}, {:#07X}", rd, imm20 & 0xFFFFF)
+    },
+
+    OpcodeRV::TipoJJal => {
+      format!("jal x{}, {}", rd, offset_jal)
+    },
+
+    OpcodeRV::TipoJJalr => {
+      //-- Instrucción jalr
+      format!("jalr x{}, {}(x{})", rd, offset_jalr, rs1)
+    },
+
+    OpcodeRV::TipoEcallEbreak => {
+      //-- Instrucción ecall o ebreak
+      if imm == 0 {
+        format!("ecall")
+      } else if imm == 1 {
+        format!("ebreak")
+      } else {
+        format!("DESCONOCIDA")
+      }
+    },
+
+    _ => {
+      //-- No es una instrucción tipo I aritmética
+      println!("   - Instrucción: DESCONOCIDA");
+      print_fields(inst);
+      String::from("DESCONOCIDA")
+    }
+  }
+
+}
+
+fn disassemble2(inst: u32) -> String {
 //────────────────────────────────────────────────
 // Desensamblar una instruccion en codigo maquina
 // Entrada: Instrucción en codigo maquina RISC-V
