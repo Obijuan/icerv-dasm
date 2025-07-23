@@ -116,7 +116,7 @@ enum OpcodeRV {
 }
 
 
-fn get_opcode2(inst: u32) -> OpcodeRV {
+fn get_opcode(inst: u32) -> OpcodeRV {
 //────────────────────────────────────────────────
 // Entrada: Instrucción RISC-V
 // Salida: Opcode de la instrucción
@@ -139,16 +139,6 @@ fn get_opcode2(inst: u32) -> OpcodeRV {
     0b_11100_11 => OpcodeRV::TipoEcallEbreak,
     _ => OpcodeRV::Unknown,
   }
-}
-
-fn get_opcode(inst: u32) -> u32 {
-//────────────────────────────────────────────────
-// Entrada: Instrucción RISC-V
-// Salida: Opcode de la instrucción
-//────────────────────────────────────────────────
-  //-- Aplicar la máscara para extraer el campo
-  //-- y desplazarlo a la posición 0
-  (inst & OPCODE_MASK) >> OPCODE_POS
 }
 
 fn get_rd(inst: u32) -> u32 {
@@ -305,7 +295,7 @@ fn print_fields(inst: u32) {
     let func7 = get_func7(inst);
 
     //-- Imprimir los campos extraídos
-    println!("   - Opcode: {:#4X}", opcode);
+    println!("   - Opcode: {:#4X}", opcode as u32);
     println!("   - rd: x{}", rd);
     println!("   - func3: {:#05b}", func3);
     println!("   - rs1: x{}", rs1);
@@ -537,7 +527,7 @@ fn inst_type_b(func3: u32) -> String {
 fn disassemble(inst: u32) -> String {
 
   //-- Obtener el opcode y todos los campos de la instrucción
-  let opcode:OpcodeRV = get_opcode2(inst);
+  let opcode:OpcodeRV = get_opcode(inst);
   let func7: u32 = get_func7(inst);
   let func3 = get_func3(inst);
   let rd = get_rd(inst);
@@ -732,16 +722,9 @@ fn test_get_opcode() {
     //-- Test de la función get_opcode
 
     //-- Instrucciones reales
-    assert_eq!(get_opcode(0x0000_0013), 0x13);
-    assert_ne!(get_opcode(0x0000_0013), 0x00);
-    assert_eq!(get_opcode(0x0aa0_0093), 0x13);
-
-    //-- Instrucciones inventadas
-    assert_eq!(get_opcode(0xffff_ffff), 0x7f);
-    assert_eq!(get_opcode(0x0000_0000), 0x00);
-    assert_eq!(get_opcode(0xaaaa_aaaa), 0x2a);
-    assert_eq!(get_opcode(0x0000_0000_0000_0000__0000_00000_0000001), 0x01);
-    assert_eq!(get_opcode(0x0000_0000 | 0b0000001), 0x01);
+    assert_eq!(get_opcode(0x0000_0013) as u32, 0x13);
+    assert_ne!(get_opcode(0x0000_0013) as u32, 0x00);
+    assert_eq!(get_opcode(0x0aa0_0093) as u32, 0x13);
 }
 
 #[test]
