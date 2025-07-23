@@ -81,16 +81,13 @@ const OFFSET1_MASK: u32 = FIELD_1B << OFFSET1_POS;
 //  DEFINICION DE LOS OPCODES
 //────────────────────────────────────────────────
 enum OpcodeRV {
-  TipoIArith = 0x13,   //-- ADDI: addi rd, rs1, imm12
+  //-- Instrucciones aritméticas tipo I
+  TipoIArith = 0x13,   //-- Ex: ADDI: addi rd, rs1, imm12
+
+  //-- Instrucciones de carga (tipo I)
+  TipoILoad = 0x03,    //-- Ex: LW: lw rd, imm12(rs1)
 }
 
-
-//  Instrucciones tipo-I
-//────────────────────────────
-//-- Estas instrucciones se dividen a su vez en dos grupos:
-//  - Instrucciones aritméticas (ADDI, ANDI, ORI,...)
-//  - Instrucciones de carga (LW, LH, LB,...)
-const OPCODE_I_LOAD: u32 = 0x03;    //-- LW: lw rd, imm12(rs1)
 //  Instrucciones tipo-R
 //────────────────────────────
 const OPCODE_R: u32 = 0b_01100_11;  //-- 0x33
@@ -367,7 +364,8 @@ fn is_type_i(opcode: u32) -> bool {
 //────────────────────────────────────────────────
     //-- Las instrucciones de tipo I son bien las de tipo
     //-- aritmético (ADDI, ANDI, ORI,...) o las de LOAD (LW, LH, LB,...)
-    if opcode == OpcodeRV::TipoIArith as u32 || opcode == OPCODE_I_LOAD {
+    if opcode == OpcodeRV::TipoIArith as u32 || 
+       opcode == OpcodeRV::TipoILoad as u32 {
         true
     } else {
         false
@@ -384,7 +382,7 @@ fn is_type_i_arith(opcode: u32) -> bool {
 }
 
 fn is_type_i_load(opcode: u32) -> bool {
-    if opcode == OPCODE_I_LOAD {
+    if opcode == OpcodeRV::TipoILoad as u32 {
       true
     }
     else {
@@ -977,7 +975,7 @@ fn test_is_type_i() {
 
   //-- Tipos correctos
   assert!(is_type_i(OpcodeRV::TipoIArith as u32));
-  assert!(is_type_i(OPCODE_I_LOAD));
+  assert!(is_type_i(OpcodeRV::TipoILoad as u32));
   assert!(is_type_i(0x13));  //-- ADDI
   assert!(is_type_i(0x03));  //-- LW
 
