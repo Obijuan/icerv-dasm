@@ -82,36 +82,35 @@ const OFFSET1_MASK: u32 = FIELD_1B << OFFSET1_POS;
 //────────────────────────────────────────────────
 enum OpcodeRV {
   //-- Instrucciones aritméticas tipo I
-  TipoIArith = 0x13,   //-- Ex: ADDI: addi rd, rs1, imm12
+  TipoIArith = 0b_00100_11,   //-- Ex: ADDI: addi rd, rs1, imm12
 
   //-- Instrucciones de carga (tipo I)
-  TipoILoad = 0x03,    //-- Ex: LW: lw rd, imm12(rs1)
+  TipoILoad = 0b_00000_11,    //-- Ex: LW: lw rd, imm12(rs1)
 
   //-- Instrucciones tipo-R
-  TipoR = 0x33,        //-- Ex: ADD: add rd, rs1, rs2
-}
+  TipoR = 0b_01100_11,       //-- Ex: ADD: add rd, rs1, rs2
 
-//  Instrucciones tipo-S
-//────────────────────────────
-const OPCODE_S: u32 = 0b_01000_11;  //-- 0x23
-//  Instrucciones tipo-B
-//────────────────────────────
-const OPCODE_B: u32 = 0b_11000_11; //-- 0x63
-//  Instruccion tipo-U: LUI
-//────────────────────────────
-const OPCODE_U_LUI: u32 = 0b_01101_11; //--0x37 
-//  Instruccion tipo-U: AUIPC
-//────────────────────────────
-const OPCODE_U_AUIPC: u32 = 0b_00101_11; //--0x17
-//  Instruccion tipo-J: jal
-//────────────────────────────
-const OPCODE_J_JAL: u32 = 0b_11011_11; //--0x6F
-//  Instruccion tipo-J: jalr
-//────────────────────────────
-const OPCODE_J_JALR: u32 = 0b_11001_11; //--0x67
-//  Instruccion tipo ecall/ebreak
-//────────────────────────────
-const OPCODE_ECALL_EBREAK: u32 = 0b_11100_11; //--0x73
+  //-- Instrucciones tipo-S
+  TipoS = 0b_01000_11,        //-- Ex: SW: sw rs2, imm12(rs1)
+
+  //-- Instrucciones tipo-B
+  TipoB = 0b_11000_11,        //-- Ex: BEQ: beq rs1, rs2, offset
+
+  //-- Instruccion tipo-U: LUI
+  TipoULui = 0b_01101_11,   //-- Ex: LUI: lui rd, imm20
+
+  //-- Instruccion tipo-U: AUIPC
+  TipoUAuipc = 0b_00101_11, //-- Ex: AUIPC: auipc rd, imm20
+
+  //-- Instruccion tipo-J: jal
+  TipoJJal = 0b_11011_11, //-- Ex: JAL: jal rd, offset
+
+  //-- Instruccion tipo-J: jalr
+  TipoJJalr = 0b_11001_11, //-- Ex: JALR: jalr rd, rs1, imm12
+
+  //-- Instruccion ecall/ebreak
+  TipoEcallEbreak = 0b_11100_11, //-- Ex: ECALL: ecall
+}
 
 
 fn get_opcode(inst: u32) -> u32 {
@@ -391,7 +390,7 @@ fn is_type_i_load(opcode: u32) -> bool {
 }
 
 fn is_type_u_lui(opcode: u32) -> bool {
-    if opcode == OPCODE_U_LUI {
+    if opcode == OpcodeRV::TipoULui as u32 {
         true
     }
     else {
@@ -400,7 +399,7 @@ fn is_type_u_lui(opcode: u32) -> bool {
 }
 
 fn is_type_u_auipc(opcode: u32) -> bool {
-    if opcode == OPCODE_U_AUIPC {
+    if opcode == OpcodeRV::TipoUAuipc as u32 {
         true
     }
     else {
@@ -418,7 +417,7 @@ fn is_type_r(opcode: u32) -> bool {
 }
 
 fn is_type_s(opcode: u32) -> bool {
-    if opcode == OPCODE_S {
+    if opcode == OpcodeRV::TipoS as u32 {
       true
     }
     else {
@@ -427,7 +426,7 @@ fn is_type_s(opcode: u32) -> bool {
 }
 
 fn is_type_b(opcode: u32) -> bool {
-    if opcode == OPCODE_B {
+    if opcode == OpcodeRV::TipoB as u32 {
       true
     }
     else {
@@ -436,7 +435,7 @@ fn is_type_b(opcode: u32) -> bool {
 }
 
 fn is_type_j_jal(opcode: u32) -> bool {
-    if opcode == OPCODE_J_JAL {
+    if opcode == OpcodeRV::TipoJJal as u32 {
       true
     }
     else {
@@ -445,7 +444,7 @@ fn is_type_j_jal(opcode: u32) -> bool {
 }
 
 fn is_type_j_jalr(opcode: u32) -> bool {
-    if opcode == OPCODE_J_JALR {
+    if opcode == OpcodeRV::TipoJJalr as u32 {
       true
     }
     else {
@@ -454,7 +453,7 @@ fn is_type_j_jalr(opcode: u32) -> bool {
 }
 
 fn is_ecall_ebreak(opcode: u32) -> bool {
-    if opcode == OPCODE_ECALL_EBREAK {
+    if opcode == OpcodeRV::TipoEcallEbreak as u32 {
       true
     }
     else {
