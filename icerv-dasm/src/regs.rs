@@ -49,7 +49,46 @@ impl Reg {
 
         format!("x{}", *self as u8)
     }
+
+    pub fn new(num: u8) -> Self {
+      match num { 
+          0 => Reg::X0,
+          1 => Reg::X1,
+          2 => Reg::X2,
+          3 => Reg::X3,
+          4 => Reg::X4,
+          5 => Reg::X5,
+          6 => Reg::X6,
+          7 => Reg::X7,
+          8 => Reg::X8,
+          9 => Reg::X9,
+          10 => Reg::X10,
+          11 => Reg::X11,
+          12 => Reg::X12,
+          13 => Reg::X13,
+          14 => Reg::X14,
+          15 => Reg::X15,
+          16 => Reg::X16,
+          17 => Reg::X17,
+          18 => Reg::X18,
+          19 => Reg::X19,
+          20 => Reg::X20,
+          21 => Reg::X21,
+          22 => Reg::X22,
+          23 => Reg::X23,
+          24 => Reg::X24,
+          25 => Reg::X25,
+          26 => Reg::X26,
+          27 => Reg::X27,
+          28 => Reg::X28,
+          29 => Reg::X29,
+          30 => Reg::X30,
+          31 => Reg::X31,
+          _ => panic!("Registro inválido: {}", num),
+      }
+    }
 }
+
 
 #[test]
 fn test_regs() {

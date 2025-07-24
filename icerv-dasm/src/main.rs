@@ -84,9 +84,6 @@ const OFFSET5_MASK: u32 = FIELD_5B << OFFSET5_POS;
 const OFFSET4_MASK: u32 = FIELD_4B << OFFSET4_POS;
 const OFFSET1_MASK: u32 = FIELD_1B << OFFSET1_POS;
 
-//-----
-//let inst2: InstructionRV = InstructionRV::from_mcode(0x00100093);
-
 
 fn get_rd(inst: u32) -> u32 {
 //────────────────────────────────────────────────
