@@ -12,9 +12,11 @@
 #[cfg(test)]
 mod tests;
 mod regs;
+mod instructionrv;
 
 //-- Registros del RISCV
 use regs::Reg;
+use instructionrv::InstructionRV;
 
 //────────────────────────────────────────────────
 //  CONSTANTES PARA ACCESO A LA ISA DEL RISCV   
@@ -81,29 +83,6 @@ const OFFSET4_MASK: u32 = FIELD_4B << OFFSET4_POS;
 const OFFSET1_MASK: u32 = FIELD_1B << OFFSET1_POS;
 
 //-----
-enum InstructionRV {
-  Addi {rd: Reg, rs1: Reg, imm: i32},  //-- addi rd, rs1, imm12
-}
-
-impl InstructionRV {
-    pub fn from_mcode(mcode: u32) -> Self {
-        println!("* Codigo maquina: {:#010X}", mcode);
-        Self::Addi {
-          rd: Reg::X1,
-          rs1: Reg::X0,
-          imm: 1
-        }
-    }
-
-    pub fn to_string(&self) -> String {
-        match self {
-            Self::Addi {rd, rs1, imm} => {
-                format!("addi {}, {}, {}", rd.to_str(), rs1.to_str(), imm)
-            }
-        }
-    }
-}
-
 //let inst2: InstructionRV = InstructionRV::from_mcode(0x00100093);
 
 
@@ -740,8 +719,8 @@ fn main1() {
 //────────────────────────────────────────────────
 fn main() {
 
-  //-- Test
-  println!("\n------ TESTING.....");
+    //-- Test
+    println!("\n------ TESTING.....");
 
     let inst1: InstructionRV = InstructionRV::Addi{
       rd: Reg::X1, 
