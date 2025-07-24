@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 
+
 use crate::regs::Reg;
 use crate::opcoderv::OpcodeRV;
 
@@ -36,12 +37,14 @@ const FIELD_20B: u32 = 0xFFFFF;
 //────────────────────────────────────────────────
 const OPCODE_POS: u8 = 0;
 const RD_POS: u8 = 7;  
+const RS1_POS: u8 = 15;  
 
 //────────────────────────────────────────────────
 //  CALCULAR LAS MASCARAS DE ACCESO A LOS CAMPOS
 //────────────────────────────────────────────────
 const OPCODE_MASK: u32 = FIELD_7B << OPCODE_POS; 
 const RD_MASK: u32 = FIELD_5B << RD_POS;  
+const RS1_MASK: u32 = FIELD_5B << RS1_POS;  
 
 
 //────────────────────────────────────────────────
@@ -92,6 +95,13 @@ impl MCode {
         Reg::new(reg_num as u8)
     }
 
+    //────────────────────────────────────────────────
+    //  Obtener el registro fuente 1 (rs1) de la instrucción
+    //────────────────────────────────────────────────
+    pub fn rs1(&self) -> Reg {
+        let reg_num: u32 = (self.value & RS1_MASK) >> RS1_POS;
+        Reg::new(reg_num as u8) 
+    }
 }
 
 
@@ -102,6 +112,7 @@ fn test_opcode() {
     assert_eq!(MCode::new(0x00000093).opcode() as u32, 0x13);
 }
 
+#[test]
 fn test_rd() {
 
     //-- Instrucciones reales
@@ -120,3 +131,33 @@ fn test_rd() {
     assert_eq!(MCode::new(0xFFFF0000 | 0b11111_0000000).rd().to_str(), "x31");
 }   
 
+#[test]
+fn test_rs1() {
+
+    //--                              func7  rs2   rs1  func3 rd    opcode
+    let mcode = MCode::new(0b_0000000_00000_00000_000_00000_0000000);
+    assert_eq!(mcode.rs1().to_str(), "x0");
+
+    let mcode = MCode::new(0b_0000000_00000_00001_000_00000_0000000);
+    assert_eq!(mcode.rs1().to_str(), "x1");
+
+    let mcode = MCode::new(0b_0000000_00000_00010_000_00000_0000000);
+    assert_eq!(mcode.rs1().to_str(), "x2");
+
+    let mcode = MCode::new(0b_0000000_00000_00100_000_00000_0000000);
+    assert_eq!(mcode.rs1().to_str(), "x4");
+
+    let mcode = MCode::new(0b_0000000_00000_01000_000_00000_0000000);
+    assert_eq!(mcode.rs1().to_str(), "x8");
+
+    let mcode = MCode::new(0b_0000000_00000_10000_000_00000_0000000);
+    assert_eq!(mcode.rs1().to_str(), "x16");
+
+    let mcode = MCode::new(0b_0000000_00000_10001_000_00000_0000000);
+    assert_eq!(mcode.rs1().to_str(), "x17");
+
+    let mcode = MCode::new(0b_0000000_00000_11111_000_00000_0000000);
+    assert_eq!(mcode.rs1().to_str(), "x31");
+
+} 
+    

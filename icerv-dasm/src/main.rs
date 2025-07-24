@@ -45,7 +45,6 @@ const FIELD_20B: u32 = 0xFFFFF; //-- Campo de 20 bits
 //  POSICIONES de LOS CAMPOS
 //────────────────────────────────────────────────
 const FUNC3_POS: u8 = 12;  
-const RS1_POS: u8 = 15;  
 const RS2_POS: u8 = 20;  
 const FUNC7_POS: u8 = 25;  
 const IMM12_POS: u8 = 20; 
@@ -69,7 +68,6 @@ const BIT5: u32 = 1 << 5;
 //  a la posición del campo
 //──────────────────────────────────────────────
 const FUNC3_MASK: u32 = FIELD_3B << FUNC3_POS;  
-const RS1_MASK: u32 = FIELD_5B << RS1_POS;  
 const RS2_MASK: u32 = FIELD_5B << RS2_POS;
 const FUNC7_MASK: u32 = FIELD_7B << FUNC7_POS;
 const IMM12_MASK: u32 = FIELD_12B << IMM12_POS;  
@@ -91,16 +89,6 @@ fn get_func3(inst: u32) -> u32 {
   //-- Aplicar la máscara para extraer el campo
   //-- y desplazarlo a la posición 0
   (inst & FUNC3_MASK) >> FUNC3_POS
-}
-
-fn get_rs1(inst: u32) -> u32 {
-//────────────────────────────────────────────────
-// Entrada: Instrucción RISC-V          
-// Salida: Registro fuente 1 (rs1) de la instrucción
-//────────────────────────────────────────────────
-  //-- Aplicar la máscara para extraer el campo
-  //-- y desplazarlo a la posición 0
-  (inst & RS1_MASK) >> RS1_POS
 }
 
 fn get_rs2(inst: u32) -> u32 {
@@ -223,9 +211,9 @@ fn print_fields(inst: u32) {
     let mcode = MCode::new(inst);
     let opcode = mcode.opcode();
     let rd = mcode.rd();
+    let rs1: Reg = mcode.rs1();
 
     let func3 = get_func3(inst);
-    let rs1 = get_rs1(inst);
     let rs2 = get_rs2(inst);
     let imm = get_imm12(inst);
     let func7 = get_func7(inst);
@@ -234,7 +222,7 @@ fn print_fields(inst: u32) {
     println!("   - Opcode: {:#4X}", opcode as u32);
     println!("   - rd: x{}", rd as u8);
     println!("   - func3: {:#05b}", func3);
-    println!("   - rs1: x{}", rs1);
+    println!("   - rs1: x{}", rs1 as u8);
     println!("   - rs2: x{}", rs2);
     println!("   - Inmediato: {:#X}", imm);
     println!("   - Func7: {:#07b}", func7);
@@ -467,11 +455,11 @@ fn disassemble(inst: u32) -> String {
 
   //-- y todos los campos de la instrucción  
   let opcode = mcode.opcode();
-  let rd = mcode.rd(); 
+  let rd: Reg = mcode.rd(); 
+  let rs1: Reg = mcode.rs1();
 
   let func7: u32 = get_func7(inst);
   let func3 = get_func3(inst);
-  let rs1 = get_rs1(inst);
   let rs2 = get_rs2(inst);
   let imm = get_imm12(inst) as i32;
   let offset:i32 = get_offset_s(inst);
@@ -494,31 +482,31 @@ fn disassemble(inst: u32) -> String {
         imm
       };
 
-      format!("{} x{}, x{}, {}", name, rd as u8, rs1, imm2)
+      format!("{} x{}, x{}, {}", name, rd as u8, rs1 as u8, imm2)
     },
 
     OpcodeRV::TipoILoad => {
       //-- Nombre de la instrucción
       let name: String = inst_type_i_load(func3);
 
-      format!("{} x{}, {}(x{})", name, rd as u8, imm, rs1)
+      format!("{} x{}, {}(x{})", name, rd as u8, imm, rs1 as u8)
     },
 
     OpcodeRV::TipoR => {
       let name: String = inst_type_r(func7, func3);
-      format!("{} x{}, x{}, x{}", name, rd as u8, rs1, rs2)
+      format!("{} x{}, x{}, x{}", name, rd as u8, rs1 as u8, rs2)
     },
 
     OpcodeRV::TipoS => {
       //-- Nombre de la instrucción
       let name: String = inst_type_s(func3);
-      format!("{} x{}, {}(x{})", name, rs2, offset, rs1)
+      format!("{} x{}, {}(x{})", name, rs2, offset, rs1 as u8)
     },
 
     OpcodeRV::TipoB => {
       //-- Nombre de la instrucción
       let name: String = inst_type_b(func3);
-      format!("{} x{}, x{}, {}", name, rs1, rs2, offset_b)
+      format!("{} x{}, x{}, {}", name, rs1 as u8, rs2, offset_b)
     },
 
     OpcodeRV::TipoULui => {
@@ -535,7 +523,7 @@ fn disassemble(inst: u32) -> String {
 
     OpcodeRV::TipoJJalr => {
       //-- Instrucción jalr
-      format!("jalr x{}, {}(x{})", rd as u8, offset_jalr, rs1)
+      format!("jalr x{}, {}(x{})", rd as u8, offset_jalr, rs1 as u8)
     },
 
     OpcodeRV::TipoEcallEbreak => {
@@ -691,20 +679,6 @@ fn test_get_func3() {
   assert_eq!(get_func3(0b_0000000_00000_00000_111_00000_0000000), 0b111);
 }
 
-#[test]
-fn test_get_rs1() {
-  //-- Test de la función get_rs1 
-
-  //--                   func7  rs2   rs1  func3 rd    opcode
-  assert_eq!(get_rs1(0b_0000000_00000_00000_000_00000_0000000), 0);
-  assert_eq!(get_rs1(0b_0000000_00000_00001_000_00000_0000000), 1);
-  assert_eq!(get_rs1(0b_0000000_00000_00010_000_00000_0000000), 2);
-  assert_eq!(get_rs1(0b_0000000_00000_00100_000_00000_0000000), 4);
-  assert_eq!(get_rs1(0b_0000000_00000_01000_000_00000_0000000), 8);
-  assert_eq!(get_rs1(0b_0000000_00000_10000_000_00000_0000000), 16);
-  assert_eq!(get_rs1(0b_0000000_00000_10001_000_00000_0000000), 17);
-  assert_eq!(get_rs1(0b_0000000_00000_11111_000_00000_0000000), 31);
-}
 
 #[test]
 fn test_get_rs2() {
