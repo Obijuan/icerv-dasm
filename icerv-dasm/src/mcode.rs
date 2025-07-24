@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 
+use crate::opcoderv::OpcodeRV;
+
 //───────────────────────────
 //  ANCHURAS de LOS CAMPOS
 //───────────────────────────
@@ -45,13 +47,28 @@ impl MCode {
     //────────────────────────────────────────────────
     //  Obtener el opcode de la instruccion
     //────────────────────────────────────────────────    
-    pub fn opcode(&self) -> u32 {
-        (self.value & OPCODE_MASK) >> OPCODE_POS
+    pub fn opcode(&self) -> OpcodeRV {
+        let op = (self.value & OPCODE_MASK) >> OPCODE_POS;
+
+        //-- Devolver el opcode como un valor del enum OpcodeRV
+        match op {
+          0b_00100_11 => OpcodeRV::TipoIArith,
+          0b_00000_11 => OpcodeRV::TipoILoad,
+          0b_01100_11 => OpcodeRV::TipoR,
+          0b_01000_11 => OpcodeRV::TipoS,
+          0b_11000_11 => OpcodeRV::TipoB,
+          0b_01101_11 => OpcodeRV::TipoULui,
+          0b_00101_11 => OpcodeRV::TipoUAuipc,
+          0b_11011_11 => OpcodeRV::TipoJJal,
+          0b_11001_11 => OpcodeRV::TipoJJalr,
+          0b_11100_11 => OpcodeRV::TipoEcallEbreak,
+          _ => OpcodeRV::Unknown,
+        }
     }
 
 }
 
 #[test]
 fn test_opcode() {
-    assert_eq!(MCode::new(0x00000013).opcode(), 0x13);
+    assert_eq!(MCode::new(0x00000013).opcode() as u32, 0x13);
 }
