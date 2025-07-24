@@ -42,6 +42,9 @@ impl MCode {
         MCode { value }
     }
 
+    //────────────────────────────────────────────────
+    //  Obtener el opcode de la instruccion
+    //────────────────────────────────────────────────    
     pub fn opcode(&self) -> u32 {
         (self.value & OPCODE_MASK) >> OPCODE_POS
     }
