@@ -39,6 +39,8 @@ const OPCODE_POS: u8 = 0;
 const RD_POS: u8 = 7;
 const FUNC3_POS: u8 = 12;  
 const RS1_POS: u8 = 15;
+const IMM12_POS: u8 = 20; 
+
 
 
 //────────────────────────────────────────────────
@@ -47,8 +49,25 @@ const RS1_POS: u8 = 15;
 const OPCODE_MASK: u32 = FIELD_7B << OPCODE_POS; 
 const RD_MASK: u32 = FIELD_5B << RD_POS;  
 const FUNC3_MASK: u32 = FIELD_3B << FUNC3_POS;  
-const RS1_MASK: u32 = FIELD_5B << RS1_POS;  
+const RS1_MASK: u32 = FIELD_5B << RS1_POS;
+const IMM12_MASK: u32 = FIELD_12B << IMM12_POS;  
 
+//────────────────────────────────────────────────
+// Entrada: Valor de 12 bits  
+// Salida: Valor extendido a 32 bits con signo
+//────────────────────────────────────────────────
+fn sign_ext(value: i32) -> i32 {
+    //-- Obtener el bit de signo
+    //-- sign_bit = true --> negativo
+    let sign_bit = (value & 0x800) != 0;
+
+    //-- En caso de ser negativo, extender el signo
+    if sign_bit {
+        value | !0xFFF  //-- Extender el signo a 32 bits
+    } else {
+        value  //-- No es negativo, devolver el valor original
+    }
+}
 
 //────────────────────────────────────────────────
 //  Estructura para gestionar el codigo maquina
@@ -111,7 +130,20 @@ impl MCode {
     //────────────────────────────────────────────────    
     pub fn func3(&self) -> u32 {
         (self.value & FUNC3_MASK) >> FUNC3_POS
-    }   
+    }
+
+    //────────────────────────────────────────────────
+    //  Obtener el campo inmediato de 12 bits (imm12)
+    //────────────────────────────────────────────────
+    pub fn imm12(&self) -> i32 {
+        //-- Aplicar la máscara para extraer el campo
+        //-- y desplazarlo a la posición 0
+        let imm12: u32 = (self.value & IMM12_MASK) >> IMM12_POS;
+
+        //-- Convertir el valor a i32 para manejar el signo
+        //-- y devolverlo!
+        sign_ext(imm12 as i32)
+    }      
 
 }
 
@@ -179,5 +211,54 @@ fn test_func3() {
     assert_eq!(MCode::new(0b_0000000_00000_00000_010_00000_0000000).func3(), 0b010);
     assert_eq!(MCode::new(0b_0000000_00000_00000_100_00000_0000000).func3(), 0b100);
     assert_eq!(MCode::new(0b_0000000_00000_00000_111_00000_0000000).func3(), 0b111);
+}
+
+#[test]
+fn test_imm12() {
+
+    assert_eq!(
+        MCode::new(0b_0000_0000_0000__00000__000__00000__0000000).imm12(), 
+        0b0000_0000_0000);
+    assert_eq!(
+        MCode::new(0b_0000_0000_0001__00000__000__00000__0000000).imm12(), 
+        0x001);
+    assert_eq!(
+        MCode::new(0b_0000_0000_0010__00000__000__00000__0000000).imm12(), 
+        0x002);
+    assert_eq!(
+        MCode::new(0b_0000_0000_0100__00000__000__00000__0000000).imm12(), 
+        0x004);
+    assert_eq!(
+        MCode::new(0b_0000_0000_1000__00000__000__00000__0000000).imm12(), 
+        0x008);
+    assert_eq!(
+        MCode::new(0b_0000_0001_0000__00000__000__00000__0000000).imm12(), 
+        0x010);
+    assert_eq!(
+        MCode::new(0b_0000_0010_0000__00000__000__00000__0000000).imm12(), 
+        0x020);
+    assert_eq!(
+        MCode::new(0b_0000_0100_0000__00000__000__00000__0000000).imm12(), 
+        0x040);
+    assert_eq!(
+        MCode::new(0b_0000_1000_0000__00000__000__00000__0000000).imm12(), 
+        0x080);
+    assert_eq!(
+        MCode::new(0b_0001_0000_0000__00000__000__00000__0000000).imm12(), 
+        0x100);
+    assert_eq!(
+        MCode::new(0b_0010_0000_0000__00000__000__00000__0000000).imm12(), 
+        0x200);
+    assert_eq!(
+        MCode::new(0b_0100_0000_0000__00000__000__00000__0000000).imm12(), 
+        0x400);
+
+  //-- Pruebs de signo
+    assert_eq!(MCode::new(0x800_0_0000).imm12(), 0xFFFF_F800u32 as i32);
+    assert_eq!(MCode::new(0xFFF_0_0000).imm12(), 0xFFFF_FFFFu32 as i32);
+    assert_eq!(MCode::new(0xFFF_FFFFF).imm12(), -1);
+    assert_eq!(MCode::new(0x800_FFFFF).imm12(), -2048);
+    assert_eq!(MCode::new(0x7FF_FFFFF).imm12(), 2047);
+    assert_eq!(MCode::new(0xFFE_FFFFF).imm12() as i32, -2);
 }
 

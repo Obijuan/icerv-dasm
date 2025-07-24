@@ -38,14 +38,12 @@ const FIELD_6B: u32 = 0x3F;  //-- Campo de 6 bits
 const FIELD_7B: u32 = 0x7F;  //-- Campo de 7 bits
 const FIELD_8B: u32 = 0xFF;  //-- Campo de 8 bits
 const FIELD_10B: u32 = 0x3FF; //-- Campo de 10 bits
-const FIELD_12B: u32 = 0xFFF;  //-- Campo de 12 bits
 const FIELD_20B: u32 = 0xFFFFF; //-- Campo de 20 bits
 //────────────────────────────────────────────────
 //  POSICIONES de LOS CAMPOS
 //────────────────────────────────────────────────
 const RS2_POS: u8 = 20;  
 const FUNC7_POS: u8 = 25;  
-const IMM12_POS: u8 = 20; 
 const IMM20_POS: u8 = 12; 
 const OFFSET10_POS: u8 = 21;
 const OFFSET8_POS: u8 = 12;
@@ -67,7 +65,6 @@ const BIT5: u32 = 1 << 5;
 //──────────────────────────────────────────────
 const RS2_MASK: u32 = FIELD_5B << RS2_POS;
 const FUNC7_MASK: u32 = FIELD_7B << FUNC7_POS;
-const IMM12_MASK: u32 = FIELD_12B << IMM12_POS;  
 const IMM20_MASK: u32 = FIELD_20B << IMM20_POS; 
 const OFFSET7_MASK: u32 = FIELD_7B << OFFSET7_POS;
 const OFFSET8_MASK: u32 = FIELD_8B << OFFSET8_POS; 
@@ -85,20 +82,6 @@ fn get_rs2(inst: u32) -> u32 {
   //-- Aplicar la máscara para extraer el campo
   //-- y desplazarlo a la posición 0    
     (inst & RS2_MASK) >> RS2_POS    
-}
-
-fn get_imm12(inst: u32) -> i32 {
-//────────────────────────────────────────────────
-// Entrada: Instrucción RISC-V
-// Salida: Inmediato de 12 bits de la instrucción
-//────────────────────────────────────────────────
-  //-- Aplicar la máscara para extraer el campo
-  //-- y desplazarlo a la posición 0
-  let imm12: u32 = (inst & IMM12_MASK) >> IMM12_POS;
-
-  //-- Convertir el valor a i32 para manejar el signo
-  //-- y devolverlo!
-  sign_ext(imm12 as i32)
 }
 
 fn get_imm20(inst: u32) -> i32 {
@@ -199,9 +182,9 @@ fn print_fields(inst: u32) {
     let rd: Reg = mcode.rd();
     let rs1: Reg = mcode.rs1();
     let func3: u32 = mcode.func3();
+    let imm:i32 = mcode.imm12();
 
     let rs2 = get_rs2(inst);
-    let imm = get_imm12(inst);
     let func7 = get_func7(inst);
 
     //-- Imprimir los campos extraídos
@@ -444,14 +427,14 @@ fn disassemble(inst: u32) -> String {
   let rd: Reg = mcode.rd(); 
   let rs1: Reg = mcode.rs1();
   let func3: u32 = mcode.func3();
+  let imm: i32 = mcode.imm12();
+  let offset_jalr: i32 = mcode.imm12();
 
   let func7: u32 = get_func7(inst);
   let rs2 = get_rs2(inst);
-  let imm = get_imm12(inst) as i32;
   let offset:i32 = get_offset_s(inst);
   let imm20: i32 = get_imm20(inst);
   let offset_b: i32 = get_offset_b(inst);
-  let offset_jalr: i32 = get_imm12(inst);
   let offset_jal: i32 = get_offset_jal(inst);
   
   match opcode {
@@ -680,33 +663,6 @@ fn test_get_func7() {
   assert_eq!(get_func7(0b_0100000_00000_00000_000_00000_0000000), 0b0100000);
   assert_eq!(get_func7(0b_1000000_00000_00000_000_00000_0000000), 0b1000000);
   assert_eq!(get_func7(0b_1111111_00000_00000_000_00000_0000000), 0b1111111);
-}
-
-#[test]
-fn test_get_imm12() {
-  //-- Test de la función get_imm12
-  //--                    ----imm12-----   rs1  func3  rd    opcode
-  assert_eq!(get_imm12(0b_0000_0000_0000__00000__000__00000__0000000), 0b0000_0000_0000);
-  assert_eq!(get_imm12(0b_0000_0000_0001__00000__000__00000__0000000), 0x001);
-  assert_eq!(get_imm12(0x001_0_0000), 0x001); 
-  assert_eq!(get_imm12(0x002_0_0000), 0x002);
-  assert_eq!(get_imm12(0x004_0_0000), 0x004);
-  assert_eq!(get_imm12(0x008_0_0000), 0x008);
-  assert_eq!(get_imm12(0x010_0_0000), 0x010);
-  assert_eq!(get_imm12(0x020_0_0000), 0x020);
-  assert_eq!(get_imm12(0x040_0_0000), 0x040);
-  assert_eq!(get_imm12(0x080_0_0000), 0x080);
-  assert_eq!(get_imm12(0x100_0_0000), 0x100);
-  assert_eq!(get_imm12(0x200_0_0000), 0x200);
-  assert_eq!(get_imm12(0x400_0_0000), 0x400);
-
-  //-- Pruebs de signo
-  assert_eq!(get_imm12(0x800_0_0000), 0xFFFF_F800u32 as i32); //-- -2048
-  assert_eq!(get_imm12(0xFFF_0_0000), 0xFFFF_FFFFu32 as i32); //-- -1
-  assert_eq!(get_imm12(0xFFF_FFFFF), -1); 
-  assert_eq!(get_imm12(0x800_FFFFF), -2048);
-  assert_eq!(get_imm12(0x7FF_FFFFF), 2047);
-  assert_eq!(get_imm12(0xFFE_FFFFF), -2);
 }
 
 #[test]

@@ -15,7 +15,7 @@ impl InstructionRV {
         Self::Addi {
           rd: mcode.rd(),
           rs1: mcode.rs1(),
-          imm: 2
+          imm: mcode.imm12(),
         }
     }
 
