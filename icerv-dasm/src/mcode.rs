@@ -71,4 +71,5 @@ impl MCode {
 #[test]
 fn test_opcode() {
     assert_eq!(MCode::new(0x00000013).opcode() as u32, 0x13);
+    assert_eq!(MCode::new(0x00000093).opcode() as u32, 0x13);
 }

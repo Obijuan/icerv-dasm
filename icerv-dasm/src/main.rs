@@ -44,7 +44,6 @@ const FIELD_20B: u32 = 0xFFFFF; //-- Campo de 20 bits
 //────────────────────────────────────────────────
 //  POSICIONES de LOS CAMPOS
 //────────────────────────────────────────────────
-const OPCODE_POS: u8 = 0;  
 const RD_POS: u8 = 7;
 const FUNC3_POS: u8 = 12;  
 const RS1_POS: u8 = 15;  
@@ -70,7 +69,6 @@ const BIT5: u32 = 1 << 5;
 //  Se calculan desplazando los campos de la anchura correspondiente
 //  a la posición del campo
 //──────────────────────────────────────────────
-const OPCODE_MASK: u32 = FIELD_7B << OPCODE_POS; 
 const RD_MASK: u32 = FIELD_5B << RD_POS;  
 const FUNC3_MASK: u32 = FIELD_3B << FUNC3_POS;  
 const RS1_MASK: u32 = FIELD_5B << RS1_POS;  
@@ -89,34 +87,6 @@ const OFFSET1_MASK: u32 = FIELD_1B << OFFSET1_POS;
 //-----
 //let inst2: InstructionRV = InstructionRV::from_mcode(0x00100093);
 
-
-
-
-
-fn get_opcode(inst: u32) -> OpcodeRV {
-//────────────────────────────────────────────────
-// Entrada: Instrucción RISC-V
-// Salida: Opcode de la instrucción
-//────────────────────────────────────────────────
-  //-- Aplicar la máscara para extraer el campo
-  //-- y desplazarlo a la posición 0
-  let opcode: u32 = (inst & OPCODE_MASK) >> OPCODE_POS;
-
-  //-- Devolver el opcode como un valor del enum OpcodeRV
-  match opcode {
-    0b_00100_11 => OpcodeRV::TipoIArith,
-    0b_00000_11 => OpcodeRV::TipoILoad,
-    0b_01100_11 => OpcodeRV::TipoR,
-    0b_01000_11 => OpcodeRV::TipoS,
-    0b_11000_11 => OpcodeRV::TipoB,
-    0b_01101_11 => OpcodeRV::TipoULui,
-    0b_00101_11 => OpcodeRV::TipoUAuipc,
-    0b_11011_11 => OpcodeRV::TipoJJal,
-    0b_11001_11 => OpcodeRV::TipoJJalr,
-    0b_11100_11 => OpcodeRV::TipoEcallEbreak,
-    _ => OpcodeRV::Unknown,
-  }
-}
 
 fn get_rd(inst: u32) -> u32 {
 //────────────────────────────────────────────────
@@ -263,7 +233,9 @@ fn print_fields(inst: u32) {
 //────────────────────────────────────────────────
 
     //-- Extraer los campos de la instrucción
-    let opcode = get_opcode(inst);
+    //let opcode = get_opcode(inst);
+
+    let opcode: OpcodeRV = MCode::new(inst).opcode();
     let rd = get_rd(inst);
     let func3 = get_func3(inst);
     let rs1 = get_rs1(inst);
@@ -504,7 +476,8 @@ fn inst_type_b(func3: u32) -> String {
 fn disassemble(inst: u32) -> String {
 
   //-- Obtener el opcode y todos los campos de la instrucción
-  let opcode:OpcodeRV = get_opcode(inst);
+  let opcode: OpcodeRV = MCode::new(inst).opcode();
+
   let func7: u32 = get_func7(inst);
   let func3 = get_func3(inst);
   let rd = get_rd(inst);
@@ -716,16 +689,6 @@ fn main() {
 //────────────────────────────────────────────────
 //  TESTS
 //────────────────────────────────────────────────
-
-#[test]
-fn test_get_opcode() {
-    //-- Test de la función get_opcode
-
-    //-- Instrucciones reales
-    assert_eq!(get_opcode(0x0000_0013) as u32, 0x13);
-    assert_ne!(get_opcode(0x0000_0013) as u32, 0x00);
-    assert_eq!(get_opcode(0x0aa0_0093) as u32, 0x13);
-}
 
 #[test]
 fn test_get_rd() {
