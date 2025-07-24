@@ -32,7 +32,6 @@ use opcoderv::OpcodeRV;
 //  ANCHURAS de LOS CAMPOS
 //───────────────────────────
 const FIELD_1B: u32 = 0x01;  //-- Campo de 1 bit
-const FIELD_3B: u32 = 0x07;  //-- Campo de 3 bits de ancho
 const FIELD_4B: u32 = 0x0F;  //-- Campo de 4 bits
 const FIELD_5B: u32 = 0x1F;  //-- Campo de 5 bits
 const FIELD_6B: u32 = 0x3F;  //-- Campo de 6 bits
@@ -44,7 +43,6 @@ const FIELD_20B: u32 = 0xFFFFF; //-- Campo de 20 bits
 //────────────────────────────────────────────────
 //  POSICIONES de LOS CAMPOS
 //────────────────────────────────────────────────
-const FUNC3_POS: u8 = 12;  
 const RS2_POS: u8 = 20;  
 const FUNC7_POS: u8 = 25;  
 const IMM12_POS: u8 = 20; 
@@ -67,7 +65,6 @@ const BIT5: u32 = 1 << 5;
 //  Se calculan desplazando los campos de la anchura correspondiente
 //  a la posición del campo
 //──────────────────────────────────────────────
-const FUNC3_MASK: u32 = FIELD_3B << FUNC3_POS;  
 const RS2_MASK: u32 = FIELD_5B << RS2_POS;
 const FUNC7_MASK: u32 = FIELD_7B << FUNC7_POS;
 const IMM12_MASK: u32 = FIELD_12B << IMM12_POS;  
@@ -79,17 +76,6 @@ const OFFSET6_MASK: u32 = FIELD_6B << OFFSET6_POS;
 const OFFSET5_MASK: u32 = FIELD_5B << OFFSET5_POS;
 const OFFSET4_MASK: u32 = FIELD_4B << OFFSET4_POS;
 const OFFSET1_MASK: u32 = FIELD_1B << OFFSET1_POS;
-
-
-fn get_func3(inst: u32) -> u32 {
-//────────────────────────────────────────────────
-// Entrada: Instrucción RISC-V
-// Salida: Func3 de la instrucción
-//────────────────────────────────────────────────
-  //-- Aplicar la máscara para extraer el campo
-  //-- y desplazarlo a la posición 0
-  (inst & FUNC3_MASK) >> FUNC3_POS
-}
 
 fn get_rs2(inst: u32) -> u32 {
 //────────────────────────────────────────────────
@@ -210,10 +196,10 @@ fn print_fields(inst: u32) {
 
     let mcode = MCode::new(inst);
     let opcode = mcode.opcode();
-    let rd = mcode.rd();
+    let rd: Reg = mcode.rd();
     let rs1: Reg = mcode.rs1();
+    let func3: u32 = mcode.func3();
 
-    let func3 = get_func3(inst);
     let rs2 = get_rs2(inst);
     let imm = get_imm12(inst);
     let func7 = get_func7(inst);
@@ -457,9 +443,9 @@ fn disassemble(inst: u32) -> String {
   let opcode = mcode.opcode();
   let rd: Reg = mcode.rd(); 
   let rs1: Reg = mcode.rs1();
+  let func3: u32 = mcode.func3();
 
   let func7: u32 = get_func7(inst);
-  let func3 = get_func3(inst);
   let rs2 = get_rs2(inst);
   let imm = get_imm12(inst) as i32;
   let offset:i32 = get_offset_s(inst);
@@ -667,19 +653,6 @@ fn main() {
 //────────────────────────────────────────────────
 //  TESTS
 //────────────────────────────────────────────────
-
-#[test]
-fn test_get_func3() {
-  //-- Test de la función get_func3
-
-  assert_eq!(get_func3(0b_0000000_00000_00000_000_00000_0000000), 0b000);
-  assert_eq!(get_func3(0b_0000000_00000_00000_001_00000_0000000), 0b001);
-  assert_eq!(get_func3(0b_0000000_00000_00000_010_00000_0000000), 0b010);
-  assert_eq!(get_func3(0b_0000000_00000_00000_100_00000_0000000), 0b100);
-  assert_eq!(get_func3(0b_0000000_00000_00000_111_00000_0000000), 0b111);
-}
-
-
 #[test]
 fn test_get_rs2() {
   //-- Test de la función get_rs2

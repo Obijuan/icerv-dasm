@@ -36,14 +36,17 @@ const FIELD_20B: u32 = 0xFFFFF;
 //  POSICIONES de LOS CAMPOS
 //────────────────────────────────────────────────
 const OPCODE_POS: u8 = 0;
-const RD_POS: u8 = 7;  
-const RS1_POS: u8 = 15;  
+const RD_POS: u8 = 7;
+const FUNC3_POS: u8 = 12;  
+const RS1_POS: u8 = 15;
+
 
 //────────────────────────────────────────────────
 //  CALCULAR LAS MASCARAS DE ACCESO A LOS CAMPOS
 //────────────────────────────────────────────────
 const OPCODE_MASK: u32 = FIELD_7B << OPCODE_POS; 
 const RD_MASK: u32 = FIELD_5B << RD_POS;  
+const FUNC3_MASK: u32 = FIELD_3B << FUNC3_POS;  
 const RS1_MASK: u32 = FIELD_5B << RS1_POS;  
 
 
@@ -102,6 +105,14 @@ impl MCode {
         let reg_num: u32 = (self.value & RS1_MASK) >> RS1_POS;
         Reg::new(reg_num as u8) 
     }
+
+    //────────────────────────────────────────────────
+    //  Obtener el campo func3 de la instrucción
+    //────────────────────────────────────────────────    
+    pub fn func3(&self) -> u32 {
+        (self.value & FUNC3_MASK) >> FUNC3_POS
+    }   
+
 }
 
 
@@ -161,3 +172,12 @@ fn test_rs1() {
 
 } 
     
+#[test]
+fn test_func3() {
+    assert_eq!(MCode::new(0b_0000000_00000_00000_000_00000_0000000).func3(), 0b000);
+    assert_eq!(MCode::new(0b_0000000_00000_00000_001_00000_0000000).func3(), 0b001);
+    assert_eq!(MCode::new(0b_0000000_00000_00000_010_00000_0000000).func3(), 0b010);
+    assert_eq!(MCode::new(0b_0000000_00000_00000_100_00000_0000000).func3(), 0b100);
+    assert_eq!(MCode::new(0b_0000000_00000_00000_111_00000_0000000).func3(), 0b111);
+}
+
