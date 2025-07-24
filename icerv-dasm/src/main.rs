@@ -472,12 +472,15 @@ fn inst_type_b(func3: u32) -> String {
 
 fn disassemble(inst: u32) -> String {
 
-  //-- Obtener el opcode y todos los campos de la instrucción
-  let opcode: OpcodeRV = MCode::new(inst).opcode();
+  //-- Obtener el opcode 
+  let mcode = MCode::new(inst);
+
+  //-- y todos los campos de la instrucción  
+  let opcode = mcode.opcode();
+  let rd = mcode.rd(); 
 
   let func7: u32 = get_func7(inst);
   let func3 = get_func3(inst);
-  let rd = get_rd(inst);
   let rs1 = get_rs1(inst);
   let rs2 = get_rs2(inst);
   let imm = get_imm12(inst) as i32;
@@ -501,19 +504,19 @@ fn disassemble(inst: u32) -> String {
         imm
       };
 
-      format!("{} x{}, x{}, {}", name, rd, rs1, imm2)
+      format!("{} x{}, x{}, {}", name, rd as u8, rs1, imm2)
     },
 
     OpcodeRV::TipoILoad => {
       //-- Nombre de la instrucción
       let name: String = inst_type_i_load(func3);
 
-      format!("{} x{}, {}(x{})", name, rd, imm, rs1)
+      format!("{} x{}, {}(x{})", name, rd as u8, imm, rs1)
     },
 
     OpcodeRV::TipoR => {
       let name: String = inst_type_r(func7, func3);
-      format!("{} x{}, x{}, x{}", name, rd, rs1, rs2)
+      format!("{} x{}, x{}, x{}", name, rd as u8, rs1, rs2)
     },
 
     OpcodeRV::TipoS => {
@@ -529,20 +532,20 @@ fn disassemble(inst: u32) -> String {
     },
 
     OpcodeRV::TipoULui => {
-      format!("lui x{}, {:#07X}", rd, imm20 & 0xFFFFF)
+      format!("lui x{}, {:#07X}", rd as u8, imm20 & 0xFFFFF)
     },
 
     OpcodeRV::TipoUAuipc => {
-      format!("auipc x{}, {:#07X}", rd, imm20 & 0xFFFFF)
+      format!("auipc x{}, {:#07X}", rd as u8, imm20 & 0xFFFFF)
     },
 
     OpcodeRV::TipoJJal => {
-      format!("jal x{}, {}", rd, offset_jal)
+      format!("jal x{}, {}", rd as u8, offset_jal)
     },
 
     OpcodeRV::TipoJJalr => {
       //-- Instrucción jalr
-      format!("jalr x{}, {}(x{})", rd, offset_jalr, rs1)
+      format!("jalr x{}, {}(x{})", rd as u8, offset_jalr, rs1)
     },
 
     OpcodeRV::TipoEcallEbreak => {
@@ -686,25 +689,6 @@ fn main() {
 //────────────────────────────────────────────────
 //  TESTS
 //────────────────────────────────────────────────
-
-#[test]
-fn test_get_rd() {
-    //-- Test de la función get_rd
-
-    //-- Instrucciones reales
-    assert_eq!(get_rd(0x0000_0013), 0);
-    assert_eq!(get_rd(0x0aa0_0093), 1);
-
-    //-- Instrucciones inventandas
-    assert_eq!(get_rd(0x0000_0000 | 0b00000_0000000), 0);
-    assert_eq!(get_rd(0x0000_0000 | 0b00001_0000000), 1);
-    assert_eq!(get_rd(0xFFFF_0000 | 0b00010_0000000), 2); 
-    assert_eq!(get_rd(0xFFFF_0000 | 0b00100_0000000), 4); 
-    assert_eq!(get_rd(0xFFFF_0000 | 0b01000_0000000), 8); 
-    assert_eq!(get_rd(0xFFFF_0000 | 0b10000_0000000), 16);
-    assert_eq!(get_rd(0xFFFF_0000 | 0b10001_0000000), 17); 
-    assert_eq!(get_rd(0xFFFF_0000 | 0b11111_0000000), 31); 
-}
 
 #[test]
 fn test_get_func3() {

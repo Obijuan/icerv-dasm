@@ -1,4 +1,4 @@
-use crate::regs::Reg;
+use crate::{mcode, regs::Reg};
 
 pub enum InstructionRV {
 //────────────────────────────────────────────────
@@ -8,9 +8,12 @@ pub enum InstructionRV {
 }
 
 impl InstructionRV {
-    pub fn from_mcode(_mcode: u32) -> Self {
+    pub fn from_mcode(mcode: u32) -> Self {
+
+        let mcode = mcode::MCode::new(mcode);
+
         Self::Addi {
-          rd: Reg::X10,
+          rd: mcode.rd(),
           rs1: Reg::X11,
           imm: 1
         }
