@@ -13,10 +13,12 @@
 mod tests;
 mod regs;
 mod instructionrv;
+mod mcode;
 
 //-- Registros del RISCV
 use regs::Reg;
 use instructionrv::InstructionRV;
+use mcode::MCode;
 
 //────────────────────────────────────────────────
 //  CONSTANTES PARA ACCESO A LA ISA DEL RISCV   
@@ -718,6 +720,11 @@ fn main1() {
 //  PROGRAMA PRINCIPAL
 //────────────────────────────────────────────────
 fn main() {
+
+    //-- Test machine code
+    let mcode: MCode = MCode::new(0x00100093);
+    println!("Machine Code: {:#010X}", mcode.value);
+    println!("  opcode: {:#04X}", mcode.opcode());
 
     //-- Test
     println!("\n------ TESTING.....");
