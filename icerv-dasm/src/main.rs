@@ -44,7 +44,6 @@ const FIELD_20B: u32 = 0xFFFFF; //-- Campo de 20 bits
 //────────────────────────────────────────────────
 //  POSICIONES de LOS CAMPOS
 //────────────────────────────────────────────────
-const RD_POS: u8 = 7;
 const FUNC3_POS: u8 = 12;  
 const RS1_POS: u8 = 15;  
 const RS2_POS: u8 = 20;  
@@ -69,7 +68,6 @@ const BIT5: u32 = 1 << 5;
 //  Se calculan desplazando los campos de la anchura correspondiente
 //  a la posición del campo
 //──────────────────────────────────────────────
-const RD_MASK: u32 = FIELD_5B << RD_POS;  
 const FUNC3_MASK: u32 = FIELD_3B << FUNC3_POS;  
 const RS1_MASK: u32 = FIELD_5B << RS1_POS;  
 const RS2_MASK: u32 = FIELD_5B << RS2_POS;
@@ -84,16 +82,6 @@ const OFFSET5_MASK: u32 = FIELD_5B << OFFSET5_POS;
 const OFFSET4_MASK: u32 = FIELD_4B << OFFSET4_POS;
 const OFFSET1_MASK: u32 = FIELD_1B << OFFSET1_POS;
 
-
-fn get_rd(inst: u32) -> u32 {
-//────────────────────────────────────────────────
-// Entrada: Instrucción RISC-V
-// Salida: Registro destino (rd) de la instrucción
-//────────────────────────────────────────────────
-  //-- Aplicar la máscara para extraer el campo
-  //-- y desplazarlo a la posición 0
-  (inst & RD_MASK) >> RD_POS
-}
 
 fn get_func3(inst: u32) -> u32 {
 //────────────────────────────────────────────────
@@ -232,8 +220,10 @@ fn print_fields(inst: u32) {
     //-- Extraer los campos de la instrucción
     //let opcode = get_opcode(inst);
 
-    let opcode: OpcodeRV = MCode::new(inst).opcode();
-    let rd = get_rd(inst);
+    let mcode = MCode::new(inst);
+    let opcode = mcode.opcode();
+    let rd = mcode.rd();
+
     let func3 = get_func3(inst);
     let rs1 = get_rs1(inst);
     let rs2 = get_rs2(inst);
@@ -242,7 +232,7 @@ fn print_fields(inst: u32) {
 
     //-- Imprimir los campos extraídos
     println!("   - Opcode: {:#4X}", opcode as u32);
-    println!("   - rd: x{}", rd);
+    println!("   - rd: x{}", rd as u8);
     println!("   - func3: {:#05b}", func3);
     println!("   - rs1: x{}", rs1);
     println!("   - rs2: x{}", rs2);

@@ -84,6 +84,9 @@ impl MCode {
         }
     }
 
+    //────────────────────────────────────────────────
+    //  Obtener el registro destino (rd) de la instrucción
+    //────────────────────────────────────────────────
     pub fn rd(&self) -> Reg {
         let reg_num = (self.value & RD_MASK) >> RD_POS;
         Reg::new(reg_num as u8)
