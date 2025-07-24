@@ -11,7 +11,10 @@
 
 #[cfg(test)]
 mod tests;
+mod regs;
 
+//-- Registros del RISCV
+use regs::Reg;
 
 //────────────────────────────────────────────────
 //  CONSTANTES PARA ACCESO A LA ISA DEL RISCV   
@@ -76,6 +79,33 @@ const OFFSET6_MASK: u32 = FIELD_6B << OFFSET6_POS;
 const OFFSET5_MASK: u32 = FIELD_5B << OFFSET5_POS;
 const OFFSET4_MASK: u32 = FIELD_4B << OFFSET4_POS;
 const OFFSET1_MASK: u32 = FIELD_1B << OFFSET1_POS;
+
+//-----
+enum InstructionRV {
+  Addi {rd: Reg, rs1: Reg, imm: i32},  //-- addi rd, rs1, imm12
+}
+
+impl InstructionRV {
+    pub fn from_mcode(mcode: u32) -> Self {
+        println!("* Codigo maquina: {:#010X}", mcode);
+        Self::Addi {
+          rd: Reg::X1,
+          rs1: Reg::X0,
+          imm: 1
+        }
+    }
+
+    pub fn to_string(&self) -> String {
+        match self {
+            Self::Addi {rd, rs1, imm} => {
+                format!("addi {}, {}, {}", rd.to_str(), rs1.to_str(), imm)
+            }
+        }
+    }
+}
+
+//let inst2: InstructionRV = InstructionRV::from_mcode(0x00100093);
+
 
 //────────────────────────────────────────────────
 //  DEFINICION DE LOS OPCODES
@@ -619,14 +649,9 @@ fn disassemble(inst: u32) -> String {
 
 }
 
-//────────────────────────────────────────────────
-//  PROGRAMA PRINCIPAL
-//────────────────────────────────────────────────
-fn main() {
-
-    //-- Instrucciones RISC-V a desensamblar
+fn main1() {
+   //-- Instrucciones RISC-V a desensamblar
     let insts = [
-        0x40115093, // srai x1, x2, 1
         0x00100093, // addi x1, x0, 1
         0x00111093, // slli x1, x2, 1
         0x00112093, // slti x1, x2, 1
@@ -667,7 +692,7 @@ fn main() {
         0xff1ff26f, // jal x4, -16
         0x00000073, // ecall
         0x00100073, // ebreak
-];
+    ];
 
 
     //-- TODO
@@ -708,8 +733,31 @@ fn main() {
         println!("🟢 [{machine_code:#010X}]: {inst}");
 
     }
+}
+
+//────────────────────────────────────────────────
+//  PROGRAMA PRINCIPAL
+//────────────────────────────────────────────────
+fn main() {
+
+  //-- Test
+  println!("\n------ TESTING.....");
+
+    let inst1: InstructionRV = InstructionRV::Addi{
+      rd: Reg::X1, 
+      rs1: Reg::X0, 
+      imm: 1
+    };
+
+    println!("Inst1: {}", inst1.to_string());
+
+    let inst2: InstructionRV = InstructionRV::from_mcode(0x00100093);
+    println!("Inst2: {}", inst2.to_string());
 
 
+    //-- old...
+    println!("\n\n--- Main1");
+    main1();
 }
 
 
