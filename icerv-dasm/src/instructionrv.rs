@@ -116,6 +116,9 @@ impl InstructionRV {
             Self::Xori {rd, rs1, imm} => {
                 format!("xori {}, {}, {}", rd.to_str(), rs1.to_str(), imm)
             },
+            Self::Srli {rd, rs1, imm} => {
+                format!("srli {}, {}, {}", rd.to_str(), rs1.to_str(), imm)
+            },
             Self::Unknown => {
                 "Unknown Instruction".to_string()
             },
@@ -299,6 +302,38 @@ fn test_instructions_xori() {
 
 
 #[test]
+fn test_instructions_srli() {
+    assert_eq!(
+        InstructionRV::Srli { rd: Reg::X0, rs1: Reg::X0, imm: 0 }.to_string(),
+        "srli x0, x0, 0");
+    assert_eq!(
+        InstructionRV::Srli { rd: Reg::X1, rs1: Reg::X2, imm: 1 }.to_string(),
+        "srli x1, x2, 1");
+    assert_eq!(
+        InstructionRV::Srli { rd: Reg::X31, rs1: Reg::X1, imm: 2 }.to_string(),
+        "srli x31, x1, 2");
+    assert_eq!(
+        InstructionRV::Srli { rd: Reg::X30, rs1: Reg::X2, imm: 4 }.to_string(),
+        "srli x30, x2, 4");
+    assert_eq!(
+        InstructionRV::Srli { rd: Reg::X29, rs1: Reg::X3, imm: 8 }.to_string(),
+        "srli x29, x3, 8");
+    assert_eq!(
+        InstructionRV::Srli { rd: Reg::X28, rs1: Reg::X4, imm: 16 }.to_string(),
+        "srli x28, x4, 16");
+    assert_eq!(
+        InstructionRV::Srli { rd: Reg::X27, rs1: Reg::X5, imm: 17 }.to_string(),
+        "srli x27, x5, 17");
+    assert_eq!(
+        InstructionRV::Srli { rd: Reg::X26, rs1: Reg::X6, imm: 30 }.to_string(),
+        "srli x26, x6, 30");
+    assert_eq!(
+        InstructionRV::Srli { rd: Reg::X25, rs1: Reg::X7, imm: 31 }.to_string(),
+        "srli x25, x7, 31");
+}    
+    
+
+#[test]
 fn test_mcode_addi() {
     //────────────────────────────────────────────────
     //  Test de la instrucción ADDI
@@ -469,6 +504,38 @@ fn test_mcode_xori() {
     assert_eq!(
         InstructionRV::from_mcode(0x01f3cc93).to_string(),
         "xori x25, x7, 31");
+
+}
+
+#[test]
+fn test_mcode_srli() {
+    assert_eq!(
+        InstructionRV::from_mcode(0x00005013).to_string(),
+        "srli x0, x0, 0");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00115093).to_string(),
+        "srli x1, x2, 1");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0020df93).to_string(),
+        "srli x31, x1, 2");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00415f13).to_string(),
+        "srli x30, x2, 4");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0081de93).to_string(),
+        "srli x29, x3, 8");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01025e13).to_string(),
+        "srli x28, x4, 16");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0112dd93).to_string(),
+        "srli x27, x5, 17");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01e35d13).to_string(),
+        "srli x26, x6, 30");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01f3dc93).to_string(),
+        "srli x25, x7, 31");
 
 }
 

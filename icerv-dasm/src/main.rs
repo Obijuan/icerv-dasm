@@ -611,6 +611,7 @@ fn main_test1() {
         InstructionRV::Slti{rd: Reg::X1, rs1: Reg::X2, imm: 1}, 
         InstructionRV::Sltiu{rd: Reg::X1, rs1: Reg::X2, imm: 1},
         InstructionRV::Xori{rd: Reg::X1, rs1: Reg::X2, imm: 1},
+        InstructionRV::Srli{rd: Reg::X1, rs1: Reg::X2, imm: 1},
     ];
 
     for i in 0..inst.len() {
@@ -628,7 +629,9 @@ fn main_test2() {
         0x00112093, //-- slti x1, x2, 1
         0x00113093, //-- sltiu x1, x2, 1
         0x00114093, //-- xori x1, x2, 1
+        0x00115093, //-- srli x1, x2, 1
     ];
+
 
     for i in 0..mcode.len() {
         let inst: InstructionRV = InstructionRV::from_mcode(mcode[i]);

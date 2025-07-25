@@ -456,15 +456,3 @@ fn test_disassemble_andi() {
     assert_eq!(disassemble(0x01f3fc93), "andi x25, x7, 31");
 }
 
-#[test]
-fn test_disassemble_srli() {
-    assert_eq!(disassemble(0x00115093), "srli x1, x2, 1"); 
-    assert_eq!(disassemble(0x00005013), "srli x0, x0, 0");
-    assert_eq!(disassemble(0x0020df93), "srli x31, x1, 2");
-    assert_eq!(disassemble(0x00415f13), "srli x30, x2, 4");
-    assert_eq!(disassemble(0x0081de93), "srli x29, x3, 8");
-    assert_eq!(disassemble(0x01025e13), "srli x28, x4, 16");
-    assert_eq!(disassemble(0x0112dd93), "srli x27, x5, 17");
-    assert_eq!(disassemble(0x01e35d13), "srli x26, x6, 30");
-    assert_eq!(disassemble(0x01f3dc93), "srli x25, x7, 31");
-}
