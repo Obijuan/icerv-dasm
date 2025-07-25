@@ -428,17 +428,3 @@ fn test_disassemble_lb() {
     assert_eq!(disassemble(0x7ff48483), "lb x9, 2047(x9)");
 }
 
-
-#[test]
-fn test_disassemble_andi() {
-    assert_eq!(disassemble(0x00117093), "andi x1, x2, 1");
-    assert_eq!(disassemble(0x00007013), "andi x0, x0, 0");
-    assert_eq!(disassemble(0x0020ff93), "andi x31, x1, 2");
-    assert_eq!(disassemble(0x00417f13), "andi x30, x2, 4");
-    assert_eq!(disassemble(0x0081fe93), "andi x29, x3, 8");
-    assert_eq!(disassemble(0x01027e13), "andi x28, x4, 16");
-    assert_eq!(disassemble(0x0112fd93), "andi x27, x5, 17");
-    assert_eq!(disassemble(0x01e37d13), "andi x26, x6, 30");
-    assert_eq!(disassemble(0x01f3fc93), "andi x25, x7, 31");
-}
-

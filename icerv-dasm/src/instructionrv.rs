@@ -18,8 +18,6 @@ pub enum InstructionRV {
     Ori {rd: Reg, rs1: Reg, imm: i32},   //-- ori rd, rs1, imm12
     Andi {rd: Reg, rs1: Reg, imm: i32},  //-- andi rd, rs1, imm12
 
-
-
     Unknown, //-- Instrucción desconocida
 }
 
@@ -125,12 +123,12 @@ impl InstructionRV {
             Self::Andi { rd, rs1, imm } => {
                 format!("andi {}, {}, {}", rd.to_str(), rs1.to_str(), imm)
             },
+            Self::Srai {rd, rs1, imm} => {
+                format!("srai {}, {}, {}", rd.to_str(), rs1.to_str(), imm)
+            },
             Self::Unknown => {
                 "Unknown Instruction".to_string()
             },
-            _ => {
-                "Not implemented".to_string()
-            }
         }
     }
 }
@@ -373,6 +371,20 @@ fn test_instructions_andi() {
 
 
 #[test]
+fn test_instructions_srai() {
+    // assert_eq!(disassemble(0x40115093), "srai x1, x2, 1");
+    // assert_eq!(disassemble(0x40005013), "srai x0, x0, 0");
+    // assert_eq!(disassemble(0x4020df93), "srai x31, x1, 2");
+    // assert_eq!(disassemble(0x40415f13), "srai x30, x2, 4");
+    // assert_eq!(disassemble(0x4081de93), "srai x29, x3, 8");
+    // assert_eq!(disassemble(0x41025e13), "srai x28, x4, 16");
+    // assert_eq!(disassemble(0x4112dd93), "srai x27, x5, 17");
+    // assert_eq!(disassemble(0x41e35d13), "srai x26, x6, 30");
+    // assert_eq!(disassemble(0x41f3dc93), "srai x25, x7, 31");
+}
+
+
+#[test]
 fn test_mcode_addi() {
     //────────────────────────────────────────────────
     //  Test de la instrucción ADDI
@@ -608,4 +620,17 @@ fn test_mcode_andi() {
         InstructionRV::from_mcode(0x01f3fc93).to_string(),
         "andi x25, x7, 31");
 
+}
+
+#[test]
+fn test_mcode_srai() {
+    // assert_eq!(disassemble(0x40115093), "srai x1, x2, 1");
+    // assert_eq!(disassemble(0x40005013), "srai x0, x0, 0");
+    // assert_eq!(disassemble(0x4020df93), "srai x31, x1, 2");
+    // assert_eq!(disassemble(0x40415f13), "srai x30, x2, 4");
+    // assert_eq!(disassemble(0x4081de93), "srai x29, x3, 8");
+    // assert_eq!(disassemble(0x41025e13), "srai x28, x4, 16");
+    // assert_eq!(disassemble(0x4112dd93), "srai x27, x5, 17");
+    // assert_eq!(disassemble(0x41e35d13), "srai x26, x6, 30");
+    // assert_eq!(disassemble(0x41f3dc93), "srai x25, x7, 31");
 }
