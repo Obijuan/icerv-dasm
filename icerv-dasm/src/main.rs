@@ -609,7 +609,6 @@ fn main() {
 
     //-- Test
     println!("\n------ TESTING 1.....");
-
     let inst: InstructionRV = InstructionRV::Addi{
       rd: Reg::X1, 
       rs1: Reg::X0, 
@@ -624,12 +623,23 @@ fn main() {
     };
     println!("🟢 {}", inst.to_string());
 
+    let inst: InstructionRV = InstructionRV::Slti{
+      rd: Reg::X1, 
+      rs1: Reg::X2, 
+      imm: 1
+    };
+    println!("🟢 {}", inst.to_string());
+
     println!("\n------ TESTING 2.....");
     let mcode: u32 = 0x00100093;
     let inst: InstructionRV = InstructionRV::from_mcode(mcode);
     println!("🟢 [{:#010X}]: {}", mcode as u32, inst.to_string());
 
     let mcode: u32 = 0x00111093;
+    let inst: InstructionRV = InstructionRV::from_mcode(mcode);
+    println!("🟢 [{:#010X}]: {}", mcode as u32, inst.to_string());
+
+    let mcode: u32 = 0x00112093;
     let inst: InstructionRV = InstructionRV::from_mcode(mcode);
     println!("🟢 [{:#010X}]: {}", mcode as u32, inst.to_string());
 
