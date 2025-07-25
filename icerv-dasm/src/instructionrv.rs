@@ -119,6 +119,9 @@ impl InstructionRV {
             Self::Srli {rd, rs1, imm} => {
                 format!("srli {}, {}, {}", rd.to_str(), rs1.to_str(), imm)
             },
+            Self::Ori { rd, rs1, imm } => {
+                format!("ori {}, {}, {}", rd.to_str(), rs1.to_str(), imm)
+            },  
             Self::Unknown => {
                 "Unknown Instruction".to_string()
             },
@@ -332,6 +335,8 @@ fn test_instructions_srli() {
         "srli x25, x7, 31");
 }    
     
+
+
 
 #[test]
 fn test_mcode_addi() {

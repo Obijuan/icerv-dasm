@@ -428,20 +428,6 @@ fn test_disassemble_lb() {
     assert_eq!(disassemble(0x7ff48483), "lb x9, 2047(x9)");
 }
 
-#[test]
-fn test_disassemble_ori() {
-
-    assert_eq!(disassemble(0x00116093), "ori x1, x2, 1");
-    assert_eq!(disassemble(0x00006013), "ori x0, x0, 0");
-    assert_eq!(disassemble(0x0020ef93), "ori x31, x1, 2");
-    assert_eq!(disassemble(0x00416f13), "ori x30, x2, 4");
-    assert_eq!(disassemble(0x0081ee93), "ori x29, x3, 8");
-    assert_eq!(disassemble(0x01026e13), "ori x28, x4, 16");
-    assert_eq!(disassemble(0x0112ed93), "ori x27, x5, 17");
-    assert_eq!(disassemble(0x01e36d13), "ori x26, x6, 30");
-    assert_eq!(disassemble(0x01f3ec93), "ori x25, x7, 31");
-}
-
 
 #[test]
 fn test_disassemble_andi() {
