@@ -121,7 +121,10 @@ impl InstructionRV {
             },
             Self::Ori { rd, rs1, imm } => {
                 format!("ori {}, {}, {}", rd.to_str(), rs1.to_str(), imm)
-            },  
+            },
+            Self::Andi { rd, rs1, imm } => {
+                format!("andi {}, {}, {}", rd.to_str(), rs1.to_str(), imm)
+            },
             Self::Unknown => {
                 "Unknown Instruction".to_string()
             },
@@ -336,6 +339,37 @@ fn test_instructions_srli() {
 }    
     
 
+#[test]
+fn test_instructions_andi() {
+    assert_eq!(
+        InstructionRV::Andi { rd: Reg::X0, rs1: Reg::X0, imm: 0 }.to_string(),
+        "andi x0, x0, 0");
+    assert_eq!(
+        InstructionRV::Andi { rd: Reg::X1, rs1: Reg::X2, imm: 1 }.to_string(),
+        "andi x1, x2, 1");
+    assert_eq!(
+        InstructionRV::Andi { rd: Reg::X31, rs1: Reg::X1, imm: 2 }.to_string(),
+        "andi x31, x1, 2");
+    assert_eq!(
+        InstructionRV::Andi { rd: Reg::X30, rs1: Reg::X2, imm: 4 }.to_string(),
+        "andi x30, x2, 4");
+    assert_eq!(
+        InstructionRV::Andi { rd: Reg::X29, rs1: Reg::X3, imm: 8 }.to_string(),
+        "andi x29, x3, 8");
+    assert_eq!(
+        InstructionRV::Andi { rd: Reg::X28, rs1: Reg::X4, imm: 16 }.to_string(),
+        "andi x28, x4, 16");
+    assert_eq!(
+        InstructionRV::Andi { rd: Reg::X27, rs1: Reg::X5, imm: 17 }.to_string(),
+        "andi x27, x5, 17");
+    assert_eq!(
+        InstructionRV::Andi { rd: Reg::X26, rs1: Reg::X6, imm: 30 }.to_string(),
+        "andi x26, x6, 30");
+    assert_eq!(
+        InstructionRV::Andi { rd: Reg::X25, rs1: Reg::X7, imm: 31 }.to_string(),
+        "andi x25, x7, 31");
+
+}
 
 
 #[test]
@@ -544,3 +578,34 @@ fn test_mcode_srli() {
 
 }
 
+#[test]
+fn test_mcode_andi() {
+    assert_eq!(
+        InstructionRV::from_mcode(0x00007013).to_string(),
+        "andi x0, x0, 0");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00117093).to_string(),
+        "andi x1, x2, 1");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0020ff93).to_string(),
+        "andi x31, x1, 2");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00417f13).to_string(),
+        "andi x30, x2, 4");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0081fe93).to_string(),
+        "andi x29, x3, 8");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01027e13).to_string(),
+        "andi x28, x4, 16");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0112fd93).to_string(),
+        "andi x27, x5, 17");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01e37d13).to_string(),
+        "andi x26, x6, 30");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01f3fc93).to_string(),
+        "andi x25, x7, 31");
+
+}
