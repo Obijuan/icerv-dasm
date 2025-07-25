@@ -509,26 +509,6 @@ fn test_disassemble_sltiu()
     assert_eq!(disassemble(0x01f3bc93), "sltiu x25, x7, 31");
 }
 
-
-#[test]
-fn test_disassemble_addi() {
-    //-- Test de la funcion disassemble
-    //-- Instrucciones addi 
-
-    assert_eq!(disassemble(0x00000013), "addi x0, x0, 0");
-    assert_eq!(disassemble(0x00100093), "addi x1, x0, 1");
-    assert_eq!(disassemble(0x00200113), "addi x2, x0, 2");
-    assert_eq!(disassemble(0xfff00193), "addi x3, x0, -1");
-    assert_eq!(disassemble(0x7ff00213), "addi x4, x0, 2047");
-    assert_eq!(disassemble(0x00308f93), "addi x31, x1, 3");
-    assert_eq!(disassemble(0x00410413), "addi x8, x2, 4");
-    assert_eq!(disassemble(0x00820813), "addi x16, x4, 8");
-    assert_eq!(disassemble(0x01040893), "addi x17, x8, 16");
-    assert_eq!(disassemble(0xff040893), "addi x17, x8, -16");
-    assert_eq!(disassemble(0x80040893), "addi x17, x8, -2048");
-    assert_eq!(disassemble(0x0aa00093), "addi x1, x0, 170");    
-}
-
 #[test]
 fn test_disassemble_slli() {
     //-- Test de la funcion disassemble

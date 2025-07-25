@@ -607,25 +607,31 @@ fn main1() {
 //────────────────────────────────────────────────
 fn main() {
 
-    //-- Test machine code
-    let mcode: MCode = MCode::new(0x00100093);
-    println!("Machine Code: {:#010X}", mcode.value);
-    println!("  opcode: {:#04X}", mcode.opcode() as u32);
-
     //-- Test
-    println!("\n------ TESTING.....");
+    println!("\n------ TESTING 1.....");
 
-    let inst1: InstructionRV = InstructionRV::Addi{
+    let inst: InstructionRV = InstructionRV::Addi{
       rd: Reg::X1, 
       rs1: Reg::X0, 
       imm: 1
     };
+    println!("🟢 {}", inst.to_string());
 
-    println!("Inst1: {}", inst1.to_string());
+    let inst: InstructionRV = InstructionRV::Slli{
+      rd: Reg::X1, 
+      rs1: Reg::X2, 
+      imm: 1
+    };
+    println!("🟢 {}", inst.to_string());
 
-    let inst2: InstructionRV = InstructionRV::from_mcode(0x00100093);
-    println!("Inst2: {}", inst2.to_string());
+    println!("\n------ TESTING 2.....");
+    let mcode: u32 = 0x00100093;
+    let inst: InstructionRV = InstructionRV::from_mcode(mcode);
+    println!("🟢 [{:#010X}]: {}", mcode as u32, inst.to_string());
 
+    let mcode: u32 = 0x00111093;
+    let inst: InstructionRV = InstructionRV::from_mcode(mcode);
+    println!("🟢 [{:#010X}]: {}", mcode as u32, inst.to_string());
 
     //-- old...
     println!("\n\n--- Main1");
