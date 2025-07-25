@@ -113,6 +113,9 @@ impl InstructionRV {
             Self::Sltiu {rd, rs1, imm} => {
                 format!("sltiu {}, {}, {}", rd.to_str(), rs1.to_str(), imm)
             },
+            Self::Xori {rd, rs1, imm} => {
+                format!("xori {}, {}, {}", rd.to_str(), rs1.to_str(), imm)
+            },
             Self::Unknown => {
                 "Unknown Instruction".to_string()
             },
@@ -231,8 +234,7 @@ fn test_instructions_slti() {
 }
 
 #[test]
-fn test_instructions_sltiu()
-{
+fn test_instructions_sltiu() {
     assert_eq!(
         InstructionRV::Sltiu { rd: Reg::X0, rs1: Reg::X0, imm: 0 }.to_string(),
         "sltiu x0, x0, 0");
@@ -261,6 +263,38 @@ fn test_instructions_sltiu()
         InstructionRV::Sltiu { rd: Reg::X25, rs1: Reg::X7, imm: 31 }.to_string(),
         "sltiu x25, x7, 31");
     
+}
+
+#[test]
+fn test_instructions_xori() {
+    assert_eq!(
+        InstructionRV::Xori { rd: Reg::X0, rs1: Reg::X0, imm: 0 }.to_string(),
+        "xori x0, x0, 0");
+    assert_eq!(
+        InstructionRV::Xori { rd: Reg::X1, rs1: Reg::X2, imm: 1 }.to_string(),
+        "xori x1, x2, 1");
+    assert_eq!(
+        InstructionRV::Xori { rd: Reg::X31, rs1: Reg::X1, imm: 2 }.to_string(),
+        "xori x31, x1, 2"); 
+    assert_eq!(
+        InstructionRV::Xori { rd: Reg::X30, rs1: Reg::X2, imm: 4 }.to_string(),
+        "xori x30, x2, 4");
+    assert_eq!(
+        InstructionRV::Xori { rd: Reg::X29, rs1: Reg::X3, imm: 8 }.to_string(),
+        "xori x29, x3, 8");
+    assert_eq!(
+        InstructionRV::Xori { rd: Reg::X28, rs1: Reg::X4, imm: 16 }.to_string(),
+        "xori x28, x4, 16");        
+    assert_eq!(
+        InstructionRV::Xori { rd: Reg::X27, rs1: Reg::X5, imm: 17 }.to_string(),
+        "xori x27, x5, 17");
+    assert_eq!(
+        InstructionRV::Xori { rd: Reg::X26, rs1: Reg::X6, imm: 30 }.to_string(),
+        "xori x26, x6, 30");
+    assert_eq!(
+        InstructionRV::Xori { rd: Reg::X25, rs1: Reg::X7, imm: 31 }.to_string(),
+        "xori x25, x7, 31");
+
 }
 
 
@@ -401,6 +435,40 @@ fn test_mcode_sltiu() {
     assert_eq!(
         InstructionRV::from_mcode(0x01f3bc93).to_string(),
         "sltiu x25, x7, 31");
+
+}
+
+
+#[test]
+fn test_mcode_xori() {
+
+    assert_eq!(
+        InstructionRV::from_mcode(0x00004013).to_string(),
+        "xori x0, x0, 0");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00114093).to_string(),
+        "xori x1, x2, 1");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0020cf93).to_string(),
+        "xori x31, x1, 2");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00414f13).to_string(),
+        "xori x30, x2, 4");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0081ce93).to_string(),
+        "xori x29, x3, 8");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01024e13).to_string(),
+        "xori x28, x4, 16");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0112cd93).to_string(),
+        "xori x27, x5, 17");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01e34d13).to_string(),
+        "xori x26, x6, 30");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01f3cc93).to_string(),
+        "xori x25, x7, 31");
 
 }
 

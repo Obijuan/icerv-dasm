@@ -457,19 +457,6 @@ fn test_disassemble_andi() {
 }
 
 #[test]
-fn test_disassemble_xori() {
-    assert_eq!(disassemble(0x00114093), "xori x1, x2, 1");
-    assert_eq!(disassemble(0x00004013), "xori x0, x0, 0");
-    assert_eq!(disassemble(0x0020cf93), "xori x31, x1, 2");
-    assert_eq!(disassemble(0x00414f13), "xori x30, x2, 4");
-    assert_eq!(disassemble(0x0081ce93), "xori x29, x3, 8");
-    assert_eq!(disassemble(0x01024e13), "xori x28, x4, 16");
-    assert_eq!(disassemble(0x0112cd93), "xori x27, x5, 17");
-    assert_eq!(disassemble(0x01e34d13), "xori x26, x6, 30");
-    assert_eq!(disassemble(0x01f3cc93), "xori x25, x7, 31");
-}
-
-#[test]
 fn test_disassemble_srli() {
     assert_eq!(disassemble(0x00115093), "srli x1, x2, 1"); 
     assert_eq!(disassemble(0x00005013), "srli x0, x0, 0");

@@ -519,11 +519,11 @@ fn disassemble(inst: u32) -> String {
 fn main1() {
    //-- Instrucciones RISC-V a desensamblar
     let insts = [
-        0x00100093, // addi x1, x0, 1
-        0x00111093, // slli x1, x2, 1
-        0x00112093, // slti x1, x2, 1
-        0x00113093, // sltiu x1, x2, 1
-        0x00114093, // xori x1, x2, 1
+        0x00100093, // 🟢addi x1, x0, 1
+        0x00111093, // 🟢slli x1, x2, 1
+        0x00112093, // 🟢slti x1, x2, 1
+        0x00113093, // 🟢sltiu x1, x2, 1
+        0x00114093, // 🟢xori x1, x2, 1
         0x00115093, // srli x1, x2, 1 
         0x00116093, // ori x1, x2, 1
         0x00117093, // andi x1, x2, 1
@@ -602,46 +602,48 @@ fn main1() {
     }
 }
 
+fn main_test1() {
+
+    println!("\n------ TESTING 1.....");
+    let inst = [
+        InstructionRV::Addi{rd: Reg::X1, rs1: Reg::X0, imm: 1},
+        InstructionRV::Slli{rd: Reg::X1, rs1: Reg::X2, imm: 1},
+        InstructionRV::Slti{rd: Reg::X1, rs1: Reg::X2, imm: 1}, 
+        InstructionRV::Sltiu{rd: Reg::X1, rs1: Reg::X2, imm: 1},
+        InstructionRV::Xori{rd: Reg::X1, rs1: Reg::X2, imm: 1},
+    ];
+
+    for i in 0..inst.len() {
+        //-- Imprimir la instrucción
+        println!("🟢 {}", inst[i].to_string());
+    }
+
+}
+
+fn main_test2() {
+    println!("\n------ TESTING 2.....");
+    let mcode = [
+        0x00100093, //-- addi x1, x0, 1
+        0x00111093, //-- slli x1, x2, 1
+        0x00112093, //-- slti x1, x2, 1
+        0x00113093, //-- sltiu x1, x2, 1
+        0x00114093, //-- xori x1, x2, 1
+    ];
+
+    for i in 0..mcode.len() {
+        let inst: InstructionRV = InstructionRV::from_mcode(mcode[i]);
+        println!("🟢 [{:#010X}]: {}", mcode[i] as u32, inst.to_string());
+    }
+}
+
+
 //────────────────────────────────────────────────
 //  PROGRAMA PRINCIPAL
 //────────────────────────────────────────────────
 fn main() {
 
-    //-- Test
-    println!("\n------ TESTING 1.....");
-    let inst: InstructionRV = InstructionRV::Addi{
-      rd: Reg::X1, 
-      rs1: Reg::X0, 
-      imm: 1
-    };
-    println!("🟢 {}", inst.to_string());
-
-    let inst: InstructionRV = InstructionRV::Slli{
-      rd: Reg::X1, 
-      rs1: Reg::X2, 
-      imm: 1
-    };
-    println!("🟢 {}", inst.to_string());
-
-    let inst: InstructionRV = InstructionRV::Slti{
-      rd: Reg::X1, 
-      rs1: Reg::X2, 
-      imm: 1
-    };
-    println!("🟢 {}", inst.to_string());
-
-    println!("\n------ TESTING 2.....");
-    let mcode: u32 = 0x00100093;
-    let inst: InstructionRV = InstructionRV::from_mcode(mcode);
-    println!("🟢 [{:#010X}]: {}", mcode as u32, inst.to_string());
-
-    let mcode: u32 = 0x00111093;
-    let inst: InstructionRV = InstructionRV::from_mcode(mcode);
-    println!("🟢 [{:#010X}]: {}", mcode as u32, inst.to_string());
-
-    let mcode: u32 = 0x00112093;
-    let inst: InstructionRV = InstructionRV::from_mcode(mcode);
-    println!("🟢 [{:#010X}]: {}", mcode as u32, inst.to_string());
+    main_test1();
+    main_test2();    
 
     //-- old...
     println!("\n\n--- Main1");
