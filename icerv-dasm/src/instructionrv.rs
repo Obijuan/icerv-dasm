@@ -27,7 +27,7 @@ pub enum InstructionRV {
     //  Instrucciones tipo I: LOAD
     //──────────────────────────────────
     Lb {rd: Reg, offs: i32, rs1: Reg},
-    // lb x0, 0(x1)
+    Lh {rd: Reg, offs: i32, rs1: Reg},
 
     Unknown, //-- Instrucción desconocida
 }
@@ -117,6 +117,12 @@ impl InstructionRV {
                             offs: mcode.imm12(), 
                             rs1: mcode.rs1() 
                         },
+                    0b_001 => 
+                        Self::Lh {
+                            rd: mcode.rd(), 
+                            offs: mcode.imm12(), 
+                            rs1: mcode.rs1() 
+                        },
                     _ => Self::Unknown,
                 }
             },
@@ -163,6 +169,9 @@ impl InstructionRV {
             },
             Self::Lb { rd, offs, rs1, } => {
                 format!("lb {}, {}({})", rd.to_str(), offs, rs1.to_str())
+            },
+            Self::Lh { rd, offs, rs1, } => {
+                format!("lh {}, {}({})", rd.to_str(), offs, rs1.to_str())
             },
             Self::Unknown => {
                 "Unknown Instruction".to_string()
@@ -471,6 +480,38 @@ fn test_instruction_lb() {
         InstructionRV::Lb { rd: Reg::X9, offs: 2047, rs1: Reg::X9 }.to_string(),
          "lb x9, 2047(x9)");
 
+}
+
+
+#[test]
+fn test_instruction_lh() {
+    assert_eq!(
+        InstructionRV::Lh{ rd: Reg::X0, offs: 0, rs1: Reg::X1}.to_string(), 
+        "lh x0, 0(x1)");
+    assert_eq!(
+        InstructionRV::Lh{ rd: Reg::X1, offs: 1, rs1: Reg::X2}.to_string(), 
+        "lh x1, 1(x2)");
+    assert_eq!(
+        InstructionRV::Lh{ rd: Reg::X2, offs: 2, rs1: Reg::X3}.to_string(), 
+        "lh x2, 2(x3)");
+    assert_eq!(
+        InstructionRV::Lh{ rd: Reg::X4, offs: 4, rs1: Reg::X4}.to_string(), 
+        "lh x4, 4(x4)");
+    assert_eq!(
+        InstructionRV::Lh{ rd: Reg::X5, offs: 8, rs1: Reg::X5}.to_string(), 
+        "lh x5, 8(x5)");
+    assert_eq!(
+        InstructionRV::Lh{ rd: Reg::X6, offs: -1, rs1: Reg::X6}.to_string(), 
+        "lh x6, -1(x6)");
+    assert_eq!(
+        InstructionRV::Lh{ rd: Reg::X7, offs: -2048, rs1: Reg::X7}.to_string(), 
+        "lh x7, -2048(x7)");
+    assert_eq!(
+        InstructionRV::Lh{ rd: Reg::X8, offs: -2, rs1: Reg::X8}.to_string(), 
+        "lh x8, -2(x8)");
+    assert_eq!(
+        InstructionRV::Lh{ rd: Reg::X9, offs: 2047, rs1: Reg::X9}.to_string(), 
+        "lh x9, 2047(x9)"); 
 }
 
 

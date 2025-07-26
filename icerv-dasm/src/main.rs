@@ -477,7 +477,7 @@ fn main1() {
         0x00116093, // 🟢ori x1, x2, 1
         0x00117093, // 🟢andi x1, x2, 1
         0x40115093, // 🟢srai x1, x2, 1
-        0x00008003, // lb x0, 0(x1)
+        0x00008003, // 🟢lb x0, 0(x1)
         0x0000c003, // lbu x0, 0(x1)
         0x00009003, // lh x0, 0(x1)
         0x0000a003, // lw x0, 0(x1)
@@ -565,9 +565,12 @@ fn main_test1() {
         InstructionRV::Andi{rd: Reg::X1, rs1: Reg::X2, imm: 1},
         InstructionRV::Srai{rd: Reg::X1, rs1: Reg::X2, imm: 1},
         InstructionRV::Lb { rd: Reg::X0, offs: 0, rs1: Reg::X1 },
+        InstructionRV::Lh { rd: Reg::X0, offs: 0, rs1: Reg::X1 },
     ];
 
-    //0x00008003, // lb x0, 0(x1)
+    
+    //0x00009003, // lh x0, 0(x1)
+
 
     for i in 0..inst.len() {
         //-- Imprimir la instrucción
@@ -588,10 +591,13 @@ fn main_test2() {
         0x00116093, //-- ori x1, x2, 1
         0x00117093, //-- andi x1, x2, 1
         0x40115093, //-- srai x1, x2, 1
-        0x00008003, // lb x0, 0(x1)
+        0x00008003, //-- lb x0, 0(x1)
+        0x0000c003, //-- lbu x0, 0(x1)
+        0x00009003, //-- lh x0, 0(x1)
     ];
 
-    //0x00008003, // lb x0, 0(x1)
+    //0x00009003, // lh x0, 0(x1)
+
 
     for i in 0..mcode.len() {
         let inst: InstructionRV = InstructionRV::from_mcode(mcode[i]);
