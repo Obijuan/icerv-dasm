@@ -23,6 +23,12 @@ pub enum InstructionRV {
     Ori {rd: Reg, rs1: Reg, imm: i32},   //-- ori rd, rs1, imm12
     Andi {rd: Reg, rs1: Reg, imm: i32},  //-- andi rd, rs1, imm12
 
+    //──────────────────────────────────
+    //  Instrucciones tipo I: LOAD
+    //──────────────────────────────────
+    Lb {rd: Reg, offs: i32, rs1: Reg},
+    // lb x0, 0(x1)
+
     Unknown, //-- Instrucción desconocida
 }
 
@@ -31,11 +37,11 @@ impl InstructionRV {
     pub fn from_mcode(mcode: u32) -> Self {
 
         let mcode = mcode::MCode::new(mcode);
+        let func3 = mcode.func3();
 
         match mcode.opcode() {
             OpcodeRV::TipoIArith => {
 
-                let func3 = mcode.func3();
                 let imm = mcode.imm12();
                 //-- Caso especial: srli y srai tienen el mismo codigo func3
                 //-- Se diferenencias por el bit 30 del opcode (bit 10 del valor imm)
@@ -103,10 +109,28 @@ impl InstructionRV {
                     }
                 }
             },
+            OpcodeRV::TipoILoad => {
+                match func3 {
+                    0b_000 => 
+                        Self::Lb { 
+                            rd: mcode.rd(), 
+                            offs: mcode.imm12(), 
+                            rs1: mcode.rs1() 
+                        },
+                    _ => Self::Unknown,
+                }
+            },
             _ => Self::Unknown,
         }    
     }
 
+    //   "lh",    //-- 001
+    //   "lw",    //-- 010
+    //   "ld",    //-- 011
+    //   "lbu",   //-- 100
+    //   "lhu",   //-- 101
+    //   "lwu",   //-- 110
+    //   "xxx",   //-- 111
 
     pub fn to_string(&self) -> String {
         match self {
@@ -136,6 +160,9 @@ impl InstructionRV {
             },
             Self::Srai {rd, rs1, imm} => {
                 format!("srai {}, {}, {}", rd.to_str(), rs1.to_str(), imm)
+            },
+            Self::Lb { rd, offs, rs1, } => {
+                format!("lb {}, {}({})", rd.to_str(), offs, rs1.to_str())
             },
             Self::Unknown => {
                 "Unknown Instruction".to_string()
@@ -415,6 +442,39 @@ fn test_instructions_srai() {
 
 
 #[test]
+fn test_instruction_lb() {
+    assert_eq!(
+        InstructionRV::Lb { rd: Reg::X0, offs: 0, rs1: Reg::X1 }.to_string(),
+        "lb x0, 0(x1)");
+    assert_eq!(
+        InstructionRV::Lb { rd: Reg::X1, offs: 1, rs1: Reg::X2 }.to_string(),
+         "lb x1, 1(x2)");
+    assert_eq!(
+        InstructionRV::Lb { rd: Reg::X2, offs: 2, rs1: Reg::X3 }.to_string(),
+         "lb x2, 2(x3)");
+    assert_eq!(
+        InstructionRV::Lb { rd: Reg::X4, offs: 4, rs1: Reg::X4 }.to_string(),
+         "lb x4, 4(x4)");
+    assert_eq!(
+        InstructionRV::Lb { rd: Reg::X5, offs: 8, rs1: Reg::X5 }.to_string(),
+         "lb x5, 8(x5)");
+    assert_eq!(
+        InstructionRV::Lb { rd: Reg::X6, offs: -1, rs1: Reg::X6 }.to_string(),
+         "lb x6, -1(x6)");
+    assert_eq!(
+        InstructionRV::Lb { rd: Reg::X7, offs: -2048, rs1: Reg::X7 }.to_string(),
+         "lb x7, -2048(x7)");
+    assert_eq!(
+        InstructionRV::Lb { rd: Reg::X8, offs: -2, rs1: Reg::X8 }.to_string(),
+         "lb x8, -2(x8)");
+    assert_eq!(
+        InstructionRV::Lb { rd: Reg::X9, offs: 2047, rs1: Reg::X9 }.to_string(),
+         "lb x9, 2047(x9)");
+
+}
+
+
+#[test]
 fn test_mcode_addi() {
     //────────────────────────────────────────────────
     //  Test de la instrucción ADDI
@@ -684,4 +744,35 @@ fn test_mcode_srai() {
    
 }
 
+
+#[test]
+fn test_disassemble_lb() {
+    assert_eq!(
+        InstructionRV::from_mcode(0x00008003).to_string(),
+        "lb x0, 0(x1)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00110083).to_string(),
+        "lb x1, 1(x2)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00218103).to_string(), 
+        "lb x2, 2(x3)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00420203).to_string(),
+        "lb x4, 4(x4)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00828283).to_string(), 
+        "lb x5, 8(x5)");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfff30303).to_string(), 
+        "lb x6, -1(x6)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x80038383).to_string(),
+        "lb x7, -2048(x7)");
+    assert_eq!(
+        InstructionRV::from_mcode(0xffe40403).to_string(),
+        "lb x8, -2(x8)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x7ff48483).to_string(), 
+        "lb x9, 2047(x9)");
+}
 

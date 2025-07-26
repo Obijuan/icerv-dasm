@@ -402,16 +402,3 @@ fn test_disassemble_lbu() {
     assert_eq!(disassemble(0x7ff4c483), "lbu x9, 2047(x9)");
 }
 
-#[test]
-fn test_disassemble_lb() {
-    assert_eq!(disassemble(0x00008003), "lb x0, 0(x1)");
-    assert_eq!(disassemble(0x00110083), "lb x1, 1(x2)");
-    assert_eq!(disassemble(0x00218103), "lb x2, 2(x3)");
-    assert_eq!(disassemble(0x00420203), "lb x4, 4(x4)");
-    assert_eq!(disassemble(0x00828283), "lb x5, 8(x5)");
-    assert_eq!(disassemble(0xfff30303), "lb x6, -1(x6)");
-    assert_eq!(disassemble(0x80038383), "lb x7, -2048(x7)");
-    assert_eq!(disassemble(0xffe40403), "lb x8, -2(x8)");
-    assert_eq!(disassemble(0x7ff48483), "lb x9, 2047(x9)");
-}
-
