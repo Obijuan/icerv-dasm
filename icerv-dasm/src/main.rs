@@ -55,7 +55,6 @@ const OFFSET1_POS: u8 = 20;
 //────────────────────────────────────────────────
 //  POSICIONES Bits aislados
 //────────────────────────────────────────────────
-const BIT10: u32 = 1 << 10;
 const BIT5: u32 = 1 << 5;
 //────────────────────────────────────────────────
 //  CALCULAR LAS MASCARAS DE ACCESO A LOS CAMPOS
@@ -266,45 +265,6 @@ fn sign_ext21(value: i32) -> i32 {
 }
 
 
-
-fn inst_type_i_arith(func3: u32, imm: i32) -> String {
-//────────────────────────────────────────────────
-//  Obtener el nombre de la instruccion aritmetica
-//  de tipo i cuyo codigo func3 es el dado
-//  ENTRADA: Codigo func3
-//  SALIDA: nemonico
-//────────────────────────────────────────────────
-
-    //-- Tabla de las instrucciones aritméticas
-    //-- y lógicas con valores inmediatos
-    let name = 
-    [          //-- Func3
-      "addi",  //-- 000
-      "slli",  //-- 001
-      "slti",  //-- 010
-      "sltiu", //-- 011
-      "xori",  //-- 100
-      "srli",  //-- 101  srli, srai (Bit 30 a 1)
-      "ori",   //-- 110
-      "andi",  //-- 111
-    ];
-
-    //-- Caso especial: srli y srai tienen el mismo codigo func3
-    //-- Se diferenencias por el bit 30 del opcode (bit 10 del valor imm)
-    let bit_srali:u32 = imm as u32 >> 10; 
-
-    //-- Caso especial
-    if (bit_srali==1) && (func3==0b101) {
-      "srai".to_string()
-
-    //-- Caso general
-    } else {
-      //-- Devolver la cadena a partir del código
-      name[func3 as usize].to_string()
-    }
-
-}
-
 fn inst_type_i_load(func3: u32) -> String {
 //────────────────────────────────────────────────
 //  Obtener el nombre de la instruccion load
@@ -439,19 +399,8 @@ fn disassemble(inst: u32) -> String {
   
   match opcode {
     OpcodeRV::TipoIArith => {
-      //-- Nombre de la instrucción
-      let name = inst_type_i_arith(func3, imm);
-
-      //-- Caso especial: srai
-      //-- El 10 de imm está a 1 (en caso de srai)
-      //-- Este bit hay que ponerlo a 0
-      let imm2: i32 = if (imm as u32 & BIT10==0x400) && (func3==0b101) {
-        (imm as u32 & !BIT10) as i32
-      } else {
-        imm
-      };
-
-      format!("{} x{}, x{}, {}", name, rd as u8, rs1 as u8, imm2)
+      let inst2: InstructionRV = InstructionRV::from_mcode(inst);
+      inst2.to_string()
     },
 
     OpcodeRV::TipoILoad => {
