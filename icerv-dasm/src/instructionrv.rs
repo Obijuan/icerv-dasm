@@ -28,6 +28,8 @@ pub enum InstructionRV {
     //──────────────────────────────────
     Lb {rd: Reg, offs: i32, rs1: Reg},
     Lh {rd: Reg, offs: i32, rs1: Reg},
+    Lw {rd: Reg, offs: i32, rs1: Reg},
+    
 
     Unknown, //-- Instrucción desconocida
 }
@@ -123,6 +125,12 @@ impl InstructionRV {
                             offs: mcode.imm12(), 
                             rs1: mcode.rs1() 
                         },
+                    0b_010 => 
+                        Self::Lw {
+                            rd: mcode.rd(), 
+                            offs: mcode.imm12(), 
+                            rs1: mcode.rs1() 
+                        },
                     _ => Self::Unknown,
                 }
             },
@@ -130,7 +138,6 @@ impl InstructionRV {
         }    
     }
 
-    //   "lh",    //-- 001
     //   "lw",    //-- 010
     //   "ld",    //-- 011
     //   "lbu",   //-- 100
@@ -172,6 +179,9 @@ impl InstructionRV {
             },
             Self::Lh { rd, offs, rs1, } => {
                 format!("lh {}, {}({})", rd.to_str(), offs, rs1.to_str())
+            },
+            Self::Lw { rd, offs, rs1, } => {
+                format!("lw {}, {}({})", rd.to_str(), offs, rs1.to_str())
             },
             Self::Unknown => {
                 "Unknown Instruction".to_string()
@@ -514,6 +524,19 @@ fn test_instruction_lh() {
         "lh x9, 2047(x9)"); 
 }
 
+#[test]
+fn test_instruction_lw() {
+    // assert_eq!(disassemble(0x0000a003), "lw x0, 0(x1)");
+    // assert_eq!(disassemble(0x00112083), "lw x1, 1(x2)");
+    // assert_eq!(disassemble(0x0021a103), "lw x2, 2(x3)");
+    // assert_eq!(disassemble(0x00422203), "lw x4, 4(x4)");
+    // assert_eq!(disassemble(0x0082a283), "lw x5, 8(x5)");
+    // assert_eq!(disassemble(0xfff32303), "lw x6, -1(x6)");
+    // assert_eq!(disassemble(0x8003a383), "lw x7, -2048(x7)");
+    // assert_eq!(disassemble(0xffe42403), "lw x8, -2(x8)");
+    // assert_eq!(disassemble(0x7ff4a483), "lw x9, 2047(x9)");
+}
+
 
 #[test]
 fn test_mcode_addi() {
@@ -787,7 +810,7 @@ fn test_mcode_srai() {
 
 
 #[test]
-fn test_disassemble_lb() {
+fn test_mcode_lb() {
     assert_eq!(
         InstructionRV::from_mcode(0x00008003).to_string(),
         "lb x0, 0(x1)");
@@ -815,5 +838,36 @@ fn test_disassemble_lb() {
     assert_eq!(
         InstructionRV::from_mcode(0x7ff48483).to_string(), 
         "lb x9, 2047(x9)");
+}
+
+#[test]
+fn test_mcode_lh() {
+    assert_eq!(
+        InstructionRV::from_mcode(0x00009003).to_string(), 
+        "lh x0, 0(x1)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00111083).to_string(), 
+        "lh x1, 1(x2)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00219103).to_string(), 
+        "lh x2, 2(x3)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00421203).to_string(), 
+        "lh x4, 4(x4)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00829283).to_string(), 
+        "lh x5, 8(x5)");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfff31303).to_string(), 
+        "lh x6, -1(x6)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x80039383).to_string(), 
+        "lh x7, -2048(x7)");
+    assert_eq!(
+        InstructionRV::from_mcode(0xffe41403).to_string(), 
+        "lh x8, -2(x8)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x7ff49483).to_string(), 
+        "lh x9, 2047(x9)"); 
 }
 
