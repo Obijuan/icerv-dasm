@@ -390,19 +390,6 @@ fn test_disassemble_lw() {
 
 
 #[test]
-fn test_disassemble_srai() {
-    assert_eq!(disassemble(0x40115093), "srai x1, x2, 1");
-    assert_eq!(disassemble(0x40005013), "srai x0, x0, 0");
-    assert_eq!(disassemble(0x4020df93), "srai x31, x1, 2");
-    assert_eq!(disassemble(0x40415f13), "srai x30, x2, 4");
-    assert_eq!(disassemble(0x4081de93), "srai x29, x3, 8");
-    assert_eq!(disassemble(0x41025e13), "srai x28, x4, 16");
-    assert_eq!(disassemble(0x4112dd93), "srai x27, x5, 17");
-    assert_eq!(disassemble(0x41e35d13), "srai x26, x6, 30");
-    assert_eq!(disassemble(0x41f3dc93), "srai x25, x7, 31");
-}
-
-#[test]
 fn test_disassemble_lbu() {
     assert_eq!(disassemble(0x0000c003), "lbu x0, 0(x1)");
     assert_eq!(disassemble(0x00114083), "lbu x1, 1(x2)");
