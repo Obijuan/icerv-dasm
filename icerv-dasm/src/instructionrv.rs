@@ -29,6 +29,7 @@ pub enum InstructionRV {
     Lb {rd: Reg, offs: i32, rs1: Reg},
     Lh {rd: Reg, offs: i32, rs1: Reg},
     Lw {rd: Reg, offs: i32, rs1: Reg},
+    Ld {rd: Reg, offs: i32, rs1: Reg},
     
 
     Unknown, //-- Instrucción desconocida
@@ -131,6 +132,12 @@ impl InstructionRV {
                             offs: mcode.imm12(), 
                             rs1: mcode.rs1() 
                         },
+                    0b_011 => 
+                        Self::Ld {
+                            rd: mcode.rd(), 
+                            offs: mcode.imm12(), 
+                            rs1: mcode.rs1() 
+                        },
                     _ => Self::Unknown,
                 }
             },
@@ -138,7 +145,6 @@ impl InstructionRV {
         }    
     }
 
-    //   "lw",    //-- 010
     //   "ld",    //-- 011
     //   "lbu",   //-- 100
     //   "lhu",   //-- 101
@@ -182,6 +188,9 @@ impl InstructionRV {
             },
             Self::Lw { rd, offs, rs1, } => {
                 format!("lw {}, {}({})", rd.to_str(), offs, rs1.to_str())
+            },
+            Self::Ld { rd, offs, rs1, } => {
+                format!("ld {}, {}({})", rd.to_str(), offs, rs1.to_str())
             },
             Self::Unknown => {
                 "Unknown Instruction".to_string()
@@ -555,6 +564,37 @@ fn test_instruction_lw() {
         "lw x9, 2047(x9)");
 }
 
+#[test]
+fn test_instruction_ld() {
+    assert_eq!(
+        InstructionRV::Ld{rd: Reg::X0, offs: 0, rs1: Reg::X1}.to_string(), 
+        "ld x0, 0(x1)");
+    assert_eq!(
+        InstructionRV::Ld{rd: Reg::X1, offs: 1, rs1: Reg::X2}.to_string(), 
+        "ld x1, 1(x2)");
+    assert_eq!(
+        InstructionRV::Ld{rd: Reg::X2, offs: 2, rs1: Reg::X3}.to_string(), 
+        "ld x2, 2(x3)");
+    assert_eq!(
+        InstructionRV::Ld{rd: Reg::X4, offs: 4, rs1: Reg::X4}.to_string(), 
+        "ld x4, 4(x4)");
+    assert_eq!(
+        InstructionRV::Ld{rd: Reg::X5, offs: 8, rs1: Reg::X5}.to_string(), 
+        "ld x5, 8(x5)");
+    assert_eq!(
+        InstructionRV::Ld{rd: Reg::X6, offs: -1, rs1: Reg::X6}.to_string(), 
+        "ld x6, -1(x6)");
+    assert_eq!(
+        InstructionRV::Ld{rd: Reg::X7, offs: -2048, rs1: Reg::X7}.to_string(), 
+        "ld x7, -2048(x7)");
+    assert_eq!(
+        InstructionRV::Ld{rd: Reg::X8, offs: -2, rs1: Reg::X8}.to_string(), 
+        "ld x8, -2(x8)");
+    assert_eq!(
+        InstructionRV::Ld{rd: Reg::X9, offs: 2047, rs1: Reg::X9}.to_string(), 
+        "ld x9, 2047(x9)");
+}
+
 
 #[test]
 fn test_mcode_addi() {
@@ -918,4 +958,35 @@ fn test_mcode_lw() {
     assert_eq!(
         InstructionRV::from_mcode(0x7ff4a483).to_string(), 
         "lw x9, 2047(x9)");
+}
+
+#[test]
+fn test_mcode_ld() {
+    assert_eq!(
+        InstructionRV::from_mcode(0x0000b003).to_string(), 
+        "ld x0, 0(x1)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00113083).to_string(), 
+        "ld x1, 1(x2)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0021b103).to_string(), 
+        "ld x2, 2(x3)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00423203).to_string(), 
+        "ld x4, 4(x4)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0082b283).to_string(), 
+        "ld x5, 8(x5)");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfff33303).to_string(), 
+        "ld x6, -1(x6)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x8003b383).to_string(), 
+        "ld x7, -2048(x7)");
+    assert_eq!(
+        InstructionRV::from_mcode(0xffe43403).to_string(), 
+        "ld x8, -2(x8)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x7ff4b483).to_string(), 
+        "ld x9, 2047(x9)");
 }

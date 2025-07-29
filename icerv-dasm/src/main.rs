@@ -480,7 +480,7 @@ fn main1() {
         0x00008003, // 🟢lb x0, 0(x1)
         0x00009003, // 🟢lh x0, 0(x1)
         0x0000a003, // 🟢lw x0, 0(x1)
-        0x0000b003, // ld x0, 0(x1)
+        0x0000b003, // 🟢ld x0, 0(x1)
         0x0000c003, // lbu x0, 0(x1)
         0x0000d003, // lhu x0, 0(x1)
         0x0000e003, // lwu x0, 0(x1)
@@ -567,10 +567,11 @@ fn main_test1() {
         InstructionRV::Lb { rd: Reg::X0, offs: 0, rs1: Reg::X1 },
         InstructionRV::Lh { rd: Reg::X0, offs: 0, rs1: Reg::X1 },
         InstructionRV::Lw { rd: Reg::X0, offs: 0, rs1: Reg::X1 },
+        InstructionRV::Ld { rd: Reg::X0, offs: 0, rs1: Reg::X1 },
     ];
 
     
-    //0x0000a003, // lw x0, 0(x1)
+    //0x0000b003, // ld x0, 0(x1)
 
 
     for i in 0..inst.len() {
@@ -595,10 +596,12 @@ fn main_test2() {
         0x00008003, //-- lb x0, 0(x1)
         0x00009003, //-- lh x0, 0(x1)
         0x0000a003, //-- lw x0, 0(x1)
+        0x0000b003, //-- ld x0, 0(x1)
         0x0000c003, //-- lbu x0, 0(x1)
+        
     ];
 
-    //0x0000a003, // lw x0, 0(x1)
+    //0x0000b003, // ld x0, 0(x1)
 
 
     for i in 0..mcode.len() {
