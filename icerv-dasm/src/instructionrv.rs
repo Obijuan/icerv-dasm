@@ -526,15 +526,33 @@ fn test_instruction_lh() {
 
 #[test]
 fn test_instruction_lw() {
-    // assert_eq!(disassemble(0x0000a003), "lw x0, 0(x1)");
-    // assert_eq!(disassemble(0x00112083), "lw x1, 1(x2)");
-    // assert_eq!(disassemble(0x0021a103), "lw x2, 2(x3)");
-    // assert_eq!(disassemble(0x00422203), "lw x4, 4(x4)");
-    // assert_eq!(disassemble(0x0082a283), "lw x5, 8(x5)");
-    // assert_eq!(disassemble(0xfff32303), "lw x6, -1(x6)");
-    // assert_eq!(disassemble(0x8003a383), "lw x7, -2048(x7)");
-    // assert_eq!(disassemble(0xffe42403), "lw x8, -2(x8)");
-    // assert_eq!(disassemble(0x7ff4a483), "lw x9, 2047(x9)");
+    assert_eq!(
+        InstructionRV::Lw{ rd: Reg::X0, offs: 0, rs1: Reg::X1}.to_string(), 
+        "lw x0, 0(x1)");
+    assert_eq!(
+        InstructionRV::Lw{ rd: Reg::X1, offs: 1, rs1: Reg::X2}.to_string(), 
+        "lw x1, 1(x2)");
+    assert_eq!(
+        InstructionRV::Lw{ rd: Reg::X2, offs: 2, rs1: Reg::X3}.to_string(), 
+        "lw x2, 2(x3)");
+    assert_eq!(
+        InstructionRV::Lw{ rd: Reg::X4, offs: 4, rs1: Reg::X4}.to_string(), 
+        "lw x4, 4(x4)");
+    assert_eq!(
+        InstructionRV::Lw{ rd: Reg::X5, offs: 8, rs1: Reg::X5}.to_string(), 
+        "lw x5, 8(x5)");
+    assert_eq!(
+        InstructionRV::Lw{ rd: Reg::X6, offs: -1, rs1: Reg::X6}.to_string(), 
+        "lw x6, -1(x6)");
+    assert_eq!(
+        InstructionRV::Lw{ rd: Reg::X7, offs: -2048, rs1: Reg::X7}.to_string(), 
+        "lw x7, -2048(x7)");
+    assert_eq!(
+        InstructionRV::Lw{ rd: Reg::X8, offs: -2, rs1: Reg::X8}.to_string(), 
+        "lw x8, -2(x8)");
+    assert_eq!(
+        InstructionRV::Lw{ rd: Reg::X9, offs: 2047, rs1: Reg::X9}.to_string(), 
+        "lw x9, 2047(x9)");
 }
 
 
@@ -871,3 +889,33 @@ fn test_mcode_lh() {
         "lh x9, 2047(x9)"); 
 }
 
+#[test]
+fn test_mcode_lw() {
+    assert_eq!(
+        InstructionRV::from_mcode(0x0000a003).to_string(), 
+        "lw x0, 0(x1)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00112083).to_string(), 
+        "lw x1, 1(x2)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0021a103).to_string(), 
+        "lw x2, 2(x3)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00422203).to_string(), 
+        "lw x4, 4(x4)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0082a283).to_string(), 
+        "lw x5, 8(x5)");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfff32303).to_string(), 
+        "lw x6, -1(x6)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x8003a383).to_string(), 
+        "lw x7, -2048(x7)");
+    assert_eq!(
+        InstructionRV::from_mcode(0xffe42403).to_string(), 
+        "lw x8, -2(x8)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x7ff4a483).to_string(), 
+        "lw x9, 2047(x9)");
+}
