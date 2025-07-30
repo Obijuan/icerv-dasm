@@ -1281,15 +1281,37 @@ fn test_mcode_lwu() {
 
 #[test]
 fn test_mcode_add() {
-      //assert_eq!(disassemble(0x00208033), "add x0, x1, x2");
-      //assert_eq!(disassemble(0x005201b3), "add x3, x4, x5");
-      //assert_eq!(disassemble(0x00838333), "add x6, x7, x8");
-      //assert_eq!(disassemble(0x00b504b3), "add x9, x10, x11");
-      //assert_eq!(disassemble(0x00e60633), "add x12, x12, x14");
-      //assert_eq!(disassemble(0x011807b3), "add x15, x16, x17");
-      //assert_eq!(disassemble(0x01498933), "add x18, x19, x20");
-      //assert_eq!(disassemble(0x017b0ab3), "add x21, x22, x23");
-      //assert_eq!(disassemble(0x01ac8c33), "add x24, x25, x26");
-      //assert_eq!(disassemble(0x01de0db3), "add x27, x28, x29");
-      //assert_eq!(disassemble(0x01ff8f33), "add x30, x31, x31");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00208033).to_string(), 
+        "add x0, x1, x2");
+    assert_eq!(
+        InstructionRV::from_mcode(0x005201b3).to_string(), 
+        "add x3, x4, x5");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00838333).to_string(), 
+        "add x6, x7, x8");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00b504b3).to_string(), 
+        "add x9, x10, x11");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00e60633).to_string(), 
+        "add x12, x12, x14");
+    assert_eq!(
+        InstructionRV::from_mcode(0x011807b3).to_string(), 
+        "add x15, x16, x17");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01498933).to_string(), 
+        "add x18, x19, x20");
+    assert_eq!(
+        InstructionRV::from_mcode(0x017b0ab3).to_string(), 
+        "add x21, x22, x23");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01ac8c33).to_string(), 
+        "add x24, x25, x26");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01de0db3).to_string(), 
+        "add x27, x28, x29");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01ff8f33).to_string(), 
+        "add x30, x31, x31");
 }
