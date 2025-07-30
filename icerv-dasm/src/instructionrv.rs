@@ -223,6 +223,10 @@ impl InstructionRV {
     }
 }
 
+//────────────────────────────────────────────────
+//  PRUEBAS DEL TIPO InstructionRV
+//────────────────────────────────────────────────
+
 #[test]
 fn test_instructions_addi() {
 
@@ -712,6 +716,11 @@ fn test_instruction_lwu() {
         InstructionRV::Lwu{rd: Reg::X9, offs: 2047, rs1: Reg::X9}.to_string(), 
         "lwu x9, 2047(x9)");
 }
+
+//────────────────────────────────────────────────
+//  PRUEBAS DEL CODIGO MAQUINA
+//────────────────────────────────────────────────
+
 
 #[test]
 fn test_mcode_addi() {
