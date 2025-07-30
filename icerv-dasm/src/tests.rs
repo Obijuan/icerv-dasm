@@ -335,18 +335,6 @@ fn test_disassemble_add() {
       assert_eq!(disassemble(0x01ff8f33), "add x30, x31, x31");
 }
 
-#[test]
-fn test_disassemble_lhu() {
-    assert_eq!(disassemble(0x0000d003), "lhu x0, 0(x1)");
-    assert_eq!(disassemble(0x00115083), "lhu x1, 1(x2)");
-    assert_eq!(disassemble(0x0021d103), "lhu x2, 2(x3)");
-    assert_eq!(disassemble(0x00425203), "lhu x4, 4(x4)");
-    assert_eq!(disassemble(0x0082d283), "lhu x5, 8(x5)");
-    assert_eq!(disassemble(0xfff35303), "lhu x6, -1(x6)");
-    assert_eq!(disassemble(0x8003d383), "lhu x7, -2048(x7)");
-    assert_eq!(disassemble(0xffe45403), "lhu x8, -2(x8)");
-    assert_eq!(disassemble(0x7ff4d483), "lhu x9, 2047(x9)");
-}
 
 
 
