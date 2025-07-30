@@ -26,10 +26,13 @@ pub enum InstructionRV {
     //──────────────────────────────────
     //  Instrucciones tipo I: LOAD
     //──────────────────────────────────
-    Lb {rd: Reg, offs: i32, rs1: Reg},
-    Lh {rd: Reg, offs: i32, rs1: Reg},
-    Lw {rd: Reg, offs: i32, rs1: Reg},
-    Ld {rd: Reg, offs: i32, rs1: Reg},
+    Lb {rd: Reg, offs: i32, rs1: Reg},  //-- lb rd, off(rs1)
+    Lh {rd: Reg, offs: i32, rs1: Reg},  //-- lh rd, off(rs1)
+    Lw {rd: Reg, offs: i32, rs1: Reg},  //-- lw rd, off(rs1)
+    Ld {rd: Reg, offs: i32, rs1: Reg},  //-- ld rd, off(rs1)
+    Lbu {rd: Reg, offs: i32, rs1: Reg}, //-- lbu rd, off(rs1)
+    Lhu {rd: Reg, offs: i32, rs1: Reg}, //-- lhu rd, off(rs1)
+    Lwu {rd: Reg, offs: i32, rs1: Reg}, //-- lwu rd, off(rs1)
     
 
     Unknown, //-- Instrucción desconocida
@@ -138,17 +141,30 @@ impl InstructionRV {
                             offs: mcode.imm12(), 
                             rs1: mcode.rs1() 
                         },
+                    0b_100 => 
+                        Self::Lbu {
+                            rd: mcode.rd(), 
+                            offs: mcode.imm12(), 
+                            rs1: mcode.rs1() 
+                        },
+                    0b_101 => 
+                        Self::Lhu {
+                            rd: mcode.rd(), 
+                            offs: mcode.imm12(), 
+                            rs1: mcode.rs1() 
+                        },
+                    0b_110 => 
+                        Self::Lwu {
+                            rd: mcode.rd(), 
+                            offs: mcode.imm12(), 
+                            rs1: mcode.rs1() 
+                        },
                     _ => Self::Unknown,
                 }
             },
             _ => Self::Unknown,
         }    
     }
-
-    //   "lbu",   //-- 100
-    //   "lhu",   //-- 101
-    //   "lwu",   //-- 110
-    //   "xxx",   //-- 111
 
     pub fn to_string(&self) -> String {
         match self {
@@ -190,6 +206,15 @@ impl InstructionRV {
             },
             Self::Ld { rd, offs, rs1, } => {
                 format!("ld {}, {}({})", rd.to_str(), offs, rs1.to_str())
+            },
+            Self::Lbu { rd, offs, rs1, } => {
+                format!("lbu {}, {}({})", rd.to_str(), offs, rs1.to_str())
+            },
+            Self::Lhu { rd, offs, rs1, } => {
+                format!("lhu {}, {}({})", rd.to_str(), offs, rs1.to_str())
+            },
+            Self::Lwu { rd, offs, rs1, } => {
+                format!("lwu {}, {}({})", rd.to_str(), offs, rs1.to_str())
             },
             Self::Unknown => {
                 "Unknown Instruction".to_string()
@@ -594,6 +619,36 @@ fn test_instruction_ld() {
         "ld x9, 2047(x9)");
 }
 
+#[test]
+fn test_instruction_lbu() {
+    assert_eq!(
+        InstructionRV::Lbu{rd: Reg::X0, offs: 0, rs1: Reg::X1}.to_string(), 
+        "lbu x0, 0(x1)");
+    assert_eq!(
+        InstructionRV::Lbu{rd: Reg::X1, offs: 1, rs1: Reg::X2}.to_string(), 
+        "lbu x1, 1(x2)");
+    assert_eq!(
+        InstructionRV::Lbu{rd: Reg::X2, offs: 2, rs1: Reg::X3}.to_string(), 
+        "lbu x2, 2(x3)");
+    assert_eq!(
+        InstructionRV::Lbu{rd: Reg::X4, offs: 4, rs1: Reg::X4}.to_string(), 
+        "lbu x4, 4(x4)");
+    assert_eq!(
+        InstructionRV::Lbu{rd: Reg::X5, offs: 8, rs1: Reg::X5}.to_string(), 
+        "lbu x5, 8(x5)");
+    assert_eq!(
+        InstructionRV::Lbu{rd: Reg::X6, offs: -1, rs1: Reg::X6}.to_string(), 
+        "lbu x6, -1(x6)");
+    assert_eq!(
+        InstructionRV::Lbu{rd: Reg::X7, offs: -2048, rs1: Reg::X7}.to_string(), 
+        "lbu x7, -2048(x7)");
+    assert_eq!(
+        InstructionRV::Lbu{rd: Reg::X8, offs: -2, rs1: Reg::X8}.to_string(), 
+        "lbu x8, -2(x8)");
+    assert_eq!(
+        InstructionRV::Lbu{rd: Reg::X9, offs: 2047, rs1: Reg::X9}.to_string(), 
+        "lbu x9, 2047(x9)");
+}
 
 #[test]
 fn test_mcode_addi() {
@@ -989,3 +1044,35 @@ fn test_mcode_ld() {
         InstructionRV::from_mcode(0x7ff4b483).to_string(), 
         "ld x9, 2047(x9)");
 }
+
+#[test]
+fn test_mcode_lbu() {
+    assert_eq!(
+        InstructionRV::from_mcode(0x0000c003).to_string(), 
+    "lbu x0, 0(x1)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00114083).to_string(), 
+    "lbu x1, 1(x2)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0021c103).to_string(), 
+    "lbu x2, 2(x3)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00424203).to_string(), 
+    "lbu x4, 4(x4)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0082c283).to_string(), 
+    "lbu x5, 8(x5)");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfff34303).to_string(), 
+    "lbu x6, -1(x6)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x8003c383).to_string(), 
+    "lbu x7, -2048(x7)");
+    assert_eq!(
+        InstructionRV::from_mcode(0xffe44403).to_string(), 
+    "lbu x8, -2(x8)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x7ff4c483).to_string(), 
+    "lbu x9, 2047(x9)");
+}
+

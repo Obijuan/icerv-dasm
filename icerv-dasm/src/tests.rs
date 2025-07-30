@@ -349,16 +349,4 @@ fn test_disassemble_lhu() {
 }
 
 
-#[test]
-fn test_disassemble_lbu() {
-    assert_eq!(disassemble(0x0000c003), "lbu x0, 0(x1)");
-    assert_eq!(disassemble(0x00114083), "lbu x1, 1(x2)");
-    assert_eq!(disassemble(0x0021c103), "lbu x2, 2(x3)");
-    assert_eq!(disassemble(0x00424203), "lbu x4, 4(x4)");
-    assert_eq!(disassemble(0x0082c283), "lbu x5, 8(x5)");
-    assert_eq!(disassemble(0xfff34303), "lbu x6, -1(x6)");
-    assert_eq!(disassemble(0x8003c383), "lbu x7, -2048(x7)");
-    assert_eq!(disassemble(0xffe44403), "lbu x8, -2(x8)");
-    assert_eq!(disassemble(0x7ff4c483), "lbu x9, 2047(x9)");
-}
 
