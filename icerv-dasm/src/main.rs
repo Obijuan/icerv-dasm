@@ -42,7 +42,6 @@ const FIELD_20B: u32 = 0xFFFFF; //-- Campo de 20 bits
 //────────────────────────────────────────────────
 //  POSICIONES de LOS CAMPOS
 //────────────────────────────────────────────────
-const FUNC7_POS: u8 = 25;  
 const IMM20_POS: u8 = 12; 
 const OFFSET10_POS: u8 = 21;
 const OFFSET8_POS: u8 = 12;
@@ -61,7 +60,6 @@ const BIT5: u32 = 1 << 5;
 //  Se calculan desplazando los campos de la anchura correspondiente
 //  a la posición del campo
 //──────────────────────────────────────────────
-const FUNC7_MASK: u32 = FIELD_7B << FUNC7_POS;
 const IMM20_MASK: u32 = FIELD_20B << IMM20_POS; 
 const OFFSET7_MASK: u32 = FIELD_7B << OFFSET7_POS;
 const OFFSET8_MASK: u32 = FIELD_8B << OFFSET8_POS; 
@@ -85,15 +83,6 @@ fn get_imm20(inst: u32) -> i32 {
   sign_ext20(imm20 as i32)
 }
 
-fn get_func7(inst: u32) -> u32 {
-//────────────────────────────────────────────────
-// Entrada: Instrucción RISC-V
-// Salida: Func7 de la instrucción
-//────────────────────────────────────────────────
-  //-- Aplicar la máscara para extraer el campo
-  //-- y desplazarlo a la posición 0
-  (inst & FUNC7_MASK) >> FUNC7_POS
-}
 
 fn get_offset_s(inst: u32) -> i32 {
 //────────────────────────────────────────────────
@@ -352,9 +341,10 @@ fn disassemble(inst: u32) -> String {
   let imm: i32 = mcode.imm12();
   let offset_jalr: i32 = mcode.imm12();
 
-  let func7: u32 = get_func7(inst);
+  let func7: u32 = mcode.func7();
   let rs2 = mcode.rs2();
   let offset:i32 = get_offset_s(inst);
+
   let imm20: i32 = get_imm20(inst);
   let offset_b: i32 = get_offset_b(inst);
   let offset_jal: i32 = get_offset_jal(inst);
@@ -444,7 +434,7 @@ fn main1() {
         0x0000c003, // 🟢lbu x0, 0(x1)
         0x0000d003, // 🟢lhu x0, 0(x1)
         0x0000e003, // 🟢lwu x0, 0(x1)
-        0x00208033, // add x0, x1, x2
+        0x00208033, // 🟢add x0, x1, x2
         0x40208033, // sub x0, x1, x2
         0x00209033, // sll x0, x1, x2
         0x0020a033, // slt x0, x1, x2
@@ -539,7 +529,7 @@ fn main_test1() {
 
     ];
 
-    //0x00208033, // add x0, x1, x2
+    //x40208033, // sub x0, x1, x2
 
     for i in 0..inst.len() {
         //-- Imprimir la instrucción
@@ -568,9 +558,10 @@ fn main_test2() {
         0x0000d003, //-- lhu x0, 0(x1)
         0x0000e003, //-- lwu x0, 0(x1)
         0x00208033, //-- add x0, x1, x2
+        0x40208033, //-- sub x0, x1, x2
     ];
 
-    //0x00208033, // add x0, x1, x2
+    //0x40208033, // sub x0, x1, x2
 
     for i in 0..mcode.len() {
         let inst: InstructionRV = InstructionRV::from_mcode(mcode[i]);

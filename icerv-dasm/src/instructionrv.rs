@@ -786,6 +786,22 @@ fn test_instruction_add() {
 }
 
 
+#[test]
+fn test_instruction_sub() {
+    //assert_eq!(disassemble(0x40208033), "sub x0, x1, x2");
+    //assert_eq!(disassemble(0x405201b3), "sub x3, x4, x5");
+    //assert_eq!(disassemble(0x40838333), "sub x6, x7, x8");
+    //assert_eq!(disassemble(0x40b504b3), "sub x9, x10, x11");
+    //assert_eq!(disassemble(0x40e60633), "sub x12, x12, x14");
+    //assert_eq!(disassemble(0x411807b3), "sub x15, x16, x17");
+    //assert_eq!(disassemble(0x41498933), "sub x18, x19, x20");
+    //assert_eq!(disassemble(0x417b0ab3), "sub x21, x22, x23");
+    //assert_eq!(disassemble(0x41ac8c33), "sub x24, x25, x26");
+    //assert_eq!(disassemble(0x41de0db3), "sub x27, x28, x29");
+    //assert_eq!(disassemble(0x41ff8f33), "sub x30, x31, x31");
+}
+
+
 //────────────────────────────────────────────────
 //  PRUEBAS DEL CODIGO MAQUINA
 //────────────────────────────────────────────────
@@ -1314,4 +1330,19 @@ fn test_mcode_add() {
     assert_eq!(
         InstructionRV::from_mcode(0x01ff8f33).to_string(), 
         "add x30, x31, x31");
+}
+
+#[test]
+fn test_mcode_sub() {
+    //assert_eq!(disassemble(0x40208033), "sub x0, x1, x2");
+    //assert_eq!(disassemble(0x405201b3), "sub x3, x4, x5");
+    //assert_eq!(disassemble(0x40838333), "sub x6, x7, x8");
+    //assert_eq!(disassemble(0x40b504b3), "sub x9, x10, x11");
+    //assert_eq!(disassemble(0x40e60633), "sub x12, x12, x14");
+    //assert_eq!(disassemble(0x411807b3), "sub x15, x16, x17");
+    //assert_eq!(disassemble(0x41498933), "sub x18, x19, x20");
+    //assert_eq!(disassemble(0x417b0ab3), "sub x21, x22, x23");
+    //assert_eq!(disassemble(0x41ac8c33), "sub x24, x25, x26");
+    //assert_eq!(disassemble(0x41de0db3), "sub x27, x28, x29");
+    //assert_eq!(disassemble(0x41ff8f33), "sub x30, x31, x31");
 }
