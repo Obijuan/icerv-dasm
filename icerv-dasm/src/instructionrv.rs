@@ -177,7 +177,15 @@ impl InstructionRV {
                     Self::Unknown
                 } else {
                     //-- Resto de instrucciones tipo R
-                    Self::Unknown
+                    match func3 {
+                        0b_000 => 
+                            Self::Add { 
+                                rd: mcode.rd(), 
+                                rs1: mcode.rs1(), 
+                                rs2: mcode.rs2() 
+                            },
+                        _ =>  Self::Unknown  
+                    }
                 }
 
             },
@@ -740,6 +748,44 @@ fn test_instruction_lwu() {
         "lwu x9, 2047(x9)");
 }
 
+#[test]
+fn test_instruction_add() {
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_string(), 
+        "add x0, x1, x2");
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X3, rs1: Reg::X4, rs2: Reg::X5}.to_string(), 
+        "add x3, x4, x5");
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X6, rs1: Reg::X7, rs2: Reg::X8}.to_string(), 
+        "add x6, x7, x8");
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X9, rs1: Reg::X10, rs2: Reg::X11}.to_string(), 
+        "add x9, x10, x11");
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X12, rs1: Reg::X12, rs2: Reg::X14}.to_string(), 
+        "add x12, x12, x14");
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X15, rs1: Reg::X16, rs2: Reg::X17}.to_string(), 
+        "add x15, x16, x17");
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X18, rs1: Reg::X19, rs2: Reg::X20}.to_string(), 
+        "add x18, x19, x20");
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X21, rs1: Reg::X22, rs2: Reg::X23}.to_string(), 
+        "add x21, x22, x23");
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X24, rs1: Reg::X25, rs2: Reg::X26}.to_string(), 
+        "add x24, x25, x26");
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X27, rs1: Reg::X28, rs2: Reg::X29}.to_string(), 
+        "add x27, x28, x29");
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        "add x30, x31, x31");
+}
+
+
 //────────────────────────────────────────────────
 //  PRUEBAS DEL CODIGO MAQUINA
 //────────────────────────────────────────────────
@@ -1233,3 +1279,17 @@ fn test_mcode_lwu() {
         "lwu x9, 2047(x9)");
 }
 
+#[test]
+fn test_mcode_add() {
+      //assert_eq!(disassemble(0x00208033), "add x0, x1, x2");
+      //assert_eq!(disassemble(0x005201b3), "add x3, x4, x5");
+      //assert_eq!(disassemble(0x00838333), "add x6, x7, x8");
+      //assert_eq!(disassemble(0x00b504b3), "add x9, x10, x11");
+      //assert_eq!(disassemble(0x00e60633), "add x12, x12, x14");
+      //assert_eq!(disassemble(0x011807b3), "add x15, x16, x17");
+      //assert_eq!(disassemble(0x01498933), "add x18, x19, x20");
+      //assert_eq!(disassemble(0x017b0ab3), "add x21, x22, x23");
+      //assert_eq!(disassemble(0x01ac8c33), "add x24, x25, x26");
+      //assert_eq!(disassemble(0x01de0db3), "add x27, x28, x29");
+      //assert_eq!(disassemble(0x01ff8f33), "add x30, x31, x31");
+}

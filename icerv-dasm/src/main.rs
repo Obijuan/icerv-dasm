@@ -172,7 +172,7 @@ fn print_fields(inst: u32) {
     let imm:i32 = mcode.imm12();
 
     let rs2 = mcode.rs2();
-    let func7 = get_func7(inst);
+    let func7 = mcode.func7();
 
     //-- Imprimir los campos extraídos
     println!("   - Opcode: {:#4X}", opcode as u32);
@@ -596,21 +596,6 @@ fn main() {
 //────────────────────────────────────────────────
 //  TESTS
 //────────────────────────────────────────────────
-#[test]
-fn test_get_func7() {
-  //-- Test de la función get_func7
-  //--                   func7  rs2   rs1  func3 rd    opcode
-  assert_eq!(get_func7(0b_0000000_00000_00000_000_00000_0000000), 0b0000000);
-  assert_eq!(get_func7(0b_0000001_00000_00000_000_00000_0000000), 0b0000001);
-  assert_eq!(get_func7(0b_0000010_00000_00000_000_00000_0000000), 0b0000010);
-  assert_eq!(get_func7(0b_0000100_00000_00000_000_00000_0000000), 0b0000100);
-  assert_eq!(get_func7(0b_0001000_00000_00000_000_00000_0000000), 0b0001000);
-  assert_eq!(get_func7(0b_0010000_00000_00000_000_00000_0000000), 0b0010000);
-  assert_eq!(get_func7(0b_0100000_00000_00000_000_00000_0000000), 0b0100000);
-  assert_eq!(get_func7(0b_1000000_00000_00000_000_00000_0000000), 0b1000000);
-  assert_eq!(get_func7(0b_1111111_00000_00000_000_00000_0000000), 0b1111111);
-}
-
 #[test]
 fn test_sign_ext() {
   //-- Test de la función sign_ext
