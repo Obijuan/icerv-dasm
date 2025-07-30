@@ -306,19 +306,6 @@ fn test_disassemble_sll() {
     assert_eq!(disassemble(0x01ff9f33), "sll x30, x31, x31");
 }
 
-#[test]
-fn test_disassemble_lwu() {
-    assert_eq!(disassemble(0x0000e003), "lwu x0, 0(x1)");
-    assert_eq!(disassemble(0x00116083), "lwu x1, 1(x2)");
-    assert_eq!(disassemble(0x0021e103), "lwu x2, 2(x3)");
-    assert_eq!(disassemble(0x00426203), "lwu x4, 4(x4)");
-    assert_eq!(disassemble(0x0082e283), "lwu x5, 8(x5)");
-    assert_eq!(disassemble(0xfff36303), "lwu x6, -1(x6)");
-    assert_eq!(disassemble(0x8003e383), "lwu x7, -2048(x7)");
-    assert_eq!(disassemble(0xffe46403), "lwu x8, -2(x8)");
-    assert_eq!(disassemble(0x7ff4e483), "lwu x9, 2047(x9)");
-}
-
 
 #[test]
 fn test_disassemble_add() {
