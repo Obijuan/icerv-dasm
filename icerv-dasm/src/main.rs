@@ -42,7 +42,6 @@ const FIELD_20B: u32 = 0xFFFFF; //-- Campo de 20 bits
 //────────────────────────────────────────────────
 //  POSICIONES de LOS CAMPOS
 //────────────────────────────────────────────────
-const RS2_POS: u8 = 20;  
 const FUNC7_POS: u8 = 25;  
 const IMM20_POS: u8 = 12; 
 const OFFSET10_POS: u8 = 21;
@@ -62,7 +61,6 @@ const BIT5: u32 = 1 << 5;
 //  Se calculan desplazando los campos de la anchura correspondiente
 //  a la posición del campo
 //──────────────────────────────────────────────
-const RS2_MASK: u32 = FIELD_5B << RS2_POS;
 const FUNC7_MASK: u32 = FIELD_7B << FUNC7_POS;
 const IMM20_MASK: u32 = FIELD_20B << IMM20_POS; 
 const OFFSET7_MASK: u32 = FIELD_7B << OFFSET7_POS;
@@ -72,16 +70,6 @@ const OFFSET6_MASK: u32 = FIELD_6B << OFFSET6_POS;
 const OFFSET5_MASK: u32 = FIELD_5B << OFFSET5_POS;
 const OFFSET4_MASK: u32 = FIELD_4B << OFFSET4_POS;
 const OFFSET1_MASK: u32 = FIELD_1B << OFFSET1_POS;
-
-fn get_rs2(inst: u32) -> u32 {
-//────────────────────────────────────────────────
-// Entrada: Instrucción RISC-V
-// Salida: Registro fuente 2 (rs2) de la instrucción
-//────────────────────────────────────────────────
-  //-- Aplicar la máscara para extraer el campo
-  //-- y desplazarlo a la posición 0    
-    (inst & RS2_MASK) >> RS2_POS    
-}
 
 fn get_imm20(inst: u32) -> i32 {
 //────────────────────────────────────────────────
@@ -183,7 +171,7 @@ fn print_fields(inst: u32) {
     let func3: u32 = mcode.func3();
     let imm:i32 = mcode.imm12();
 
-    let rs2 = get_rs2(inst);
+    let rs2 = mcode.rs2();
     let func7 = get_func7(inst);
 
     //-- Imprimir los campos extraídos
@@ -191,7 +179,7 @@ fn print_fields(inst: u32) {
     println!("   - rd: x{}", rd as u8);
     println!("   - func3: {:#05b}", func3);
     println!("   - rs1: x{}", rs1 as u8);
-    println!("   - rs2: x{}", rs2);
+    println!("   - rs2: x{}", rs2 as u8);
     println!("   - Inmediato: {:#X}", imm);
     println!("   - Func7: {:#07b}", func7);
 }
@@ -264,32 +252,6 @@ fn sign_ext21(value: i32) -> i32 {
     }
 }
 
-
-fn inst_type_i_load(func3: u32) -> String {
-//────────────────────────────────────────────────
-//  Obtener el nombre de la instruccion load
-//  de tipo i cuyo codigo func3 es el dado
-//  ENTRADA: Codigo func3
-//  SALIDA: nemonico
-//────────────────────────────────────────────────
-
-    //-- Tabla de las instrucciones aritméticas
-    //-- y lógicas con valores inmediatos
-    let name = 
-    [          //-- Func3
-      "lb",    //-- 000
-      "lh",    //-- 001
-      "lw",    //-- 010
-      "ld",    //-- 011
-      "lbu",   //-- 100
-      "lhu",   //-- 101
-      "lwu",   //-- 110
-      "xxx",   //-- 111
-    ];
-
-    name[func3 as usize].to_string()
-
-}
 
 fn inst_type_r(func7: u32, func3: u32) -> String {
 //────────────────────────────────────────────────
@@ -391,7 +353,7 @@ fn disassemble(inst: u32) -> String {
   let offset_jalr: i32 = mcode.imm12();
 
   let func7: u32 = get_func7(inst);
-  let rs2 = get_rs2(inst);
+  let rs2 = mcode.rs2();
   let offset:i32 = get_offset_s(inst);
   let imm20: i32 = get_imm20(inst);
   let offset_b: i32 = get_offset_b(inst);
@@ -404,27 +366,25 @@ fn disassemble(inst: u32) -> String {
     },
 
     OpcodeRV::TipoILoad => {
-      //-- Nombre de la instrucción
-      let name: String = inst_type_i_load(func3);
-
-      format!("{} x{}, {}(x{})", name, rd as u8, imm, rs1 as u8)
+      let inst2: InstructionRV = InstructionRV::from_mcode(inst);
+      inst2.to_string()
     },
 
     OpcodeRV::TipoR => {
       let name: String = inst_type_r(func7, func3);
-      format!("{} x{}, x{}, x{}", name, rd as u8, rs1 as u8, rs2)
+      format!("{} x{}, x{}, x{}", name, rd as u8, rs1 as u8, rs2 as u8)
     },
 
     OpcodeRV::TipoS => {
       //-- Nombre de la instrucción
       let name: String = inst_type_s(func3);
-      format!("{} x{}, {}(x{})", name, rs2, offset, rs1 as u8)
+      format!("{} x{}, {}(x{})", name, rs2 as u8, offset, rs1 as u8)
     },
 
     OpcodeRV::TipoB => {
       //-- Nombre de la instrucción
       let name: String = inst_type_b(func3);
-      format!("{} x{}, x{}, {}", name, rs1 as u8, rs2, offset_b)
+      format!("{} x{}, x{}, {}", name, rs1 as u8, rs2 as u8, offset_b)
     },
 
     OpcodeRV::TipoULui => {
@@ -555,6 +515,8 @@ fn main_test1() {
 
     println!("\n------ TESTING 1.....");
     let inst = [
+
+        //-- Instruciones Tipo I
         InstructionRV::Addi{rd: Reg::X1, rs1: Reg::X0, imm: 1},
         InstructionRV::Slli{rd: Reg::X1, rs1: Reg::X2, imm: 1},
         InstructionRV::Slti{rd: Reg::X1, rs1: Reg::X2, imm: 1}, 
@@ -571,7 +533,13 @@ fn main_test1() {
         InstructionRV::Lbu { rd: Reg::X0, offs: 0, rs1: Reg::X1 },
         InstructionRV::Lhu { rd: Reg::X0, offs: 0, rs1: Reg::X1 },
         InstructionRV::Lwu { rd: Reg::X0, offs: 0, rs1: Reg::X1 },
+
+        //-- Instruciones Tipo R
+        InstructionRV::Add { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}
+
     ];
+
+    //0x00208033, // add x0, x1, x2
 
     for i in 0..inst.len() {
         //-- Imprimir la instrucción
@@ -597,10 +565,12 @@ fn main_test2() {
         0x0000a003, //-- lw x0, 0(x1)
         0x0000b003, //-- ld x0, 0(x1)
         0x0000c003, //-- lbu x0, 0(x1)
-        0x0000d003, // lhu x0, 0(x1)
-        0x0000e003, // lwu x0, 0(x1)
-        
+        0x0000d003, //-- lhu x0, 0(x1)
+        0x0000e003, //-- lwu x0, 0(x1)
+        0x00208033, //-- add x0, x1, x2
     ];
+
+    //0x00208033, // add x0, x1, x2
 
     for i in 0..mcode.len() {
         let inst: InstructionRV = InstructionRV::from_mcode(mcode[i]);
@@ -626,20 +596,6 @@ fn main() {
 //────────────────────────────────────────────────
 //  TESTS
 //────────────────────────────────────────────────
-#[test]
-fn test_get_rs2() {
-  //-- Test de la función get_rs2
-  //--                   func7  rs2   rs1  func3 rd    opcode
-  assert_eq!(get_rs2(0b_0000000_00000_00000_000_00000_0000000), 0);
-  assert_eq!(get_rs2(0b_0000000_00001_00000_000_00000_0000000), 1);
-  assert_eq!(get_rs2(0b_0000000_00010_00000_000_00000_0000000), 2);
-  assert_eq!(get_rs2(0b_0000000_00100_00000_000_00000_0000000), 4);
-  assert_eq!(get_rs2(0b_0000000_01000_00000_000_00000_0000000), 8);
-  assert_eq!(get_rs2(0b_0000000_10000_00000_000_00000_0000000), 16);
-  assert_eq!(get_rs2(0b_0000000_10001_00000_000_00000_0000000), 17);
-  assert_eq!(get_rs2(0b_0000000_11111_00000_000_00000_0000000), 31);
-}
-
 #[test]
 fn test_get_func7() {
   //-- Test de la función get_func7

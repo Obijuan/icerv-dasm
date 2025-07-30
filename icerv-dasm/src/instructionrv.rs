@@ -3,6 +3,7 @@ use crate::{mcode, regs::Reg, opcoderv::OpcodeRV};
 //────────────────────────────────────────────────
 //  POSICIONES Bits aislados
 //────────────────────────────────────────────────
+const BIT5: u32 = 1 << 5;
 const BIT10: u32 = 1 << 10;
 
 //────────────────────────────────────────────────
@@ -34,6 +35,10 @@ pub enum InstructionRV {
     Lhu {rd: Reg, offs: i32, rs1: Reg}, //-- lhu rd, off(rs1)
     Lwu {rd: Reg, offs: i32, rs1: Reg}, //-- lwu rd, off(rs1)
     
+    //──────────────────────────────────
+    //  Instrucciones tipo R
+    //──────────────────────────────────
+    Add {rd: Reg, rs1: Reg, rs2: Reg}, //-- add rd, rs1, rs2
 
     Unknown, //-- Instrucción desconocida
 }
@@ -44,6 +49,7 @@ impl InstructionRV {
 
         let mcode = mcode::MCode::new(mcode);
         let func3 = mcode.func3();
+        let func7 = mcode.func7();
 
         match mcode.opcode() {
             OpcodeRV::TipoIArith => {
@@ -162,6 +168,19 @@ impl InstructionRV {
                     _ => Self::Unknown,
                 }
             },
+            OpcodeRV::TipoR => {
+                //-- Obtener el bit 5 de func7
+                let especial: u32 = (func7 & BIT5) >> 5;
+
+                if especial==1 {
+                    //-- Instrucciones sub, sra
+                    Self::Unknown
+                } else {
+                    //-- Resto de instrucciones tipo R
+                    Self::Unknown
+                }
+
+            },
             _ => Self::Unknown,
         }    
     }
@@ -216,6 +235,10 @@ impl InstructionRV {
             Self::Lwu { rd, offs, rs1, } => {
                 format!("lwu {}, {}({})", rd.to_str(), offs, rs1.to_str())
             },
+            Self::Add { rd, rs1, rs2} => {
+                format!("add {}, {}, {}", rd.to_str(), 
+                        rs1.to_str(), rs2.to_str())
+            }
             Self::Unknown => {
                 "Unknown Instruction".to_string()
             },
