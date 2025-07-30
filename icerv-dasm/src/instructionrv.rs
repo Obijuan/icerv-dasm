@@ -40,6 +40,7 @@ pub enum InstructionRV {
     //──────────────────────────────────
     Add {rd: Reg, rs1: Reg, rs2: Reg}, //-- add rd, rs1, rs2
     Sub {rd: Reg, rs1: Reg, rs2: Reg}, //-- sub rd, rs1, rs2
+    Sll {rd: Reg, rs1: Reg, rs2: Reg}, //-- sll rd, rs1, rs2
 
     Unknown, //-- Instrucción desconocida
 }
@@ -193,6 +194,12 @@ impl InstructionRV {
                                 rs1: mcode.rs1(), 
                                 rs2: mcode.rs2() 
                             },
+                        0b_001 => 
+                            Self::Sll { 
+                                rd: mcode.rd(), 
+                                rs1: mcode.rs1(), 
+                                rs2: mcode.rs2() 
+                            },
                         _ =>  Self::Unknown  
                     }
                 }
@@ -258,6 +265,10 @@ impl InstructionRV {
             },
             Self::Sub { rd, rs1, rs2} => {
                 format!("sub {}, {}, {}", rd.to_str(), 
+                        rs1.to_str(), rs2.to_str())
+            },
+            Self::Sll { rd, rs1, rs2} => {
+                format!("sll {}, {}, {}", rd.to_str(), 
                         rs1.to_str(), rs2.to_str())
             },
             Self::Unknown => {
@@ -836,6 +847,46 @@ fn test_instruction_sub() {
         "sub x30, x31, x31");
 }
 
+#[test]
+fn test_instruction_sll() {
+    assert_eq!(
+        InstructionRV::Sll{rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_string(), 
+        "sll x0, x1, x2");
+    assert_eq!(
+        InstructionRV::Sll{rd: Reg::X3, rs1: Reg::X4, rs2: Reg::X5}.to_string(), 
+        "sll x3, x4, x5");
+    assert_eq!(
+        InstructionRV::Sll{rd: Reg::X6, rs1: Reg::X7, rs2: Reg::X8}.to_string(), 
+        "sll x6, x7, x8");
+    assert_eq!(
+        InstructionRV::Sll{rd: Reg::X9, rs1: Reg::X10, rs2: Reg::X11}.to_string(), 
+        "sll x9, x10, x11");
+    assert_eq!(
+        InstructionRV::Sll{rd: Reg::X12, rs1: Reg::X12, rs2: Reg::X14}.to_string(), 
+        "sll x12, x12, x14");
+    assert_eq!(
+        InstructionRV::Sll{rd: Reg::X15, rs1: Reg::X16, rs2: Reg::X17}.to_string(), 
+        "sll x15, x16, x17");
+    assert_eq!(
+        InstructionRV::Sll{rd: Reg::X18, rs1: Reg::X19, rs2: Reg::X20}.to_string(), 
+        "sll x18, x19, x20");
+    assert_eq!(
+        InstructionRV::Sll{rd: Reg::X21, rs1: Reg::X22, rs2: Reg::X23}.to_string(), 
+        "sll x21, x22, x23");
+    assert_eq!(
+        InstructionRV::Sll{rd: Reg::X24, rs1: Reg::X25, rs2: Reg::X26}.to_string(), 
+        "sll x24, x25, x26");
+    assert_eq!(
+        InstructionRV::Sll{rd: Reg::X27, rs1: Reg::X28, rs2: Reg::X29}.to_string(), 
+        "sll x27, x28, x29");
+    assert_eq!(
+        InstructionRV::Sll{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        "sll x30, x31, x31");
+}
+
+
+
+
 
 //────────────────────────────────────────────────
 //  PRUEBAS DEL CODIGO MAQUINA
@@ -1403,4 +1454,43 @@ fn test_mcode_sub() {
         InstructionRV::from_mcode(0x41ff8f33).to_string(), 
         "sub x30, x31, x31");
 }
+
+#[test]
+fn test_mcode_sll() {
+    assert_eq!(
+        InstructionRV::from_mcode(0x00209033).to_string(), 
+        "sll x0, x1, x2");
+    assert_eq!(
+        InstructionRV::from_mcode(0x005211b3).to_string(), 
+        "sll x3, x4, x5");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00839333).to_string(), 
+        "sll x6, x7, x8");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00b514b3).to_string(), 
+        "sll x9, x10, x11");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00e61633).to_string(), 
+        "sll x12, x12, x14");
+    assert_eq!(
+        InstructionRV::from_mcode(0x011817b3).to_string(), 
+        "sll x15, x16, x17");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01499933).to_string(), 
+        "sll x18, x19, x20");
+    assert_eq!(
+        InstructionRV::from_mcode(0x017b1ab3).to_string(), 
+        "sll x21, x22, x23");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01ac9c33).to_string(), 
+        "sll x24, x25, x26");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01de1db3).to_string(), 
+        "sll x27, x28, x29");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01ff9f33).to_string(), 
+        "sll x30, x31, x31");
+}
+
+
 
