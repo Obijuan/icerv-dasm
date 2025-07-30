@@ -39,6 +39,7 @@ pub enum InstructionRV {
     //  Instrucciones tipo R
     //──────────────────────────────────
     Add {rd: Reg, rs1: Reg, rs2: Reg}, //-- add rd, rs1, rs2
+    Sub {rd: Reg, rs1: Reg, rs2: Reg}, //-- sub rd, rs1, rs2
 
     Unknown, //-- Instrucción desconocida
 }
@@ -174,7 +175,15 @@ impl InstructionRV {
 
                 if especial==1 {
                     //-- Instrucciones sub, sra
-                    Self::Unknown
+                    match func3 {
+                        0b_000 => 
+                            Self::Sub {
+                                rd: mcode.rd(),
+                                rs1: mcode.rs1(),
+                                rs2: mcode.rs2()
+                            },
+                        _ => Self::Unknown
+                    }
                 } else {
                     //-- Resto de instrucciones tipo R
                     match func3 {
@@ -246,7 +255,11 @@ impl InstructionRV {
             Self::Add { rd, rs1, rs2} => {
                 format!("add {}, {}, {}", rd.to_str(), 
                         rs1.to_str(), rs2.to_str())
-            }
+            },
+            Self::Sub { rd, rs1, rs2} => {
+                format!("sub {}, {}, {}", rd.to_str(), 
+                        rs1.to_str(), rs2.to_str())
+            },
             Self::Unknown => {
                 "Unknown Instruction".to_string()
             },
@@ -788,17 +801,39 @@ fn test_instruction_add() {
 
 #[test]
 fn test_instruction_sub() {
-    //assert_eq!(disassemble(0x40208033), "sub x0, x1, x2");
-    //assert_eq!(disassemble(0x405201b3), "sub x3, x4, x5");
-    //assert_eq!(disassemble(0x40838333), "sub x6, x7, x8");
-    //assert_eq!(disassemble(0x40b504b3), "sub x9, x10, x11");
-    //assert_eq!(disassemble(0x40e60633), "sub x12, x12, x14");
-    //assert_eq!(disassemble(0x411807b3), "sub x15, x16, x17");
-    //assert_eq!(disassemble(0x41498933), "sub x18, x19, x20");
-    //assert_eq!(disassemble(0x417b0ab3), "sub x21, x22, x23");
-    //assert_eq!(disassemble(0x41ac8c33), "sub x24, x25, x26");
-    //assert_eq!(disassemble(0x41de0db3), "sub x27, x28, x29");
-    //assert_eq!(disassemble(0x41ff8f33), "sub x30, x31, x31");
+    assert_eq!(
+        InstructionRV::Sub{rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_string(), 
+        "sub x0, x1, x2");
+    assert_eq!(
+        InstructionRV::Sub{rd: Reg::X3, rs1: Reg::X4, rs2: Reg::X5}.to_string(), 
+        "sub x3, x4, x5");
+    assert_eq!(
+        InstructionRV::Sub{rd: Reg::X6, rs1: Reg::X7, rs2: Reg::X8}.to_string(), 
+        "sub x6, x7, x8");
+    assert_eq!(
+        InstructionRV::Sub{rd: Reg::X9, rs1: Reg::X10, rs2: Reg::X11}.to_string(), 
+        "sub x9, x10, x11");
+    assert_eq!(
+        InstructionRV::Sub{rd: Reg::X12, rs1: Reg::X12, rs2: Reg::X14}.to_string(), 
+        "sub x12, x12, x14");
+    assert_eq!(
+        InstructionRV::Sub{rd: Reg::X15, rs1: Reg::X16, rs2: Reg::X17}.to_string(), 
+        "sub x15, x16, x17");
+    assert_eq!(
+        InstructionRV::Sub{rd: Reg::X18, rs1: Reg::X19, rs2: Reg::X20}.to_string(), 
+        "sub x18, x19, x20");
+    assert_eq!(
+        InstructionRV::Sub{rd: Reg::X21, rs1: Reg::X22, rs2: Reg::X23}.to_string(), 
+        "sub x21, x22, x23");
+    assert_eq!(
+        InstructionRV::Sub{rd: Reg::X24, rs1: Reg::X25, rs2: Reg::X26}.to_string(), 
+        "sub x24, x25, x26");
+    assert_eq!(
+        InstructionRV::Sub{rd: Reg::X27, rs1: Reg::X28, rs2: Reg::X29}.to_string(), 
+        "sub x27, x28, x29");
+    assert_eq!(
+        InstructionRV::Sub{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        "sub x30, x31, x31");
 }
 
 
@@ -1334,15 +1369,38 @@ fn test_mcode_add() {
 
 #[test]
 fn test_mcode_sub() {
-    //assert_eq!(disassemble(0x40208033), "sub x0, x1, x2");
-    //assert_eq!(disassemble(0x405201b3), "sub x3, x4, x5");
-    //assert_eq!(disassemble(0x40838333), "sub x6, x7, x8");
-    //assert_eq!(disassemble(0x40b504b3), "sub x9, x10, x11");
-    //assert_eq!(disassemble(0x40e60633), "sub x12, x12, x14");
-    //assert_eq!(disassemble(0x411807b3), "sub x15, x16, x17");
-    //assert_eq!(disassemble(0x41498933), "sub x18, x19, x20");
-    //assert_eq!(disassemble(0x417b0ab3), "sub x21, x22, x23");
-    //assert_eq!(disassemble(0x41ac8c33), "sub x24, x25, x26");
-    //assert_eq!(disassemble(0x41de0db3), "sub x27, x28, x29");
-    //assert_eq!(disassemble(0x41ff8f33), "sub x30, x31, x31");
+    assert_eq!(
+        InstructionRV::from_mcode(0x40208033).to_string(), 
+        "sub x0, x1, x2");
+    assert_eq!(
+        InstructionRV::from_mcode(0x405201b3).to_string(), 
+        "sub x3, x4, x5");
+    assert_eq!(
+        InstructionRV::from_mcode(0x40838333).to_string(), 
+        "sub x6, x7, x8");
+    assert_eq!(
+        InstructionRV::from_mcode(0x40b504b3).to_string(), 
+        "sub x9, x10, x11");
+    assert_eq!(
+        InstructionRV::from_mcode(0x40e60633).to_string(), 
+        "sub x12, x12, x14");
+    assert_eq!(
+        InstructionRV::from_mcode(0x411807b3).to_string(), 
+        "sub x15, x16, x17");
+    assert_eq!(
+        InstructionRV::from_mcode(0x41498933).to_string(), 
+        "sub x18, x19, x20");
+    assert_eq!(
+        InstructionRV::from_mcode(0x417b0ab3).to_string(), 
+        "sub x21, x22, x23");
+    assert_eq!(
+        InstructionRV::from_mcode(0x41ac8c33).to_string(), 
+        "sub x24, x25, x26");
+    assert_eq!(
+        InstructionRV::from_mcode(0x41de0db3).to_string(), 
+        "sub x27, x28, x29");
+    assert_eq!(
+        InstructionRV::from_mcode(0x41ff8f33).to_string(), 
+        "sub x30, x31, x31");
 }
+
