@@ -435,7 +435,7 @@ fn main1() {
         0x0000d003, // 🟢lhu x0, 0(x1)
         0x0000e003, // 🟢lwu x0, 0(x1)
         0x00208033, // 🟢add x0, x1, x2
-        0x40208033, // sub x0, x1, x2
+        0x40208033, // 🟢sub x0, x1, x2
         0x00209033, // sll x0, x1, x2
         0x0020a033, // slt x0, x1, x2
         0x0020b033, // sltu x0, x1, x2
@@ -525,7 +525,8 @@ fn main_test1() {
         InstructionRV::Lwu { rd: Reg::X0, offs: 0, rs1: Reg::X1 },
 
         //-- Instruciones Tipo R
-        InstructionRV::Add { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}
+        InstructionRV::Add { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
+        InstructionRV::Sub { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
 
     ];
 
