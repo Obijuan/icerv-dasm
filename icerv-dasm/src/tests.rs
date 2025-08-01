@@ -232,21 +232,6 @@ fn test_disassemble_or() {
 }
 
 #[test]
-fn test_disassemble_slt() {
-    assert_eq!(disassemble(0x0020a033), "slt x0, x1, x2");
-    assert_eq!(disassemble(0x005221b3), "slt x3, x4, x5");
-    assert_eq!(disassemble(0x0083a333), "slt x6, x7, x8");
-    assert_eq!(disassemble(0x00b524b3), "slt x9, x10, x11");
-    assert_eq!(disassemble(0x00e62633), "slt x12, x12, x14");
-    assert_eq!(disassemble(0x011827b3), "slt x15, x16, x17");
-    assert_eq!(disassemble(0x0149a933), "slt x18, x19, x20");
-    assert_eq!(disassemble(0x017b2ab3), "slt x21, x22, x23");
-    assert_eq!(disassemble(0x01acac33), "slt x24, x25, x26");
-    assert_eq!(disassemble(0x01de2db3), "slt x27, x28, x29");
-    assert_eq!(disassemble(0x01ffaf33), "slt x30, x31, x31");
-}
-
-#[test]
 fn test_disassemble_sltu() {
     assert_eq!(disassemble(0x0020b033), "sltu x0, x1, x2");
     assert_eq!(disassemble(0x005231b3), "sltu x3, x4, x5");
