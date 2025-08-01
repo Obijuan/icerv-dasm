@@ -999,7 +999,42 @@ fn test_instruction_slt() {
         "slt x30, x31, x31");
 }
 
-
+#[test]
+fn test_instruction_sltu() {
+    assert_eq!(
+        InstructionRV::Sltu{rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_string(), 
+        "sltu x0, x1, x2");
+    assert_eq!(
+        InstructionRV::Sltu{rd: Reg::X3, rs1: Reg::X4, rs2: Reg::X5}.to_string(), 
+        "sltu x3, x4, x5");
+    assert_eq!(
+        InstructionRV::Sltu{rd: Reg::X6, rs1: Reg::X7, rs2: Reg::X8}.to_string(), 
+        "sltu x6, x7, x8");
+    assert_eq!(
+        InstructionRV::Sltu{rd: Reg::X9, rs1: Reg::X10, rs2: Reg::X11}.to_string(), 
+        "sltu x9, x10, x11");
+    assert_eq!(
+        InstructionRV::Sltu{rd: Reg::X12, rs1: Reg::X12, rs2: Reg::X14}.to_string(), 
+        "sltu x12, x12, x14");
+    assert_eq!(
+        InstructionRV::Sltu{rd: Reg::X15, rs1: Reg::X16, rs2: Reg::X17}.to_string(), 
+        "sltu x15, x16, x17");
+    assert_eq!(
+        InstructionRV::Sltu{rd: Reg::X18, rs1: Reg::X19, rs2: Reg::X20}.to_string(), 
+        "sltu x18, x19, x20");
+    assert_eq!(
+        InstructionRV::Sltu{rd: Reg::X21, rs1: Reg::X22, rs2: Reg::X23}.to_string(), 
+        "sltu x21, x22, x23");
+    assert_eq!(
+        InstructionRV::Sltu{rd: Reg::X24, rs1: Reg::X25, rs2: Reg::X26}.to_string(), 
+        "sltu x24, x25, x26");
+    assert_eq!(
+        InstructionRV::Sltu{rd: Reg::X27, rs1: Reg::X28, rs2: Reg::X29}.to_string(), 
+        "sltu x27, x28, x29");
+    assert_eq!(
+        InstructionRV::Sltu{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        "sltu x30, x31, x31");
+}
 
 
 //────────────────────────────────────────────────
@@ -1643,3 +1678,17 @@ fn test_mcode_slt() {
         "slt x30, x31, x31");
 }
 
+#[test]
+fn test_mcode_sltu() {
+    //assert_eq!(disassemble(0x0020b033), "sltu x0, x1, x2");
+    //assert_eq!(disassemble(0x005231b3), "sltu x3, x4, x5");
+    //assert_eq!(disassemble(0x0083b333), "sltu x6, x7, x8");
+    //assert_eq!(disassemble(0x00b534b3), "sltu x9, x10, x11");
+    //assert_eq!(disassemble(0x00e63633), "sltu x12, x12, x14");
+    //assert_eq!(disassemble(0x011837b3), "sltu x15, x16, x17");
+    //assert_eq!(disassemble(0x0149b933), "sltu x18, x19, x20");
+    //assert_eq!(disassemble(0x017b3ab3), "sltu x21, x22, x23");
+    //assert_eq!(disassemble(0x01acbc33), "sltu x24, x25, x26");
+    //assert_eq!(disassemble(0x01de3db3), "sltu x27, x28, x29");
+    //assert_eq!(disassemble(0x01ffbf33), "sltu x30, x31, x31");
+}

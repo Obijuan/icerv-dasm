@@ -531,7 +531,11 @@ fn main_test1() {
 
     ];
 
-    //0x0020a033, // slt x0, x1, x2
+    //0x0020b033, // sltu x0, x1, x2
+    //0x0020c033, // xor x0, x1, x2
+    //0x0020d033, // srl x0, x1, x2
+    //0x0020e033, // or x0, x1, x2
+    //0x4020d033, // sra x0, x1, x2
 
     for i in 0..inst.len() {
         //-- Imprimir la instrucción
@@ -563,6 +567,11 @@ fn main_test2() {
         0x40208033, //-- sub x0, x1, x2
         0x00209033, //-- sll x0, x1, x2
         0x0020a033, //-- slt x0, x1, x2
+        0x0020b033, //-- sltu x0, x1, x2
+        0x0020c033, //-- xor x0, x1, x2
+        0x0020d033, //-- srl x0, x1, x2
+        0x0020e033, //-- or x0, x1, x2
+        0x4020d033, //-- sra x0, x1, x2
     ];
 
     for i in 0..mcode.len() {
