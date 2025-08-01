@@ -38,9 +38,16 @@ pub enum InstructionRV {
     //──────────────────────────────────
     //  Instrucciones tipo R
     //──────────────────────────────────
-    Add {rd: Reg, rs1: Reg, rs2: Reg}, //-- add rd, rs1, rs2
-    Sub {rd: Reg, rs1: Reg, rs2: Reg}, //-- sub rd, rs1, rs2
-    Sll {rd: Reg, rs1: Reg, rs2: Reg}, //-- sll rd, rs1, rs2
+    Add {rd: Reg, rs1: Reg, rs2: Reg},  //-- add rd, rs1, rs2
+    Sub {rd: Reg, rs1: Reg, rs2: Reg},  //-- sub rd, rs1, rs2
+    Sll {rd: Reg, rs1: Reg, rs2: Reg},  //-- sll rd, rs1, rs2
+    Slt {rd: Reg, rs1: Reg, rs2: Reg},  //-- slt rd, rs1, rs2
+    Sltu {rd: Reg, rs1: Reg, rs2: Reg}, //-- sltu rd, rs1, rs2
+    Xor {rd: Reg, rs1: Reg, rs2: Reg},  //-- xor rd, rs1, rs2
+    Srl {rd: Reg, rs1: Reg, rs2: Reg},  //-- srl rd, rs1, rs2
+    Or {rd: Reg, rs1: Reg, rs2: Reg},   //-- or rd, rs1, rs2
+    And {rd: Reg, rs1: Reg, rs2: Reg},   //-- and rd, rs1, rs2
+    Sra {rd: Reg, rs1: Reg, rs2: Reg},  //-- sra rd, rs1, rs2
 
     Unknown, //-- Instrucción desconocida
 }
@@ -183,6 +190,12 @@ impl InstructionRV {
                                 rs1: mcode.rs1(),
                                 rs2: mcode.rs2()
                             },
+                        0b_101 => 
+                            Self::Sra {
+                                rd: mcode.rd(),
+                                rs1: mcode.rs1(),
+                                rs2: mcode.rs2()
+                            },
                         _ => Self::Unknown
                     }
                 } else {
@@ -196,6 +209,42 @@ impl InstructionRV {
                             },
                         0b_001 => 
                             Self::Sll { 
+                                rd: mcode.rd(), 
+                                rs1: mcode.rs1(), 
+                                rs2: mcode.rs2() 
+                            },
+                        0b_010 => 
+                            Self::Slt { 
+                                rd: mcode.rd(), 
+                                rs1: mcode.rs1(), 
+                                rs2: mcode.rs2() 
+                            },
+                        0b_011 => 
+                            Self::Sltu { 
+                                rd: mcode.rd(), 
+                                rs1: mcode.rs1(), 
+                                rs2: mcode.rs2() 
+                            },
+                        0b_100 => 
+                            Self::Xor { 
+                                rd: mcode.rd(), 
+                                rs1: mcode.rs1(), 
+                                rs2: mcode.rs2() 
+                            },
+                        0b_101 => 
+                            Self::Srl {
+                                rd: mcode.rd(), 
+                                rs1: mcode.rs1(), 
+                                rs2: mcode.rs2() 
+                            },
+                        0b_110 => 
+                            Self::Or {
+                                rd: mcode.rd(), 
+                                rs1: mcode.rs1(), 
+                                rs2: mcode.rs2() 
+                            },
+                        0b_111 => 
+                            Self::And {
                                 rd: mcode.rd(), 
                                 rs1: mcode.rs1(), 
                                 rs2: mcode.rs2() 
@@ -271,6 +320,35 @@ impl InstructionRV {
                 format!("sll {}, {}, {}", rd.to_str(), 
                         rs1.to_str(), rs2.to_str())
             },
+            Self::Slt { rd, rs1, rs2} => {
+                format!("slt {}, {}, {}", rd.to_str(), 
+                        rs1.to_str(), rs2.to_str())
+            },
+            Self::Sltu { rd, rs1, rs2} => {
+                format!("sltu {}, {}, {}", rd.to_str(), 
+                        rs1.to_str(), rs2.to_str())
+            },
+            Self::Srl { rd, rs1, rs2} => {
+                format!("srl {}, {}, {}", rd.to_str(), 
+                        rs1.to_str(), rs2.to_str())
+            },
+            Self::Or { rd, rs1, rs2} => {
+                format!("or {}, {}, {}", rd.to_str(), 
+                        rs1.to_str(), rs2.to_str())
+            },
+            Self::Xor { rd, rs1, rs2} => {
+                format!("xor {}, {}, {}", rd.to_str(), 
+                        rs1.to_str(), rs2.to_str())
+            },
+            Self::And { rd, rs1, rs2} => {
+                format!("and {}, {}, {}", rd.to_str(), 
+                        rs1.to_str(), rs2.to_str())
+            },
+            Self::Sra { rd, rs1, rs2} => {
+                format!("sra {}, {}, {}", rd.to_str(), 
+                        rs1.to_str(), rs2.to_str())
+            },
+
             Self::Unknown => {
                 "Unknown Instruction".to_string()
             },
@@ -884,6 +962,42 @@ fn test_instruction_sll() {
         "sll x30, x31, x31");
 }
 
+#[test]
+fn test_instruction_slt() {
+    assert_eq!(
+        InstructionRV::Slt{rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_string(), 
+        "slt x0, x1, x2");
+    assert_eq!(
+        InstructionRV::Slt{rd: Reg::X3, rs1: Reg::X4, rs2: Reg::X5}.to_string(), 
+        "slt x3, x4, x5");
+    assert_eq!(
+        InstructionRV::Slt{rd: Reg::X6, rs1: Reg::X7, rs2: Reg::X8}.to_string(), 
+        "slt x6, x7, x8");
+    assert_eq!(
+        InstructionRV::Slt{rd: Reg::X9, rs1: Reg::X10, rs2: Reg::X11}.to_string(), 
+        "slt x9, x10, x11");
+    assert_eq!(
+        InstructionRV::Slt{rd: Reg::X12, rs1: Reg::X12, rs2: Reg::X14}.to_string(), 
+        "slt x12, x12, x14");
+    assert_eq!(
+        InstructionRV::Slt{rd: Reg::X15, rs1: Reg::X16, rs2: Reg::X17}.to_string(), 
+        "slt x15, x16, x17");
+    assert_eq!(
+        InstructionRV::Slt{rd: Reg::X18, rs1: Reg::X19, rs2: Reg::X20}.to_string(), 
+        "slt x18, x19, x20");
+    assert_eq!(
+        InstructionRV::Slt{rd: Reg::X21, rs1: Reg::X22, rs2: Reg::X23}.to_string(), 
+        "slt x21, x22, x23");
+    assert_eq!(
+        InstructionRV::Slt{rd: Reg::X24, rs1: Reg::X25, rs2: Reg::X26}.to_string(), 
+        "slt x24, x25, x26");
+    assert_eq!(
+        InstructionRV::Slt{rd: Reg::X27, rs1: Reg::X28, rs2: Reg::X29}.to_string(), 
+        "slt x27, x28, x29");
+    assert_eq!(
+        InstructionRV::Slt{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        "slt x30, x31, x31");
+}
 
 
 
@@ -1492,5 +1606,40 @@ fn test_mcode_sll() {
         "sll x30, x31, x31");
 }
 
-
+#[test]
+fn test_mcode_slt() {
+    assert_eq!(
+        InstructionRV::from_mcode(0x0020a033).to_string(), 
+        "slt x0, x1, x2");
+    assert_eq!(
+        InstructionRV::from_mcode(0x005221b3).to_string(), 
+        "slt x3, x4, x5");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0083a333).to_string(), 
+        "slt x6, x7, x8");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00b524b3).to_string(), 
+        "slt x9, x10, x11");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00e62633).to_string(), 
+        "slt x12, x12, x14");
+    assert_eq!(
+        InstructionRV::from_mcode(0x011827b3).to_string(), 
+        "slt x15, x16, x17");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0149a933).to_string(), 
+        "slt x18, x19, x20");
+    assert_eq!(
+        InstructionRV::from_mcode(0x017b2ab3).to_string(), 
+        "slt x21, x22, x23");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01acac33).to_string(), 
+        "slt x24, x25, x26");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01de2db3).to_string(), 
+        "slt x27, x28, x29");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01ffaf33).to_string(), 
+        "slt x30, x31, x31");
+}
 
