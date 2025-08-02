@@ -1680,15 +1680,37 @@ fn test_mcode_slt() {
 
 #[test]
 fn test_mcode_sltu() {
-    //assert_eq!(disassemble(0x0020b033), "sltu x0, x1, x2");
-    //assert_eq!(disassemble(0x005231b3), "sltu x3, x4, x5");
-    //assert_eq!(disassemble(0x0083b333), "sltu x6, x7, x8");
-    //assert_eq!(disassemble(0x00b534b3), "sltu x9, x10, x11");
-    //assert_eq!(disassemble(0x00e63633), "sltu x12, x12, x14");
-    //assert_eq!(disassemble(0x011837b3), "sltu x15, x16, x17");
-    //assert_eq!(disassemble(0x0149b933), "sltu x18, x19, x20");
-    //assert_eq!(disassemble(0x017b3ab3), "sltu x21, x22, x23");
-    //assert_eq!(disassemble(0x01acbc33), "sltu x24, x25, x26");
-    //assert_eq!(disassemble(0x01de3db3), "sltu x27, x28, x29");
-    //assert_eq!(disassemble(0x01ffbf33), "sltu x30, x31, x31");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0020b033).to_string(), 
+        "sltu x0, x1, x2");
+    assert_eq!(
+        InstructionRV::from_mcode(0x005231b3).to_string(), 
+        "sltu x3, x4, x5");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0083b333).to_string(), 
+        "sltu x6, x7, x8");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00b534b3).to_string(), 
+        "sltu x9, x10, x11");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00e63633).to_string(), 
+        "sltu x12, x12, x14");
+    assert_eq!(
+        InstructionRV::from_mcode(0x011837b3).to_string(), 
+        "sltu x15, x16, x17");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0149b933).to_string(), 
+        "sltu x18, x19, x20");
+    assert_eq!(
+        InstructionRV::from_mcode(0x017b3ab3).to_string(), 
+        "sltu x21, x22, x23");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01acbc33).to_string(), 
+        "sltu x24, x25, x26");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01de3db3).to_string(), 
+        "sltu x27, x28, x29");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01ffbf33).to_string(), 
+        "sltu x30, x31, x31");
 }
