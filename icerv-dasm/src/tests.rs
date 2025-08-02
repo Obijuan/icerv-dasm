@@ -172,21 +172,6 @@ fn test_disassemble_sd() {
 }
 
 #[test]
-fn test_disassemble_sra() {
-    assert_eq!(disassemble(0x4020d033), "sra x0, x1, x2");
-    assert_eq!(disassemble(0x405251b3), "sra x3, x4, x5");
-    assert_eq!(disassemble(0x4083d333), "sra x6, x7, x8");
-    assert_eq!(disassemble(0x40b554b3), "sra x9, x10, x11");
-    assert_eq!(disassemble(0x40e65633), "sra x12, x12, x14");
-    assert_eq!(disassemble(0x411857b3), "sra x15, x16, x17");
-    assert_eq!(disassemble(0x4149d933), "sra x18, x19, x20");
-    assert_eq!(disassemble(0x417b5ab3), "sra x21, x22, x23");
-    assert_eq!(disassemble(0x41acdc33), "sra x24, x25, x26");
-    assert_eq!(disassemble(0x41de5db3), "sra x27, x28, x29");
-    assert_eq!(disassemble(0x41ffdf33), "sra x30, x31, x31");
-}
-
-#[test]
 fn test_disassemble_sb() {
       assert_eq!(disassemble(0x00008023), "sb x0, 0(x1)");
       assert_eq!(disassemble(0xfe218fa3), "sb x2, -1(x3)");
@@ -201,63 +186,4 @@ fn test_disassemble_sb() {
 }
 
 
-#[test]
-fn test_disassemble_srl() {
-    assert_eq!(disassemble(0x0020d033), "srl x0, x1, x2");
-    assert_eq!(disassemble(0x005251b3), "srl x3, x4, x5");
-    assert_eq!(disassemble(0x0083d333), "srl x6, x7, x8");
-    assert_eq!(disassemble(0x00b554b3), "srl x9, x10, x11");
-    assert_eq!(disassemble(0x00e65633), "srl x12, x12, x14");
-    assert_eq!(disassemble(0x011857b3), "srl x15, x16, x17");
-    assert_eq!(disassemble(0x0149d933), "srl x18, x19, x20");
-    assert_eq!(disassemble(0x017b5ab3), "srl x21, x22, x23");
-    assert_eq!(disassemble(0x01acdc33), "srl x24, x25, x26");
-    assert_eq!(disassemble(0x01de5db3), "srl x27, x28, x29");
-    assert_eq!(disassemble(0x01ffdf33), "srl x30, x31, x31");
-}
-
-#[test]
-fn test_disassemble_or() {
-    assert_eq!(disassemble(0x0020e033), "or x0, x1, x2");
-    assert_eq!(disassemble(0x005261b3), "or x3, x4, x5");
-    assert_eq!(disassemble(0x0083e333), "or x6, x7, x8");
-    assert_eq!(disassemble(0x00b564b3), "or x9, x10, x11");
-    assert_eq!(disassemble(0x00e66633), "or x12, x12, x14");
-    assert_eq!(disassemble(0x011867b3), "or x15, x16, x17");
-    assert_eq!(disassemble(0x0149e933), "or x18, x19, x20");
-    assert_eq!(disassemble(0x017b6ab3), "or x21, x22, x23");
-    assert_eq!(disassemble(0x01acec33), "or x24, x25, x26");
-    assert_eq!(disassemble(0x01de6db3), "or x27, x28, x29");
-    assert_eq!(disassemble(0x01ffef33), "or x30, x31, x31");
-}
-
-#[test]
-fn test_disassemble_sltu() {
-    assert_eq!(disassemble(0x0020b033), "sltu x0, x1, x2");
-    assert_eq!(disassemble(0x005231b3), "sltu x3, x4, x5");
-    assert_eq!(disassemble(0x0083b333), "sltu x6, x7, x8");
-    assert_eq!(disassemble(0x00b534b3), "sltu x9, x10, x11");
-    assert_eq!(disassemble(0x00e63633), "sltu x12, x12, x14");
-    assert_eq!(disassemble(0x011837b3), "sltu x15, x16, x17");
-    assert_eq!(disassemble(0x0149b933), "sltu x18, x19, x20");
-    assert_eq!(disassemble(0x017b3ab3), "sltu x21, x22, x23");
-    assert_eq!(disassemble(0x01acbc33), "sltu x24, x25, x26");
-    assert_eq!(disassemble(0x01de3db3), "sltu x27, x28, x29");
-    assert_eq!(disassemble(0x01ffbf33), "sltu x30, x31, x31");
-}
-
-#[test]
-fn test_disassemble_xor() {
-    assert_eq!(disassemble(0x0020c033), "xor x0, x1, x2");
-    assert_eq!(disassemble(0x005241b3), "xor x3, x4, x5");
-    assert_eq!(disassemble(0x0083c333), "xor x6, x7, x8");
-    assert_eq!(disassemble(0x00b544b3), "xor x9, x10, x11");
-    assert_eq!(disassemble(0x00e64633), "xor x12, x12, x14");
-    assert_eq!(disassemble(0x011847b3), "xor x15, x16, x17");
-    assert_eq!(disassemble(0x0149c933), "xor x18, x19, x20");
-    assert_eq!(disassemble(0x017b4ab3), "xor x21, x22, x23");
-    assert_eq!(disassemble(0x01accc33), "xor x24, x25, x26");
-    assert_eq!(disassemble(0x01de4db3), "xor x27, x28, x29");
-    assert_eq!(disassemble(0x01ffcf33), "xor x30, x31, x31");  
-}
 

@@ -438,8 +438,8 @@ fn main1() {
         0x40208033, // 🟢sub x0, x1, x2
         0x00209033, // 🟢sll x0, x1, x2
         0x0020a033, // 🟢slt x0, x1, x2
-        0x0020b033, // sltu x0, x1, x2
-        0x0020c033, // xor x0, x1, x2
+        0x0020b033, // 🟢sltu x0, x1, x2
+        0x0020c033, // 🟢xor x0, x1, x2
         0x0020d033, // srl x0, x1, x2
         0x0020e033, // or x0, x1, x2
         0x4020d033, // sra x0, x1, x2
@@ -528,14 +528,13 @@ fn main_test1() {
         InstructionRV::Add { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
         InstructionRV::Sub { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
         InstructionRV::Sll { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
+        InstructionRV::Sltu { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
+        InstructionRV::Xor { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
+        InstructionRV::Srl { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
+        InstructionRV::Or { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
+        InstructionRV::Sra { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}
 
     ];
-
-    //0x0020b033, // sltu x0, x1, x2
-    //0x0020c033, // xor x0, x1, x2
-    //0x0020d033, // srl x0, x1, x2
-    //0x0020e033, // or x0, x1, x2
-    //0x4020d033, // sra x0, x1, x2
 
     for i in 0..inst.len() {
         //-- Imprimir la instrucción
