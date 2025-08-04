@@ -50,10 +50,7 @@ const OFFSET6_POS: u8 = 25;
 const OFFSET5_POS: u8 = 7;
 const OFFSET4_POS: u8 = 8;
 const OFFSET1_POS: u8 = 20;
-//────────────────────────────────────────────────
-//  POSICIONES Bits aislados
-//────────────────────────────────────────────────
-const BIT5: u32 = 1 << 5;
+
 //────────────────────────────────────────────────
 //  CALCULAR LAS MASCARAS DE ACCESO A LOS CAMPOS
 //────────────────────────────────────────────────
@@ -242,52 +239,6 @@ fn sign_ext21(value: i32) -> i32 {
 }
 
 
-fn inst_type_r(func7: u32, func3: u32) -> String {
-//────────────────────────────────────────────────
-//  Obtener el nombre de la instruccion de tipo R
-//  a partir de func3 y func7
-//  ENTRADA: Codigos func7 y func3
-//  SALIDA: nemonico
-//────────────────────────────────────────────────
-    let name = [
-
-      //-- Bloque 1: Bit 5 de func7 a 0
-              //-- Func3    Func7
-      "add",  //-- 000     0000000
-      "sll",  //-- 001     0000000
-      "slt",  //-- 010     0000000
-      "sltu", //-- 011     0000000
-      "xor",  //-- 100     0000000
-      "srl",  //-- 101     0000000
-      "or",   //-- 110     0000000
-      "and",  //-- 111     0000000
-
-      //-- Bloque 2: Bit 5 de func7 a 1
-      "sub",  //-- 000     0100000
-      "xxx",  //-- 001     xxxxxxx  No existe
-      "xxx",  //-- 010     xxxxxxx  No existe
-      "xxx",  //-- 011     xxxxxxx  No existe
-      "xxx",  //-- 100     xxxxxxx  No existe
-      "sra",  //-- 101     0100000 
-      "xxx",  //-- 110     xxxxxxx  No existe
-      "xxx",  //-- 111     xxxxxxx  No existe
-    ];
-
-    //-- Obtener el bit 5 de func7
-    let especial: u32 = func7 & BIT5;
-
-    //-- Moverlo al bit 3
-    //-- Si es instruccion especial (sub, sra), entonces
-    //-- especial vale 8, de lo contrario 0
-    let especial: u32 = especial >> 2;
-
-    //-- Sumar func3 + special para acceder a la tabla
-
-    //-- Devolver el nombre del nemonico
-    name[(func3 + especial) as usize].to_string()
-
-}
-
 fn inst_type_s(func3: u32) -> String {
 //────────────────────────────────────────────────
 //  Obtener el nombre de la instruccion de tipo S
@@ -341,7 +292,6 @@ fn disassemble(inst: u32) -> String {
   let imm: i32 = mcode.imm12();
   let offset_jalr: i32 = mcode.imm12();
 
-  let func7: u32 = mcode.func7();
   let rs2 = mcode.rs2();
   let offset:i32 = get_offset_s(inst);
 
@@ -361,8 +311,8 @@ fn disassemble(inst: u32) -> String {
     },
 
     OpcodeRV::TipoR => {
-      let name: String = inst_type_r(func7, func3);
-      format!("{} x{}, x{}, x{}", name, rd as u8, rs1 as u8, rs2 as u8)
+      let inst2: InstructionRV = InstructionRV::from_mcode(inst);
+      inst2.to_string()
     },
 
     OpcodeRV::TipoS => {
@@ -441,8 +391,8 @@ fn main1() {
         0x0020b033, // 🟢sltu x0, x1, x2
         0x0020c033, // 🟢xor x0, x1, x2
         0x0020d033, // 🟢srl x0, x1, x2
-        0x0020e033, // or x0, x1, x2
-        0x4020d033, // sra x0, x1, x2
+        0x0020e033, // 🟢or x0, x1, x2
+        0x4020d033, // 🟢sra x0, x1, x2
         0x00008023, // sb x0, 0(x1)
         0xfe219fa3, // sh x2, -1(x3)
         0x7e42afa3, // sw x4, 2047(x5)
@@ -536,6 +486,11 @@ fn main_test1() {
 
     ];
 
+    //0x00008023, // sb x0, 0(x1)
+    //0xfe219fa3, // sh x2, -1(x3)
+    //0x7e42afa3, // sw x4, 2047(x5)
+    //0x80533023, // sd x5, -2048(x6)
+
     for i in 0..inst.len() {
         //-- Imprimir la instrucción
         println!("🟢 {}", inst[i].to_string());
@@ -571,7 +526,13 @@ fn main_test2() {
         0x0020d033, //-- srl x0, x1, x2
         0x0020e033, //-- or x0, x1, x2
         0x4020d033, //-- sra x0, x1, x2
+        0x00008023, // sb x0, 0(x1)
+        0xfe219fa3, // sh x2, -1(x3)
+        0x7e42afa3, // sw x4, 2047(x5)
+        0x80533023, // sd x5, -2048(x6)
     ];
+
+    
 
     for i in 0..mcode.len() {
         let inst: InstructionRV = InstructionRV::from_mcode(mcode[i]);
