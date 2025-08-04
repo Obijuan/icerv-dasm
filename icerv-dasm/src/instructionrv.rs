@@ -1078,34 +1078,34 @@ fn test_instruction_xor() {
 fn test_disassemble_srl() {
     
     assert_eq!(
-        InstructionRV::Srl{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Srl{rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_string(), 
         "srl x0, x1, x2");
     assert_eq!(
-        InstructionRV::Srl{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Srl{rd: Reg::X3, rs1: Reg::X4, rs2: Reg::X5}.to_string(), 
         "srl x3, x4, x5");
     assert_eq!(
-        InstructionRV::Srl{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Srl{rd: Reg::X6, rs1: Reg::X7, rs2: Reg::X8}.to_string(), 
         "srl x6, x7, x8");
     assert_eq!(
-        InstructionRV::Srl{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Srl{rd: Reg::X9, rs1: Reg::X10, rs2: Reg::X11}.to_string(), 
         "srl x9, x10, x11");
     assert_eq!(
-        InstructionRV::Srl{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Srl{rd: Reg::X12, rs1: Reg::X12, rs2: Reg::X14}.to_string(), 
         "srl x12, x12, x14");
     assert_eq!(
-        InstructionRV::Srl{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Srl{rd: Reg::X15, rs1: Reg::X16, rs2: Reg::X17}.to_string(), 
         "srl x15, x16, x17");
     assert_eq!(
-        InstructionRV::Srl{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Srl{rd: Reg::X18, rs1: Reg::X19, rs2: Reg::X20}.to_string(), 
         "srl x18, x19, x20");
     assert_eq!(
-        InstructionRV::Srl{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Srl{rd: Reg::X21, rs1: Reg::X22, rs2: Reg::X23}.to_string(), 
         "srl x21, x22, x23");
     assert_eq!(
-        InstructionRV::Srl{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Srl{rd: Reg::X24, rs1: Reg::X25, rs2: Reg::X26}.to_string(), 
         "srl x24, x25, x26");
     assert_eq!(
-        InstructionRV::Srl{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Srl{rd: Reg::X27, rs1: Reg::X28, rs2: Reg::X29}.to_string(), 
         "srl x27, x28, x29");
     assert_eq!(
         InstructionRV::Srl{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
@@ -1944,30 +1944,74 @@ fn test_mcode_srl() {
 
 #[test]
 fn test_mcode_or() {
-    //assert_eq!(disassemble(0x0020e033), "or x0, x1, x2");
-    //assert_eq!(disassemble(0x005261b3), "or x3, x4, x5");
-    //assert_eq!(disassemble(0x0083e333), "or x6, x7, x8");
-    //assert_eq!(disassemble(0x00b564b3), "or x9, x10, x11");
-    //assert_eq!(disassemble(0x00e66633), "or x12, x12, x14");
-    //assert_eq!(disassemble(0x011867b3), "or x15, x16, x17");
-    //assert_eq!(disassemble(0x0149e933), "or x18, x19, x20");
-    //assert_eq!(disassemble(0x017b6ab3), "or x21, x22, x23");
-    //assert_eq!(disassemble(0x01acec33), "or x24, x25, x26");
-    //assert_eq!(disassemble(0x01de6db3), "or x27, x28, x29");
-    //assert_eq!(disassemble(0x01ffef33), "or x30, x31, x31");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0020e033).to_string(), 
+        "or x0, x1, x2");
+    assert_eq!(
+        InstructionRV::from_mcode(0x005261b3).to_string(), 
+        "or x3, x4, x5");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0083e333).to_string(), 
+        "or x6, x7, x8");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00b564b3).to_string(), 
+        "or x9, x10, x11");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00e66633).to_string(), 
+        "or x12, x12, x14");
+    assert_eq!(
+        InstructionRV::from_mcode(0x011867b3).to_string(), 
+        "or x15, x16, x17");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0149e933).to_string(), 
+        "or x18, x19, x20");
+    assert_eq!(
+        InstructionRV::from_mcode(0x017b6ab3).to_string(), 
+        "or x21, x22, x23");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01acec33).to_string(), 
+        "or x24, x25, x26");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01de6db3).to_string(), 
+        "or x27, x28, x29");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01ffef33).to_string(), 
+        "or x30, x31, x31");
 }
 
 #[test]
 fn test_mcode_sra() {
-    //assert_eq!(disassemble(0x4020d033), "sra x0, x1, x2");
-    //assert_eq!(disassemble(0x405251b3), "sra x3, x4, x5");
-    //assert_eq!(disassemble(0x4083d333), "sra x6, x7, x8");
-    //assert_eq!(disassemble(0x40b554b3), "sra x9, x10, x11");
-    //assert_eq!(disassemble(0x40e65633), "sra x12, x12, x14");
-    //assert_eq!(disassemble(0x411857b3), "sra x15, x16, x17");
-    //assert_eq!(disassemble(0x4149d933), "sra x18, x19, x20");
-    //assert_eq!(disassemble(0x417b5ab3), "sra x21, x22, x23");
-    //assert_eq!(disassemble(0x41acdc33), "sra x24, x25, x26");
-    //assert_eq!(disassemble(0x41de5db3), "sra x27, x28, x29");
-    //assert_eq!(disassemble(0x41ffdf33), "sra x30, x31, x31");
+    assert_eq!(
+        InstructionRV::from_mcode(0x4020d033).to_string(), 
+        "sra x0, x1, x2");
+    assert_eq!(
+        InstructionRV::from_mcode(0x405251b3).to_string(), 
+        "sra x3, x4, x5");
+    assert_eq!(
+        InstructionRV::from_mcode(0x4083d333).to_string(), 
+        "sra x6, x7, x8");
+    assert_eq!(
+        InstructionRV::from_mcode(0x40b554b3).to_string(), 
+        "sra x9, x10, x11");
+    assert_eq!(
+        InstructionRV::from_mcode(0x40e65633).to_string(), 
+        "sra x12, x12, x14");
+    assert_eq!(
+        InstructionRV::from_mcode(0x411857b3).to_string(), 
+        "sra x15, x16, x17");
+    assert_eq!(
+        InstructionRV::from_mcode(0x4149d933).to_string(), 
+        "sra x18, x19, x20");
+    assert_eq!(
+        InstructionRV::from_mcode(0x417b5ab3).to_string(), 
+        "sra x21, x22, x23");
+    assert_eq!(
+        InstructionRV::from_mcode(0x41acdc33).to_string(), 
+        "sra x24, x25, x26");
+    assert_eq!(
+        InstructionRV::from_mcode(0x41de5db3).to_string(), 
+        "sra x27, x28, x29");
+    assert_eq!(
+        InstructionRV::from_mcode(0x41ffdf33).to_string(), 
+        "sra x30, x31, x31");
 }
