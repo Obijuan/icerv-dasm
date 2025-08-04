@@ -1153,34 +1153,34 @@ fn test_disassemble_or() {
 #[test]
 fn test_disassemble_sra() {
     assert_eq!(
-        InstructionRV::Sra{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Sra{rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_string(), 
         "sra x0, x1, x2");
     assert_eq!(
-        InstructionRV::Sra{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Sra{rd: Reg::X3, rs1: Reg::X4, rs2: Reg::X5}.to_string(), 
         "sra x3, x4, x5");
     assert_eq!(
-        InstructionRV::Sra{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Sra{rd: Reg::X6, rs1: Reg::X7, rs2: Reg::X8}.to_string(), 
         "sra x6, x7, x8");
     assert_eq!(
-        InstructionRV::Sra{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Sra{rd: Reg::X9, rs1: Reg::X10, rs2: Reg::X11}.to_string(), 
         "sra x9, x10, x11");
     assert_eq!(
-        InstructionRV::Sra{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Sra{rd: Reg::X12, rs1: Reg::X12, rs2: Reg::X14}.to_string(), 
         "sra x12, x12, x14");
     assert_eq!(
-        InstructionRV::Sra{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Sra{rd: Reg::X15, rs1: Reg::X16, rs2: Reg::X17}.to_string(), 
         "sra x15, x16, x17");
     assert_eq!(
-        InstructionRV::Sra{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Sra{rd: Reg::X18, rs1: Reg::X19, rs2: Reg::X20}.to_string(), 
         "sra x18, x19, x20");
     assert_eq!(
-        InstructionRV::Sra{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Sra{rd: Reg::X21, rs1: Reg::X22, rs2: Reg::X23}.to_string(), 
         "sra x21, x22, x23");
     assert_eq!(
-        InstructionRV::Sra{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Sra{rd: Reg::X24, rs1: Reg::X25, rs2: Reg::X26}.to_string(), 
         "sra x24, x25, x26");
     assert_eq!(
-        InstructionRV::Sra{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
+        InstructionRV::Sra{rd: Reg::X27, rs1: Reg::X28, rs2: Reg::X29}.to_string(), 
         "sra x27, x28, x29");
     assert_eq!(
         InstructionRV::Sra{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_string(), 
