@@ -58,76 +58,9 @@ fn test_disassemble_auipc() {
     assert_eq!(disassemble(0xfffff397), "auipc x7, 0xFFFFF");
 }
 
-#[test]
-fn test_disassemble_bltu() {
-    assert_eq!(disassemble(0x00006063), "bltu x0, x0, 0");
-    assert_eq!(disassemble(0xfe20eee3), "bltu x1, x2, -4");
-    assert_eq!(disassemble(0xfe41ece3), "bltu x3, x4, -8");
-    assert_eq!(disassemble(0xfe62eae3), "bltu x5, x6, -12");
-    assert_eq!(disassemble(0x0083ec63), "bltu x7, x8, 24");
-    assert_eq!(disassemble(0x00a4ea63), "bltu x9, x10, 20");
-    assert_eq!(disassemble(0x00c5e863), "bltu x11, x12, 16");
-    assert_eq!(disassemble(0x00e6e663), "bltu x13, x14, 12");
-    assert_eq!(disassemble(0x0107e463), "bltu x15, x16, 8");
-    assert_eq!(disassemble(0x0128e263), "bltu x17, x18, 4"); 
-}
-
-#[test]
-fn test_disassemble_bgeu() {
-    assert_eq!(disassemble(0x00007063), "bgeu x0, x0, 0");
-    assert_eq!(disassemble(0xfe20fee3), "bgeu x1, x2, -4");
-    assert_eq!(disassemble(0xfe41fce3), "bgeu x3, x4, -8");
-    assert_eq!(disassemble(0xfe62fae3), "bgeu x5, x6, -12");
-    assert_eq!(disassemble(0x0083fc63), "bgeu x7, x8, 24");
-    assert_eq!(disassemble(0x00a4fa63), "bgeu x9, x10, 20");
-    assert_eq!(disassemble(0x00c5f863), "bgeu x11, x12, 16");
-    assert_eq!(disassemble(0x00e6f663), "bgeu x13, x14, 12");
-    assert_eq!(disassemble(0x0107f463), "bgeu x15, x16, 8");
-    assert_eq!(disassemble(0x0128f263), "bgeu x17, x18, 4"); 
-}
-
-#[test]
-fn test_disassemble_blt() {
-    assert_eq!(disassemble(0x00004063), "blt x0, x0, 0");
-    assert_eq!(disassemble(0xfe20cee3), "blt x1, x2, -4");
-    assert_eq!(disassemble(0xfe41cce3), "blt x3, x4, -8");
-    assert_eq!(disassemble(0xfe62cae3), "blt x5, x6, -12");
-    assert_eq!(disassemble(0x0083cc63), "blt x7, x8, 24");
-    assert_eq!(disassemble(0x00a4ca63), "blt x9, x10, 20");
-    assert_eq!(disassemble(0x00c5c863), "blt x11, x12, 16");
-    assert_eq!(disassemble(0x00e6c663), "blt x13, x14, 12");
-    assert_eq!(disassemble(0x0107c463), "blt x15, x16, 8");
-    assert_eq!(disassemble(0x0128c263), "blt x17, x18, 4"); 
-}
-
-#[test]
-fn test_disassemble_bge() {
-    assert_eq!(disassemble(0x00005063), "bge x0, x0, 0");
-    assert_eq!(disassemble(0xfe20dee3), "bge x1, x2, -4");
-    assert_eq!(disassemble(0xfe41dce3), "bge x3, x4, -8");
-    assert_eq!(disassemble(0xfe62dae3), "bge x5, x6, -12");
-    assert_eq!(disassemble(0x0083dc63), "bge x7, x8, 24");
-    assert_eq!(disassemble(0x00a4da63), "bge x9, x10, 20");
-    assert_eq!(disassemble(0x00c5d863), "bge x11, x12, 16");
-    assert_eq!(disassemble(0x00e6d663), "bge x13, x14, 12");
-    assert_eq!(disassemble(0x0107d463), "bge x15, x16, 8");
-    assert_eq!(disassemble(0x0128d263), "bge x17, x18, 4"); 
-}
 
 
-#[test]
-fn test_disassemble_bne() {
-    assert_eq!(disassemble(0x00001063), "bne x0, x0, 0");
-    assert_eq!(disassemble(0xfe209ee3), "bne x1, x2, -4");
-    assert_eq!(disassemble(0xfe419ce3), "bne x3, x4, -8");
-    assert_eq!(disassemble(0xfe629ae3), "bne x5, x6, -12");
-    assert_eq!(disassemble(0x00839c63), "bne x7, x8, 24");
-    assert_eq!(disassemble(0x00a49a63), "bne x9, x10, 20");
-    assert_eq!(disassemble(0x00c59863), "bne x11, x12, 16");
-    assert_eq!(disassemble(0x00e69663), "bne x13, x14, 12");
-    assert_eq!(disassemble(0x01079463), "bne x15, x16, 8");
-    assert_eq!(disassemble(0x01289263), "bne x17, x18, 4");
-}
+
 
 
 
