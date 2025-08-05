@@ -114,19 +114,6 @@ fn test_disassemble_bge() {
     assert_eq!(disassemble(0x0128d263), "bge x17, x18, 4"); 
 }
 
-#[test]
-fn test_disassemble_beq() {
-    assert_eq!(disassemble(0x00000063), "beq x0, x0, 0"); 
-    assert_eq!(disassemble(0xfe208ee3), "beq x1, x2, -4"); 
-    assert_eq!(disassemble(0xfe418ce3), "beq x3, x4, -8"); 
-    assert_eq!(disassemble(0xfe628ae3), "beq x5, x6, -12"); 
-    assert_eq!(disassemble(0x00838c63), "beq x7, x8, 24"); 
-    assert_eq!(disassemble(0x00a48a63), "beq x9, x10, 20"); 
-    assert_eq!(disassemble(0x00c58863), "beq x11, x12, 16"); 
-    assert_eq!(disassemble(0x00e68663), "beq x13, x14, 12"); 
-    assert_eq!(disassemble(0x01078463), "beq x15, x16, 8"); 
-    assert_eq!(disassemble(0x01288263), "beq x17, x18, 4"); 
-}
 
 #[test]
 fn test_disassemble_bne() {

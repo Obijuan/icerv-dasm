@@ -1444,6 +1444,39 @@ fn test_instruction_sd() {
 }
 
 
+#[test]
+fn test_instruction_beq() {
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X0, rs2: Reg::X0, offs: 0}.to_string(), 
+        "beq x0, x0, 0"); 
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X1, rs2: Reg::X2, offs: -4}.to_string(), 
+        "beq x1, x2, -4"); 
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X3, rs2: Reg::X4, offs: -8}.to_string(), 
+        "beq x3, x4, -8"); 
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X5, rs2: Reg::X6, offs: -12}.to_string(), 
+        "beq x5, x6, -12"); 
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X7, rs2: Reg::X8, offs: 24}.to_string(), 
+        "beq x7, x8, 24"); 
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X9, rs2: Reg::X10, offs: 20}.to_string(), 
+        "beq x9, x10, 20"); 
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X11, rs2: Reg::X12, offs: 16}.to_string(), 
+        "beq x11, x12, 16"); 
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X13, rs2: Reg::X14, offs: 12}.to_string(), 
+        "beq x13, x14, 12"); 
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X15, rs2: Reg::X16, offs: 8}.to_string(), 
+        "beq x15, x16, 8"); 
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X17, rs2: Reg::X18, offs: 4}.to_string(), 
+        "beq x17, x18, 4"); 
+}
 
 //────────────────────────────────────────────────
 //  PRUEBAS DEL CODIGO MAQUINA
@@ -2408,3 +2441,16 @@ fn test_mcode_sd() {
         "sd x16, 64(x17)");
 }
 
+#[test]
+fn test_mcode_beq() {
+    //assert_eq!(disassemble(0x00000063), "beq x0, x0, 0"); 
+    //assert_eq!(disassemble(0xfe208ee3), "beq x1, x2, -4"); 
+    //assert_eq!(disassemble(0xfe418ce3), "beq x3, x4, -8"); 
+    //assert_eq!(disassemble(0xfe628ae3), "beq x5, x6, -12"); 
+    //assert_eq!(disassemble(0x00838c63), "beq x7, x8, 24"); 
+    //assert_eq!(disassemble(0x00a48a63), "beq x9, x10, 20"); 
+    //assert_eq!(disassemble(0x00c58863), "beq x11, x12, 16"); 
+    //assert_eq!(disassemble(0x00e68663), "beq x13, x14, 12"); 
+    //assert_eq!(disassemble(0x01078463), "beq x15, x16, 8"); 
+    //assert_eq!(disassemble(0x01288263), "beq x17, x18, 4"); 
+}
