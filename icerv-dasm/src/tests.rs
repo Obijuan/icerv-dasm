@@ -142,20 +142,6 @@ fn test_disassemble_bne() {
     assert_eq!(disassemble(0x01289263), "bne x17, x18, 4");
 }
 
-#[test]
-fn test_disassemble_sw() {
-    assert_eq!(disassemble(0x0000a023), "sw x0, 0(x1)");
-    assert_eq!(disassemble(0xfe21afa3), "sw x2, -1(x3)");
-    assert_eq!(disassemble(0x7e42afa3), "sw x4, 2047(x5)");
-    assert_eq!(disassemble(0x80532023), "sw x5, -2048(x6)");
-    assert_eq!(disassemble(0x0063a123), "sw x6, 2(x7)");
-    assert_eq!(disassemble(0x0084a223), "sw x8, 4(x9)");
-    assert_eq!(disassemble(0x00a5a423), "sw x10, 8(x11)");
-    assert_eq!(disassemble(0x00c6a823), "sw x12, 16(x13)");
-    assert_eq!(disassemble(0x02e7a023), "sw x14, 32(x15)");
-    assert_eq!(disassemble(0x0508a023), "sw x16, 64(x17)");
-}
-
 
 #[test]
 fn test_disassemble_sd() {

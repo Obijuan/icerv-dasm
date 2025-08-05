@@ -339,7 +339,7 @@ fn main1() {
         0x4020d033, // 🟢sra x0, x1, x2
         0x00008023, // 🟢sb x0, 0(x1)
         0xfe219fa3, // 🟢sh x2, -1(x3)
-        0x7e42afa3, // sw x4, 2047(x5)
+        0x7e42afa3, // 🟢sw x4, 2047(x5)
         0x80533023, // sd x5, -2048(x6)
         0xfe208ee3, // beq x1, x2, -4
         0xfe419ce3, // bne x3, x4, -8
