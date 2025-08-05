@@ -33,9 +33,7 @@ use opcoderv::OpcodeRV;
 //───────────────────────────
 const FIELD_1B: u32 = 0x01;  //-- Campo de 1 bit
 const FIELD_4B: u32 = 0x0F;  //-- Campo de 4 bits
-const FIELD_5B: u32 = 0x1F;  //-- Campo de 5 bits
 const FIELD_6B: u32 = 0x3F;  //-- Campo de 6 bits
-const FIELD_7B: u32 = 0x7F;  //-- Campo de 7 bits
 const FIELD_8B: u32 = 0xFF;  //-- Campo de 8 bits
 const FIELD_10B: u32 = 0x3FF; //-- Campo de 10 bits
 const FIELD_20B: u32 = 0xFFFFF; //-- Campo de 20 bits
@@ -45,9 +43,7 @@ const FIELD_20B: u32 = 0xFFFFF; //-- Campo de 20 bits
 const IMM20_POS: u8 = 12; 
 const OFFSET10_POS: u8 = 21;
 const OFFSET8_POS: u8 = 12;
-const OFFSET7_POS: u8 = 25;
 const OFFSET6_POS: u8 = 25;
-const OFFSET5_POS: u8 = 7;
 const OFFSET4_POS: u8 = 8;
 const OFFSET1_POS: u8 = 20;
 
@@ -58,11 +54,9 @@ const OFFSET1_POS: u8 = 20;
 //  a la posición del campo
 //──────────────────────────────────────────────
 const IMM20_MASK: u32 = FIELD_20B << IMM20_POS; 
-const OFFSET7_MASK: u32 = FIELD_7B << OFFSET7_POS;
 const OFFSET8_MASK: u32 = FIELD_8B << OFFSET8_POS; 
 const OFFSET10_MASK: u32 = FIELD_10B << OFFSET10_POS;
 const OFFSET6_MASK: u32 = FIELD_6B << OFFSET6_POS;
-const OFFSET5_MASK: u32 = FIELD_5B << OFFSET5_POS;
 const OFFSET4_MASK: u32 = FIELD_4B << OFFSET4_POS;
 const OFFSET1_MASK: u32 = FIELD_1B << OFFSET1_POS;
 
@@ -80,19 +74,6 @@ fn get_imm20(inst: u32) -> i32 {
   sign_ext20(imm20 as i32)
 }
 
-
-fn get_offset_s(inst: u32) -> i32 {
-//────────────────────────────────────────────────
-// Entrada: Instrucción RISC-V
-// Salida: Valor del offset para instrucciones s
-//────────────────────────────────────────────────
-    //-- Extraer el campo offset7
-    let offset7: u32 = (inst & OFFSET7_MASK) >> OFFSET7_POS;
-    let offset5: u32 = (inst & OFFSET5_MASK) >> OFFSET5_POS;
-    let offset: u32 = offset7 << 5 | offset5;
-
-    sign_ext(offset as i32)
-}
 
 fn get_offset_b(inst: u32) -> i32 {
 //────────────────────────────────────────────────
@@ -239,24 +220,6 @@ fn sign_ext21(value: i32) -> i32 {
 }
 
 
-fn inst_type_s(func3: u32) -> String {
-//────────────────────────────────────────────────
-//  Obtener el nombre de la instruccion de tipo S
-//  a partir de func3
-//  ENTRADA: Codigos func3
-//  SALIDA: nemonico
-//────────────────────────────────────────────────
-    let name = [
-             //-- func3
-      "sb",  //-- 000
-      "sh",  //-- 001
-      "sw",  //-- 010
-      "sd",  //-- 011
-    ];
-
-    name[func3 as usize].to_string()
-}
-
 fn inst_type_b(func3: u32) -> String {
 //────────────────────────────────────────────────
 //  Obtener el nombre de la instruccion de tipo B
@@ -291,9 +254,7 @@ fn disassemble(inst: u32) -> String {
   let func3: u32 = mcode.func3();
   let imm: i32 = mcode.imm12();
   let offset_jalr: i32 = mcode.imm12();
-
   let rs2 = mcode.rs2();
-  let offset:i32 = get_offset_s(inst);
 
   let imm20: i32 = get_imm20(inst);
   let offset_b: i32 = get_offset_b(inst);
