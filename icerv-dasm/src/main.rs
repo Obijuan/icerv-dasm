@@ -271,7 +271,7 @@ fn main1() {
         0x7e42afa3, // 🟢sw x4, 2047(x5)
         0x80533023, // 🟢sd x5, -2048(x6)
         0xfe208ee3, // 🟢beq x1, x2, -4
-        0xfe419ce3, // bne x3, x4, -8
+        0xfe419ce3, // 🟢bne x3, x4, -8
         0xfe62cae3, // blt x5, x6, -12
         0x0083dc63, // bge x7, x8, 24
         0x00a4ea63, // bltu x9, x10, 20

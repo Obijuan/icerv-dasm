@@ -1514,58 +1514,78 @@ fn test_instruction_bne() {
 
 #[test]
 fn test_instruction_blt() {
-    //assert_eq!(disassemble(0x00004063), "blt x0, x0, 0");
-    //assert_eq!(disassemble(0xfe20cee3), "blt x1, x2, -4");
-    //assert_eq!(disassemble(0xfe41cce3), "blt x3, x4, -8");
-    //assert_eq!(disassemble(0xfe62cae3), "blt x5, x6, -12");
-    //assert_eq!(disassemble(0x0083cc63), "blt x7, x8, 24");
-    //assert_eq!(disassemble(0x00a4ca63), "blt x9, x10, 20");
-    //assert_eq!(disassemble(0x00c5c863), "blt x11, x12, 16");
-    //assert_eq!(disassemble(0x00e6c663), "blt x13, x14, 12");
-    //assert_eq!(disassemble(0x0107c463), "blt x15, x16, 8");
-    //assert_eq!(disassemble(0x0128c263), "blt x17, x18, 4"); 
+    assert_eq!(
+        InstructionRV::Blt{rs1: Reg::X0, rs2: Reg::X0, offs: 0}.to_string(), 
+        "blt x0, x0, 0");
+    assert_eq!(
+        InstructionRV::Blt{rs1: Reg::X1, rs2: Reg::X2, offs: -4}.to_string(), 
+        "blt x1, x2, -4");
+    assert_eq!(
+        InstructionRV::Blt{rs1: Reg::X3, rs2: Reg::X4, offs: -8}.to_string(), 
+        "blt x3, x4, -8");
+    assert_eq!(
+        InstructionRV::Blt{rs1: Reg::X5, rs2: Reg::X6, offs: -12}.to_string(), 
+        "blt x5, x6, -12");
+    assert_eq!(
+        InstructionRV::Blt{rs1: Reg::X7, rs2: Reg::X8, offs: 24}.to_string(), 
+        "blt x7, x8, 24");
+    assert_eq!(
+        InstructionRV::Blt{rs1: Reg::X9, rs2: Reg::X10, offs: 20}.to_string(), 
+        "blt x9, x10, 20");
+    assert_eq!(
+        InstructionRV::Blt{rs1: Reg::X11, rs2: Reg::X12, offs: 16}.to_string(), 
+        "blt x11, x12, 16");
+    assert_eq!(
+        InstructionRV::Blt{rs1: Reg::X13, rs2: Reg::X14, offs: 12}.to_string(), 
+        "blt x13, x14, 12");
+    assert_eq!(
+        InstructionRV::Blt{rs1: Reg::X15, rs2: Reg::X16, offs: 8}.to_string(), 
+        "blt x15, x16, 8");
+    assert_eq!(
+        InstructionRV::Blt{rs1: Reg::X17, rs2: Reg::X18, offs: 4}.to_string(), 
+        "blt x17, x18, 4"); 
 }
 
 #[test]
 fn test_instruction_bge() {
-    //assert_eq!(disassemble(0x00005063), "bge x0, x0, 0");
-    //assert_eq!(disassemble(0xfe20dee3), "bge x1, x2, -4");
-    //assert_eq!(disassemble(0xfe41dce3), "bge x3, x4, -8");
-    //assert_eq!(disassemble(0xfe62dae3), "bge x5, x6, -12");
-    //assert_eq!(disassemble(0x0083dc63), "bge x7, x8, 24");
-    //assert_eq!(disassemble(0x00a4da63), "bge x9, x10, 20");
-    //assert_eq!(disassemble(0x00c5d863), "bge x11, x12, 16");
-    //assert_eq!(disassemble(0x00e6d663), "bge x13, x14, 12");
-    //assert_eq!(disassemble(0x0107d463), "bge x15, x16, 8");
-    //assert_eq!(disassemble(0x0128d263), "bge x17, x18, 4"); 
+    //assert_eq!(, "bge x0, x0, 0");
+    //assert_eq!(, "bge x1, x2, -4");
+    //assert_eq!(, "bge x3, x4, -8");
+    //assert_eq!(, "bge x5, x6, -12");
+    //assert_eq!(, "bge x7, x8, 24");
+    //assert_eq!(, "bge x9, x10, 20");
+    //assert_eq!(, "bge x11, x12, 16");
+    //assert_eq!(, "bge x13, x14, 12");
+    //assert_eq!(, "bge x15, x16, 8");
+    //assert_eq!(, "bge x17, x18, 4"); 
 }
 
 #[test]
 fn test_instruction_bltu() {
-    //assert_eq!(disassemble(0x00006063), "bltu x0, x0, 0");
-    //assert_eq!(disassemble(0xfe20eee3), "bltu x1, x2, -4");
-    //assert_eq!(disassemble(0xfe41ece3), "bltu x3, x4, -8");
-    //assert_eq!(disassemble(0xfe62eae3), "bltu x5, x6, -12");
-    //assert_eq!(disassemble(0x0083ec63), "bltu x7, x8, 24");
-    //assert_eq!(disassemble(0x00a4ea63), "bltu x9, x10, 20");
-    //assert_eq!(disassemble(0x00c5e863), "bltu x11, x12, 16");
-    //assert_eq!(disassemble(0x00e6e663), "bltu x13, x14, 12");
-    //assert_eq!(disassemble(0x0107e463), "bltu x15, x16, 8");
-    //assert_eq!(disassemble(0x0128e263), "bltu x17, x18, 4"); 
+    //assert_eq!(, "bltu x0, x0, 0");
+    //assert_eq!(, "bltu x1, x2, -4");
+    //assert_eq!(, "bltu x3, x4, -8");
+    //assert_eq!(, "bltu x5, x6, -12");
+    //assert_eq!(, "bltu x7, x8, 24");
+    //assert_eq!(, "bltu x9, x10, 20");
+    //assert_eq!(, "bltu x11, x12, 16");
+    //assert_eq!(, "bltu x13, x14, 12");
+    //assert_eq!(, "bltu x15, x16, 8");
+    //assert_eq!(, "bltu x17, x18, 4"); 
 }
 
 #[test]
 fn test_instruction_bgeu() {
-    //assert_eq!(disassemble(0x00007063), "bgeu x0, x0, 0");
-    //assert_eq!(disassemble(0xfe20fee3), "bgeu x1, x2, -4");
-    //assert_eq!(disassemble(0xfe41fce3), "bgeu x3, x4, -8");
-    //assert_eq!(disassemble(0xfe62fae3), "bgeu x5, x6, -12");
-    //assert_eq!(disassemble(0x0083fc63), "bgeu x7, x8, 24");
-    //assert_eq!(disassemble(0x00a4fa63), "bgeu x9, x10, 20");
-    //assert_eq!(disassemble(0x00c5f863), "bgeu x11, x12, 16");
-    //assert_eq!(disassemble(0x00e6f663), "bgeu x13, x14, 12");
-    //assert_eq!(disassemble(0x0107f463), "bgeu x15, x16, 8");
-    //assert_eq!(disassemble(0x0128f263), "bgeu x17, x18, 4"); 
+    //assert_eq!(, "bgeu x0, x0, 0");
+    //assert_eq!(, "bgeu x1, x2, -4");
+    //assert_eq!(, "bgeu x3, x4, -8");
+    //assert_eq!(, "bgeu x5, x6, -12");
+    //assert_eq!(, "bgeu x7, x8, 24");
+    //assert_eq!(, "bgeu x9, x10, 20");
+    //assert_eq!(, "bgeu x11, x12, 16");
+    //assert_eq!(, "bgeu x13, x14, 12");
+    //assert_eq!(, "bgeu x15, x16, 8");
+    //assert_eq!(, "bgeu x17, x18, 4"); 
 }
 
 
