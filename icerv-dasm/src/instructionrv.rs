@@ -57,6 +57,16 @@ pub enum InstructionRV {
     Sw {rs2: Reg, offs: i32, rs1: Reg}, //-- sw rs2, offs(rs1)
     Sd {rs2: Reg, offs: i32, rs1: Reg}, //-- sd rs2, offs(rs1)
 
+    //──────────────────────────────────
+    //  Instrucciones tipo B
+    //──────────────────────────────────
+    Beq {rs1: Reg, rs2: Reg, offs: i32}, //-- beq x1, x2, -4
+    Bne {rs1: Reg, rs2: Reg, offs: i32}, //-- bne x3, x4, -8
+    Blt {rs1: Reg, rs2: Reg, offs: i32}, //-- blt x5, x6, -12
+    Bge {rs1: Reg, rs2: Reg, offs: i32}, //-- bge x7, x8, 24
+    Bltu {rs1: Reg, rs2: Reg, offs: i32}, //-- bltu x9, x10, 20
+    Bgeu {rs1: Reg, rs2: Reg, offs: i32}, //-- bgeu x11, x12, 16
+
     Unknown, //-- Instrucción desconocida
 }
 
@@ -292,6 +302,48 @@ impl InstructionRV {
                     _ => Self::Unknown
                 }
             },
+            OpcodeRV::TipoB => {
+                let func3 = mcode.func3();
+                match func3 {
+                    0b_000 => 
+                        Self::Beq {
+                            rs1: mcode.rs1(),
+                            rs2: mcode.rs2(),
+                            offs: mcode.offset_b(),
+                        },
+                    0b_001 =>
+                        Self::Bne {
+                            rs1: mcode.rs1(),
+                            rs2: mcode.rs2(),
+                            offs: mcode.offset_b(),
+                        },
+                    0b_100 =>
+                        Self::Blt {
+                            rs1: mcode.rs1(),
+                            rs2: mcode.rs2(),
+                            offs: mcode.offset_b(),
+                        },
+                    0b_101 =>
+                        Self::Bge {
+                            rs1: mcode.rs1(),
+                            rs2: mcode.rs2(),
+                            offs: mcode.offset_b(),
+                        },
+                    0b_110 =>
+                        Self::Bltu {
+                            rs1: mcode.rs1(),
+                            rs2: mcode.rs2(),
+                            offs: mcode.offset_b(),
+                        },
+                    0b_111 =>
+                        Self::Bgeu {
+                            rs1: mcode.rs1(),
+                            rs2: mcode.rs2(),
+                            offs: mcode.offset_b(),
+                        },
+                    _ => Self::Unknown
+                }
+            },
             _ => Self::Unknown,
         }    
     }
@@ -397,6 +449,24 @@ impl InstructionRV {
             },
             Self::Sd { rs2, offs, rs1, } => {
                 format!("sd {}, {}({})", rs2.to_str(), offs, rs1.to_str())
+            },
+            Self::Beq { rs1, rs2, offs } => {
+                format!("beq {}, {}, {}", rs1.to_str(), rs2.to_str(), offs)
+            },
+            Self::Bne { rs1, rs2, offs } => {
+                format!("bne {}, {}, {}", rs1.to_str(), rs2.to_str(), offs)
+            },
+            Self::Blt { rs1, rs2, offs } => {
+                format!("blt {}, {}, {}", rs1.to_str(), rs2.to_str(), offs)
+            },
+            Self::Bge { rs1, rs2, offs } => {
+                format!("bge {}, {}, {}", rs1.to_str(), rs2.to_str(), offs)
+            },
+            Self::Bltu { rs1, rs2, offs } => {
+                format!("bltu {}, {}, {}", rs1.to_str(), rs2.to_str(), offs)
+            },
+            Self::Bgeu { rs1, rs2, offs } => {
+                format!("bgeu {}, {}, {}", rs1.to_str(), rs2.to_str(), offs)
             },
 
             Self::Unknown => {
