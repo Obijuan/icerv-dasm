@@ -58,6 +58,8 @@ const RS1_POS: u8 = 15;
 const RS2_POS: u8 = 20;  
 const IMM12_POS: u8 = 20; 
 const FUNC7_POS: u8 = 25;  
+const OFFSET5_POS: u8 = 7;
+const OFFSET7_POS: u8 = 25;
 
 
 
@@ -71,6 +73,8 @@ const RS1_MASK: u32 = FIELD_5B << RS1_POS;
 const RS2_MASK: u32 = FIELD_5B << RS2_POS;
 const IMM12_MASK: u32 = FIELD_12B << IMM12_POS;  
 const FUNC7_MASK: u32 = FIELD_7B << FUNC7_POS;
+const OFFSET7_MASK: u32 = FIELD_7B << OFFSET7_POS;
+const OFFSET5_MASK: u32 = FIELD_5B << OFFSET5_POS;
 
 
 //────────────────────────────────────────────────
@@ -179,7 +183,19 @@ impl MCode {
         //-- Convertir el valor a i32 para manejar el signo
         //-- y devolverlo!
         sign_ext(imm12 as i32)
-    }      
+    }
+
+    //────────────────────────────────────────────────
+    //  Obtener el campo offset de las instrucciones S
+    //────────────────────────────────────────────────
+    pub fn offset_s(&self) -> i32 {
+        //-- Extraer el campo offset7
+        let offset7: u32 = (self.value & OFFSET7_MASK) >> OFFSET7_POS;
+        let offset5: u32 = (self.value & OFFSET5_MASK) >> OFFSET5_POS;
+        let offset: u32 = offset7 << 5 | offset5;
+
+        sign_ext(offset as i32)
+    }
 
 }
 

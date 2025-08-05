@@ -171,19 +171,6 @@ fn test_disassemble_sd() {
     assert_eq!(disassemble(0x0508b023), "sd x16, 64(x17)");
 }
 
-#[test]
-fn test_disassemble_sb() {
-      assert_eq!(disassemble(0x00008023), "sb x0, 0(x1)");
-      assert_eq!(disassemble(0xfe218fa3), "sb x2, -1(x3)");
-      assert_eq!(disassemble(0x7e428fa3), "sb x4, 2047(x5)");
-      assert_eq!(disassemble(0x80530023), "sb x5, -2048(x6)");
-      assert_eq!(disassemble(0x00638123), "sb x6, 2(x7)");
-      assert_eq!(disassemble(0x00848223), "sb x8, 4(x9)");
-      assert_eq!(disassemble(0x00a58423), "sb x10, 8(x11)");
-      assert_eq!(disassemble(0x00c68823), "sb x12, 16(x13)");
-      assert_eq!(disassemble(0x02e78023), "sb x14, 32(x15)");
-      assert_eq!(disassemble(0x05088023), "sb x16, 64(x17)");
-}
 
 
 

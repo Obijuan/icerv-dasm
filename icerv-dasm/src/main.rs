@@ -482,14 +482,15 @@ fn main_test1() {
         InstructionRV::Xor { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
         InstructionRV::Srl { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
         InstructionRV::Or { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
-        InstructionRV::Sra { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}
+        InstructionRV::Sra { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
+
+        //-- Instruciones Tipo S
+        InstructionRV::Sb { rs2: Reg::X0, offs: 0, rs1: Reg::X1},
+        InstructionRV::Sh { rs2: Reg::X2, offs: -1, rs1: Reg::X3},
+        InstructionRV::Sw { rs2: Reg::X4, offs: 2047, rs1: Reg::X5},
+        InstructionRV::Sd { rs2: Reg::X5, offs: -2048, rs1: Reg::X6},
 
     ];
-
-    //0x00008023, // sb x0, 0(x1)
-    //0xfe219fa3, // sh x2, -1(x3)
-    //0x7e42afa3, // sw x4, 2047(x5)
-    //0x80533023, // sd x5, -2048(x6)
 
     for i in 0..inst.len() {
         //-- Imprimir la instrucción

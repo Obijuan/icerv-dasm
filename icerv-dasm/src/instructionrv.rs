@@ -49,6 +49,14 @@ pub enum InstructionRV {
     And {rd: Reg, rs1: Reg, rs2: Reg},   //-- and rd, rs1, rs2
     Sra {rd: Reg, rs1: Reg, rs2: Reg},  //-- sra rd, rs1, rs2
 
+    //──────────────────────────────────
+    //  Instrucciones tipo S
+    //──────────────────────────────────
+    Sb {rs2: Reg, offs: i32, rs1: Reg}, //-- sb rs2, offs(rs1)
+    Sh {rs2: Reg, offs: i32, rs1: Reg}, //-- sh rs2, offs(rs1)
+    Sw {rs2: Reg, offs: i32, rs1: Reg}, //-- sw rs2, offs(rs1)
+    Sd {rs2: Reg, offs: i32, rs1: Reg}, //-- sd rs2, offs(rs1)
+
     Unknown, //-- Instrucción desconocida
 }
 
@@ -254,6 +262,36 @@ impl InstructionRV {
                 }
 
             },
+            OpcodeRV::TipoS => {
+                let func3 = mcode.func3();
+                match func3 {
+                    0b_000 => 
+                        Self::Sb {
+                            rs2: mcode.rs2(),
+                            offs: mcode.offset_s(),
+                            rs1: mcode.rs1(),
+                        },
+                    0b_001 =>
+                        Self::Sh {
+                            rs2: mcode.rs2(),
+                            offs: mcode.offset_s(),
+                            rs1: mcode.rs1(),
+                        },
+                    0b_010 =>
+                        Self::Sw {
+                            rs2: mcode.rs2(),
+                            offs: mcode.offset_s(),
+                            rs1: mcode.rs1(),
+                        },
+                    0b_011 =>
+                        Self::Sd {
+                            rs2: mcode.rs1(),
+                            offs: mcode.offset_s(),
+                            rs1: mcode.rs2(),
+                        },
+                    _ => Self::Unknown
+                }
+            },
             _ => Self::Unknown,
         }    
     }
@@ -347,6 +385,18 @@ impl InstructionRV {
             Self::Sra { rd, rs1, rs2} => {
                 format!("sra {}, {}, {}", rd.to_str(), 
                         rs1.to_str(), rs2.to_str())
+            },
+            Self::Sb { rs2, offs, rs1, } => {
+                format!("sb {}, {}({})", rs2.to_str(), offs, rs1.to_str())
+            },
+            Self::Sh { rs2, offs, rs1, } => {
+                format!("sh {}, {}({})", rs2.to_str(), offs, rs1.to_str())
+            },
+            Self::Sw { rs2, offs, rs1, } => {
+                format!("sw {}, {}({})", rs2.to_str(), offs, rs1.to_str())
+            },
+            Self::Sd { rs2, offs, rs1, } => {
+                format!("sd {}, {}({})", rs2.to_str(), offs, rs1.to_str())
             },
 
             Self::Unknown => {
@@ -1075,7 +1125,7 @@ fn test_instruction_xor() {
 }
 
 #[test]
-fn test_disassemble_srl() {
+fn test_instruction_srl() {
     
     assert_eq!(
         InstructionRV::Srl{rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_string(), 
@@ -1113,7 +1163,7 @@ fn test_disassemble_srl() {
 }
 
 #[test]
-fn test_disassemble_or() {
+fn test_instruction_or() {
     assert_eq!(
         InstructionRV::Or{rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_string(), 
         "or x0, x1, x2");
@@ -1151,7 +1201,7 @@ fn test_disassemble_or() {
 
 
 #[test]
-fn test_disassemble_sra() {
+fn test_instruction_sra() {
     assert_eq!(
         InstructionRV::Sra{rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_string(), 
         "sra x0, x1, x2");
@@ -1187,6 +1237,39 @@ fn test_disassemble_sra() {
         "sra x30, x31, x31");
 }
 
+#[test]
+fn test_instruction_sb() {
+      assert_eq!(
+        InstructionRV::Sb{rs2: Reg::X0, offs: 0, rs1: Reg::X1}.to_string(), 
+        "sb x0, 0(x1)");
+      assert_eq!(
+        InstructionRV::Sb{rs2: Reg::X2, offs: -1, rs1: Reg::X3}.to_string(), 
+        "sb x2, -1(x3)");
+      assert_eq!(
+        InstructionRV::Sb{rs2: Reg::X4, offs: 2047, rs1: Reg::X5}.to_string(), 
+        "sb x4, 2047(x5)");
+      assert_eq!(
+        InstructionRV::Sb{rs2: Reg::X5, offs: -2048, rs1: Reg::X6}.to_string(), 
+        "sb x5, -2048(x6)");
+      assert_eq!(
+        InstructionRV::Sb{rs2: Reg::X6, offs: 2, rs1: Reg::X7}.to_string(), 
+        "sb x6, 2(x7)");
+      assert_eq!(
+        InstructionRV::Sb{rs2: Reg::X8, offs: 4, rs1: Reg::X9}.to_string(), 
+        "sb x8, 4(x9)");
+      assert_eq!(
+        InstructionRV::Sb{rs2: Reg::X10, offs: 8, rs1: Reg::X11}.to_string(), 
+        "sb x10, 8(x11)");
+      assert_eq!(
+        InstructionRV::Sb{rs2: Reg::X12, offs: 16, rs1: Reg::X13}.to_string(), 
+        "sb x12, 16(x13)");
+      assert_eq!(
+        InstructionRV::Sb{rs2: Reg::X14, offs: 32, rs1: Reg::X15}.to_string(), 
+        "sb x14, 32(x15)");
+      assert_eq!(
+        InstructionRV::Sb{rs2: Reg::X16, offs: 64, rs1: Reg::X17}.to_string(), 
+        "sb x16, 64(x17)");
+}
 
 
 
@@ -2015,3 +2098,38 @@ fn test_mcode_sra() {
         InstructionRV::from_mcode(0x41ffdf33).to_string(), 
         "sra x30, x31, x31");
 }
+
+#[test]
+fn test_mcode_sb() {
+      assert_eq!(
+        InstructionRV::from_mcode(0x00008023).to_string(), 
+        "sb x0, 0(x1)");
+      assert_eq!(
+        InstructionRV::from_mcode(0xfe218fa3).to_string(), 
+        "sb x2, -1(x3)");
+      assert_eq!(
+        InstructionRV::from_mcode(0x7e428fa3).to_string(), 
+        "sb x4, 2047(x5)");
+      assert_eq!(
+        InstructionRV::from_mcode(0x80530023).to_string(), 
+        "sb x5, -2048(x6)");
+      assert_eq!(
+        InstructionRV::from_mcode(0x00638123).to_string(), 
+        "sb x6, 2(x7)");
+      assert_eq!(
+        InstructionRV::from_mcode(0x00848223).to_string(), 
+        "sb x8, 4(x9)");
+      assert_eq!(
+        InstructionRV::from_mcode(0x00a58423).to_string(), 
+        "sb x10, 8(x11)");
+      assert_eq!(
+        InstructionRV::from_mcode(0x00c68823).to_string(), 
+        "sb x12, 16(x13)");
+      assert_eq!(
+        InstructionRV::from_mcode(0x02e78023).to_string(), 
+        "sb x14, 32(x15)");
+      assert_eq!(
+        InstructionRV::from_mcode(0x05088023).to_string(), 
+        "sb x16, 64(x17)");
+}
+
