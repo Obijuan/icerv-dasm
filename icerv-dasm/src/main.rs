@@ -272,10 +272,10 @@ fn main1() {
         0x80533023, // 🟢sd x5, -2048(x6)
         0xfe208ee3, // 🟢beq x1, x2, -4
         0xfe419ce3, // 🟢bne x3, x4, -8
-        0xfe62cae3, // blt x5, x6, -12
-        0x0083dc63, // bge x7, x8, 24
-        0x00a4ea63, // bltu x9, x10, 20
-        0x00c5f863, // bgeu x11, x12, 16
+        0xfe62cae3, // 🟢blt x5, x6, -12
+        0x0083dc63, // 🟢bge x7, x8, 24
+        0x00a4ea63, // 🟢bltu x9, x10, 20
+        0x00c5f863, // 🟢bgeu x11, x12, 16
         0x80000337, // lui x6, 0x80000
         0x08000217, // auipc x4, 0x08000
         0xff1ff26f, // jal x4, -16
