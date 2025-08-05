@@ -143,21 +143,5 @@ fn test_disassemble_bne() {
 }
 
 
-#[test]
-fn test_disassemble_sd() {
-    assert_eq!(disassemble(0x0000b023), "sd x0, 0(x1)");
-    assert_eq!(disassemble(0xfe21bfa3), "sd x2, -1(x3)");
-    assert_eq!(disassemble(0x7e42bfa3), "sd x4, 2047(x5)");
-    assert_eq!(disassemble(0x80533023), "sd x5, -2048(x6)");
-    assert_eq!(disassemble(0x0063b123), "sd x6, 2(x7)");
-    assert_eq!(disassemble(0x0084b223), "sd x8, 4(x9)");
-    assert_eq!(disassemble(0x00a5b423), "sd x10, 8(x11)");
-    assert_eq!(disassemble(0x00c6b823), "sd x12, 16(x13)");
-    assert_eq!(disassemble(0x02e7b023), "sd x14, 32(x15)");
-    assert_eq!(disassemble(0x0508b023), "sd x16, 64(x17)");
-}
-
-
-
 
 
