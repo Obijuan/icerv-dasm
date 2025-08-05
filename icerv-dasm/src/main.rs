@@ -316,9 +316,8 @@ fn disassemble(inst: u32) -> String {
     },
 
     OpcodeRV::TipoS => {
-      //-- Nombre de la instrucción
-      let name: String = inst_type_s(func3);
-      format!("{} x{}, {}(x{})", name, rs2 as u8, offset, rs1 as u8)
+      let inst2: InstructionRV = InstructionRV::from_mcode(inst);
+      inst2.to_string()
     },
 
     OpcodeRV::TipoB => {

@@ -285,9 +285,9 @@ impl InstructionRV {
                         },
                     0b_011 =>
                         Self::Sd {
-                            rs2: mcode.rs1(),
+                            rs2: mcode.rs2(),
                             offs: mcode.offset_s(),
-                            rs1: mcode.rs2(),
+                            rs1: mcode.rs1(),
                         },
                     _ => Self::Unknown
                 }
