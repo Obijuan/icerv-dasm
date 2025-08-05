@@ -1271,6 +1271,42 @@ fn test_instruction_sb() {
         "sb x16, 64(x17)");
 }
 
+#[test]
+fn test_instruction_sh() {
+    assert_eq!(
+        InstructionRV::Sh{rs2: Reg::X0, offs: 0, rs1: Reg::X1}.to_string(), 
+        "sh x0, 0(x1)");
+    assert_eq!(
+        InstructionRV::Sh{rs2: Reg::X2, offs: -1, rs1: Reg::X3}.to_string(), 
+        "sh x2, -1(x3)");
+    assert_eq!(
+        InstructionRV::Sh{rs2: Reg::X4, offs: 2047, rs1: Reg::X5}.to_string(), 
+        "sh x4, 2047(x5)");
+    assert_eq!(
+        InstructionRV::Sh{rs2: Reg::X5, offs: -2048, rs1: Reg::X6}.to_string(), 
+        "sh x5, -2048(x6)");
+    assert_eq!(
+        InstructionRV::Sh{rs2: Reg::X6, offs: 2, rs1: Reg::X7}.to_string(), 
+        "sh x6, 2(x7)");
+    assert_eq!(
+        InstructionRV::Sh{rs2: Reg::X8, offs: 4, rs1: Reg::X9}.to_string(), 
+        "sh x8, 4(x9)");
+    assert_eq!(
+        InstructionRV::Sh{rs2: Reg::X10, offs: 8, rs1: Reg::X11}.to_string(), 
+        "sh x10, 8(x11)");
+    assert_eq!(
+        InstructionRV::Sh{rs2: Reg::X12, offs: 16, rs1: Reg::X13}.to_string(), 
+        "sh x12, 16(x13)");
+    assert_eq!(
+        InstructionRV::Sh{rs2: Reg::X14, offs: 32, rs1: Reg::X15}.to_string(), 
+        "sh x14, 32(x15)");
+    assert_eq!(
+        InstructionRV::Sh{rs2: Reg::X16, offs: 64, rs1: Reg::X17}.to_string(), 
+        "sh x16, 64(x17)");
+}
+
+
+
 
 
 //────────────────────────────────────────────────
@@ -2132,4 +2168,41 @@ fn test_mcode_sb() {
         InstructionRV::from_mcode(0x05088023).to_string(), 
         "sb x16, 64(x17)");
 }
+
+
+#[test]
+fn test_mcode_sh() {
+    assert_eq!(
+        InstructionRV::from_mcode(0x00009023).to_string(), 
+        "sh x0, 0(x1)");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfe219fa3).to_string(), 
+        "sh x2, -1(x3)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x7e429fa3).to_string(), 
+        "sh x4, 2047(x5)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x80531023).to_string(), 
+        "sh x5, -2048(x6)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00639123).to_string(), 
+        "sh x6, 2(x7)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00849223).to_string(), 
+        "sh x8, 4(x9)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00a59423).to_string(), 
+        "sh x10, 8(x11)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00c69823).to_string(), 
+        "sh x12, 16(x13)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x02e79023).to_string(), 
+        "sh x14, 32(x15)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x05089023).to_string(), 
+        "sh x16, 64(x17)");
+}
+
+
 

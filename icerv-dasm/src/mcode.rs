@@ -356,3 +356,17 @@ fn test_imm12() {
     assert_eq!(MCode::new(0xFFE_FFFFF).imm12() as i32, -2);
 }
 
+
+//────────────────────────────────────────────────
+//  TESTS
+//────────────────────────────────────────────────
+#[test]
+fn test_sign_ext() {
+  //-- Test de la función sign_ext
+  assert_eq!(sign_ext(0x000), 0);
+  assert_eq!(sign_ext(0x001), 1);
+  assert_eq!(sign_ext(0x7FF), 2047);  //-- 0x7FF
+  assert_eq!(sign_ext(0x800), -2048); //-- 0x800
+  assert_eq!(sign_ext(0xFFF), -1);
+  assert_eq!(sign_ext(0x7FF_FFFF), -1);
+}
