@@ -31,15 +31,9 @@ use opcoderv::OpcodeRV;
 //───────────────────────────
 //  ANCHURAS de LOS CAMPOS
 //───────────────────────────
-const FIELD_1B: u32 = 0x01;  //-- Campo de 1 bit
-const FIELD_8B: u32 = 0xFF;  //-- Campo de 8 bits
-const FIELD_10B: u32 = 0x3FF; //-- Campo de 10 bits
 //────────────────────────────────────────────────
 //  POSICIONES de LOS CAMPOS
 //────────────────────────────────────────────────
-const OFFSET10_POS: u8 = 21;
-const OFFSET8_POS: u8 = 12;
-const OFFSET1_POS: u8 = 20;
 
 //────────────────────────────────────────────────
 //  CALCULAR LAS MASCARAS DE ACCESO A LOS CAMPOS
@@ -47,36 +41,6 @@ const OFFSET1_POS: u8 = 20;
 //  Se calculan desplazando los campos de la anchura correspondiente
 //  a la posición del campo
 //──────────────────────────────────────────────
-const OFFSET8_MASK: u32 = FIELD_8B << OFFSET8_POS; 
-const OFFSET10_MASK: u32 = FIELD_10B << OFFSET10_POS;
-const OFFSET1_MASK: u32 = FIELD_1B << OFFSET1_POS;
-
-
-fn get_offset_jal(inst: u32) -> i32 {
-//────────────────────────────────────────────────
-// Entrada: Instrucción RISC-V
-// Salida: Valor del offset para instrucciones jal
-// offset[20|10:1|11|19:12]
-//────────────────────────────────────────────────
-    //-- Extraer el bit de signo
-    let sign: u32 = (inst & 0x8000_0000) >> 31;
-
-    //-- Extraer los bits 19-12
-    let offset8: u32 = (inst & OFFSET8_MASK) >> OFFSET8_POS;
-
-    //-- Extraer el bit 11
-    let b11: u32 = (inst & OFFSET1_MASK) >> OFFSET1_POS;
-
-    //-- Extraer los bits 10-1
-    let offset10: u32 = (inst & OFFSET10_MASK) >> OFFSET10_POS;
-
-    //-- Construir el offset final a partir de todos sus componentes
-    let offset: u32 = (sign << 20) | (offset8 << 12) | b11 << 11 |
-                      (offset10 << 1); 
-                      
-
-    sign_ext21(offset as i32)
-}
 
 fn print_fields(inst: u32) {
 //────────────────────────────────────────────────
@@ -108,23 +72,6 @@ fn print_fields(inst: u32) {
 }
 
 
-fn sign_ext21(value: i32) -> i32 {
-//────────────────────────────────────────────────
-// Entrada: Valor de 21 bits  
-// Salida: Valor extendido a 32 bits con signo
-//────────────────────────────────────────────────
-    //-- Obtener el bit de signo
-    //-- sign_bit = true --> negativo
-    let sign_bit = (value & 0x100000) != 0;
-
-    //-- En caso de ser negativo, extender el signo
-    if sign_bit {
-        value | !0x1FFFFF  //-- Extender el signo a 32 bits
-    } else {
-        value  //-- No es negativo, devolver el valor original
-    }
-}
-
 
 fn disassemble(inst: u32) -> String {
 
@@ -137,7 +84,6 @@ fn disassemble(inst: u32) -> String {
   let rs1: Reg = mcode.rs1();
   let imm: i32 = mcode.imm12();
   let offset_jalr: i32 = mcode.imm12();
-  let offset_jal: i32 = get_offset_jal(inst);
   
   match opcode {
     OpcodeRV::TipoIArith => {
@@ -176,7 +122,8 @@ fn disassemble(inst: u32) -> String {
     },
 
     OpcodeRV::TipoJJal => {
-      format!("jal x{}, {}", rd as u8, offset_jal)
+        let inst2: InstructionRV = InstructionRV::from_mcode(inst);
+        inst2.to_string()
     },
 
     OpcodeRV::TipoJJalr => {
@@ -245,7 +192,7 @@ fn main1() {
         0x00c5f863, // 🟢bgeu x11, x12, 16
         0x80000337, // 🟢lui x6, 0x80000
         0x08000217, // 🟢auipc x4, 0x08000
-        0xff1ff26f, // jal x4, -16
+        0xff1ff26f, // 🟢jal x4, -16
         0xfff500e7, // jalr x1, -1(x10)
         0x00000073, // ecall
         0x00100073, // ebreak

@@ -1745,31 +1745,31 @@ fn test_instruction_jal() {
     InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
     "jal x0, 0");
     assert_eq!(
-    InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
+    InstructionRV::Jal { rd: Reg::X1, offs: -4 }.to_string(), 
     "jal x1, -4");
     assert_eq!(
-    InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
+    InstructionRV::Jal { rd: Reg::X2, offs: -8 }.to_string(), 
     "jal x2, -8");
     assert_eq!(
-    InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
+    InstructionRV::Jal { rd: Reg::X3, offs: -12 }.to_string(), 
     "jal x3, -12");
     assert_eq!(
-    InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
+    InstructionRV::Jal { rd: Reg::X4, offs: -16 }.to_string(), 
     "jal x4, -16");
     assert_eq!(
-    InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
+    InstructionRV::Jal { rd: Reg::X5, offs: 20 }.to_string(), 
     "jal x5, 20");
     assert_eq!(
-    InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
+    InstructionRV::Jal { rd: Reg::X6, offs: 16 }.to_string(), 
     "jal x6, 16");
     assert_eq!(
-    InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
+    InstructionRV::Jal { rd: Reg::X7, offs: 12 }.to_string(), 
     "jal x7, 12");
     assert_eq!(
-    InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
+    InstructionRV::Jal { rd: Reg::X8, offs: 8 }.to_string(), 
     "jal x8, 8");
     assert_eq!(
-    InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
+    InstructionRV::Jal { rd: Reg::X9, offs: 4 }.to_string(), 
     "jal x9, 4");
 }
 
