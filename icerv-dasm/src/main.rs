@@ -12,17 +12,29 @@
 #[cfg(test)]
 mod test;
 
-mod regs;
-mod instructionrv;
-mod mcode;
-mod opcoderv;
 
-//-- Registros del RISCV
-use instructionrv::InstructionRV;
+//────────────────────────────────────────────────
+//  MODULOS usados
+//────────────────────────────────────────────────
+
+//──────── Instrucciones completas del RiscV
+mod instructionrv;
+
+//──────── Registros del RiscV
+mod regs;
+
+//──────── Código máquina
+mod mcode;
+
+//──────── Códigos de operación
+mod opcoderv;
 
 //────────────────────────────────────────────────
 //  PROGRAMA PRINCIPAL
 //────────────────────────────────────────────────
+
+use instructionrv::InstructionRV;
+
 fn main() {
 
     //-- Progama a desensamblar
@@ -40,7 +52,11 @@ fn main() {
 
     //-- Desensamblar programa instrucción a instrucción
     for i in 0..mcode.len() {
-        let inst: InstructionRV = InstructionRV::from_mcode(mcode[i]);
+
+        //-- Leer instrucción a partir del código máquina
+        let inst= InstructionRV::from_mcode(mcode[i]);
+
+        //-- Imprimir instrucción en código máquina y en ensamblador
         println!("🟢 [{:#010X}]: {}", mcode[i] as u32, inst.to_string());
     }
 }
