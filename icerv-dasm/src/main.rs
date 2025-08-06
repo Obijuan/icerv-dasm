@@ -176,32 +176,33 @@ fn disassemble(inst: u32) -> String {
   
   match opcode {
     OpcodeRV::TipoIArith => {
-      let inst2: InstructionRV = InstructionRV::from_mcode(inst);
-      inst2.to_string()
+        let inst2: InstructionRV = InstructionRV::from_mcode(inst);
+        inst2.to_string()
     },
 
     OpcodeRV::TipoILoad => {
-      let inst2: InstructionRV = InstructionRV::from_mcode(inst);
-      inst2.to_string()
+        let inst2: InstructionRV = InstructionRV::from_mcode(inst);
+        inst2.to_string()
     },
 
     OpcodeRV::TipoR => {
-      let inst2: InstructionRV = InstructionRV::from_mcode(inst);
-      inst2.to_string()
+        let inst2: InstructionRV = InstructionRV::from_mcode(inst);
+        inst2.to_string()
     },
 
     OpcodeRV::TipoS => {
-      let inst2: InstructionRV = InstructionRV::from_mcode(inst);
-      inst2.to_string()
+        let inst2: InstructionRV = InstructionRV::from_mcode(inst);
+        inst2.to_string()
     },
 
     OpcodeRV::TipoB => {
-      let inst2: InstructionRV = InstructionRV::from_mcode(inst);
-      inst2.to_string()
+        let inst2: InstructionRV = InstructionRV::from_mcode(inst);
+        inst2.to_string()
     },
 
     OpcodeRV::TipoULui => {
-      format!("lui x{}, {:#07X}", rd as u8, imm20 & 0xFFFFF)
+        let inst2: InstructionRV = InstructionRV::from_mcode(inst);
+        inst2.to_string()
     },
 
     OpcodeRV::TipoUAuipc => {
@@ -276,9 +277,10 @@ fn main1() {
         0x0083dc63, // 🟢bge x7, x8, 24
         0x00a4ea63, // 🟢bltu x9, x10, 20
         0x00c5f863, // 🟢bgeu x11, x12, 16
-        0x80000337, // lui x6, 0x80000
+        0x80000337, // 🟢lui x6, 0x80000
         0x08000217, // auipc x4, 0x08000
         0xff1ff26f, // jal x4, -16
+        0xfff500e7, // jalr x1, -1(x10)
         0x00000073, // ecall
         0x00100073, // ebreak
     ];
@@ -370,6 +372,14 @@ fn main_test1() {
         InstructionRV::Bge {rs1: Reg::X7, rs2: Reg::X8, offs: 24},
         InstructionRV::Beq {rs1: Reg::X9, rs2: Reg::X10, offs: 20},
         InstructionRV::Beq {rs1: Reg::X11, rs2: Reg::X12, offs: 16},
+
+        //-- Instrucciones Tipo U
+        InstructionRV::Lui {rd: Reg::X6, imm: 0x80000},
+
+        //0x08000217, // auipc x4, 0x08000
+        //0xff1ff26f, // jal x4, -16
+        //0x00000073, // ecall
+        //0x00100073, // ebreak
     ];
 
     for i in 0..inst.len() {
@@ -417,6 +427,11 @@ fn main_test2() {
         0x0083dc63, //-- bge x7, x8, 24
         0x00a4ea63, //-- bltu x9, x10, 20
         0x00c5f863, //-- bgeu x11, x12, 16
+        0x80000337, //-- lui x6, 0x80000
+        0x08000217, //-- auipc x4, 0x08000
+        0xff1ff26f, //-- jal x4, -16
+        0x00000073, //-- ecall
+        0x00100073, //-- ebreak
     ];
 
     

@@ -60,16 +60,29 @@ pub enum InstructionRV {
     //──────────────────────────────────
     //  Instrucciones tipo B
     //──────────────────────────────────
-    Beq {rs1: Reg, rs2: Reg, offs: i32}, //-- beq x1, x2, -4
-    Bne {rs1: Reg, rs2: Reg, offs: i32}, //-- bne x3, x4, -8
-    Blt {rs1: Reg, rs2: Reg, offs: i32}, //-- blt x5, x6, -12
-    Bge {rs1: Reg, rs2: Reg, offs: i32}, //-- bge x7, x8, 24
-    Bltu {rs1: Reg, rs2: Reg, offs: i32}, //-- bltu x9, x10, 20
-    Bgeu {rs1: Reg, rs2: Reg, offs: i32}, //-- bgeu x11, x12, 16
+    Beq {rs1: Reg, rs2: Reg, offs: i32}, //-- beq rs1, rs2, offs
+    Bne {rs1: Reg, rs2: Reg, offs: i32}, //-- bne rs1, rs2, offs
+    Blt {rs1: Reg, rs2: Reg, offs: i32}, //-- blt rs1, rs2, offs
+    Bge {rs1: Reg, rs2: Reg, offs: i32}, //-- bge rs1, rs2, offs
+    Bltu {rs1: Reg, rs2: Reg, offs: i32}, //-- bltu rs1, rs2, offs
+    Bgeu {rs1: Reg, rs2: Reg, offs: i32}, //-- bgeu rs1, rs2, offs
+
+    //──────────────────────────────────
+    //  Instrucciones tipo U: LUI
+    //──────────────────────────────────
+    Lui {rd: Reg, imm: i32},   //-- lui rd, imm
+    Auipc {rd: Reg, imm: i32}, //-- auipc rd, imm
+
+    //──────────────────────────────────
+    //  Instrucciones tipo J
+    //──────────────────────────────────
+    Jal {rd: Reg, offs: i32},  //-- jal rd, offs
+
+    Ecall,
+    Ebreak,
 
     Unknown, //-- Instrucción desconocida
 }
-
 
 impl InstructionRV {
     pub fn from_mcode(mcode: u32) -> Self {
@@ -344,6 +357,9 @@ impl InstructionRV {
                     _ => Self::Unknown
                 }
             },
+            OpcodeRV::TipoULui => {
+                Self::Lui {rd: mcode.rd(), imm: mcode.imm20()}
+            }
             _ => Self::Unknown,
         }    
     }
@@ -468,10 +484,17 @@ impl InstructionRV {
             Self::Bgeu { rs1, rs2, offs } => {
                 format!("bgeu {}, {}, {}", rs1.to_str(), rs2.to_str(), offs)
             },
+            Self::Lui {rd, imm} => {
+                format!("lui {}, {:#07X}", rd.to_str(), imm&0xFFFFF)
+            }
 
             Self::Unknown => {
                 "Unknown Instruction".to_string()
             },
+
+            _ => {
+                "Unknown Instruction".to_string()
+            }
         }
     }
 }
@@ -1648,7 +1671,33 @@ fn test_instruction_bgeu() {
         "bgeu x17, x18, 4"); 
 }
 
-
+#[test]
+fn test_instruction_lui() {
+    assert_eq!(
+        InstructionRV::Lui {rd: Reg::X0, imm: 0}.to_string(), 
+        "lui x0, 0x00000");
+    assert_eq!(
+        InstructionRV::Lui {rd: Reg::X1, imm: 1}.to_string(), 
+        "lui x1, 0x00001");
+    assert_eq!(
+        InstructionRV::Lui {rd: Reg::X2, imm: 0x20}.to_string(), 
+        "lui x2, 0x00020");
+    assert_eq!(
+        InstructionRV::Lui {rd: Reg::X3, imm: 0x400}.to_string(), 
+        "lui x3, 0x00400");
+    assert_eq!(
+        InstructionRV::Lui {rd: Reg::X4, imm: 0x8000}.to_string(), 
+        "lui x4, 0x08000");
+    assert_eq!(
+        InstructionRV::Lui {rd: Reg::X5, imm: 0x7FFFF}.to_string(), 
+        "lui x5, 0x7FFFF");
+    assert_eq!(
+        InstructionRV::Lui {rd: Reg::X6, imm: 0x80000}.to_string(), 
+        "lui x6, 0x80000");
+    assert_eq!(
+        InstructionRV::Lui {rd: Reg::X7, imm: 0xFFFFF}.to_string(), 
+        "lui x7, 0xFFFFF");
+}
 
 
 //────────────────────────────────────────────────

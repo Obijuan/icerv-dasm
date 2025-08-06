@@ -17,7 +17,6 @@ use crate::opcoderv::OpcodeRV;
    │            imm12                  |     rs1      | func3  |      rd      |      opcode        |
    ╰───────────────────────────────────┴──────────────┴────────┴──────────────┴────────────────────╯ 
 
-
     TIPO R
 
    │31 30 29 28 27 26 25│24 23 22 21 20│19 18 17 16 15│14 13 12│11 10 9  8  7 │6  5  4  3  2  1  0 │
@@ -39,7 +38,12 @@ use crate::opcoderv::OpcodeRV;
    │  offset[12|10:5]   │   rs2        |     rs1      | func3  |offset[4:1|11]|      opcode        |
    ╰────────────────────┴──────────────┴──────────────┴────────┴──────────────┴────────────────────╯     
 
+    TIPO U
 
+   │31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12│11 10 9  8  7 │6  5  4  3  2  1  0 │
+   ├──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┼──┴──┴──┴──┴──┼──┴──┴──┴──┴──┴──┴──┤
+   │                        imm[31:12]                         |      rd      |      opcode        |
+   ╰───────────────────────────────────────────────────────────┴──────────────┴────────────────────╯     
 */
 
 //───────────────────────────
@@ -70,6 +74,8 @@ const OFFSET4_POS: u8 = 8;
 const OFFSET5_POS: u8 = 7;
 const OFFSET6_POS: u8 = 25;
 const OFFSET7_POS: u8 = 25;
+const IMM20_POS: u8 = 12; 
+
 
 
 
@@ -87,6 +93,8 @@ const OFFSET7_MASK: u32 = FIELD_7B << OFFSET7_POS;
 const OFFSET6_MASK: u32 = FIELD_6B << OFFSET6_POS;
 const OFFSET5_MASK: u32 = FIELD_5B << OFFSET5_POS;
 const OFFSET4_MASK: u32 = FIELD_4B << OFFSET4_POS;
+const IMM20_MASK: u32 = FIELD_20B << IMM20_POS; 
+
 
 
 
@@ -123,6 +131,24 @@ fn sign_ext13(value: i32) -> i32 {
         value  //-- No es negativo, devolver el valor original
     }
 }
+
+fn sign_ext20(value: i32) -> i32 {
+//────────────────────────────────────────────────
+// Entrada: Valor de 20 bits  
+// Salida: Valor extendido a 32 bits con signo
+//────────────────────────────────────────────────
+    //-- Obtener el bit de signo
+    //-- sign_bit = true --> negativo
+    let sign_bit = (value & 0x80000) != 0;
+
+    //-- En caso de ser negativo, extender el signo
+    if sign_bit {
+        value | !0xFFFFF  //-- Extender el signo a 32 bits
+    } else {
+        value  //-- No es negativo, devolver el valor original
+    }
+}
+
 
 //────────────────────────────────────────────────
 //  Estructura para gestionar el codigo maquina
@@ -247,6 +273,20 @@ impl MCode {
                                   (offset6 << 5) | offset4<<1;    
         sign_ext13(offset as i32)
     }
+
+    pub fn imm20(&self) -> i32 {
+    //────────────────────────────────────────────────
+    // Entrada: Instrucción RISC-V
+    // Salida: Inmediato de 20 bits de la instrucción
+    //────────────────────────────────────────────────
+          //-- Aplicar la máscara para extraer el campo
+          //-- y desplazarlo a la posición 0
+          let imm20: u32 = (self.value & IMM20_MASK) >> IMM20_POS;
+
+          //-- Convertir el valor a i32
+          //-- Hay que extender el signo
+          sign_ext20(imm20 as i32)
+        }
 
 }
 
