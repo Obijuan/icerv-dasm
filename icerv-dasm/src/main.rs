@@ -375,8 +375,8 @@ fn main_test1() {
 
         //-- Instrucciones Tipo U
         InstructionRV::Lui {rd: Reg::X6, imm: 0x80000},
+        InstructionRV::Auipc {rd: Reg::X4, imm: 0x08000},
 
-        //0x08000217, // auipc x4, 0x08000
         //0xff1ff26f, // jal x4, -16
         //0x00000073, // ecall
         //0x00100073, // ebreak

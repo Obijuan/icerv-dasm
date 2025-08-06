@@ -359,6 +359,9 @@ impl InstructionRV {
             },
             OpcodeRV::TipoULui => {
                 Self::Lui {rd: mcode.rd(), imm: mcode.imm20()}
+            },
+            OpcodeRV::TipoUAuipc => {
+                Self::Auipc {rd: mcode.rd(), imm: mcode.imm20()}
             }
             _ => Self::Unknown,
         }    
@@ -486,6 +489,9 @@ impl InstructionRV {
             },
             Self::Lui {rd, imm} => {
                 format!("lui {}, {:#07X}", rd.to_str(), imm&0xFFFFF)
+            }
+            Self::Auipc {rd, imm} => {
+                format!("auipc {}, {:#07X}", rd.to_str(), imm & 0xFFFFF)
             }
 
             Self::Unknown => {
@@ -1699,6 +1705,35 @@ fn test_instruction_lui() {
         "lui x7, 0xFFFFF");
 }
 
+#[test]
+fn test_instruction_auipc() {
+    assert_eq!(
+        InstructionRV::Auipc {rd: Reg::X0, imm: 0}.to_string(), 
+        "auipc x0, 0x00000");
+    assert_eq!(
+        InstructionRV::Auipc {rd: Reg::X1, imm: 1}.to_string(), 
+        "auipc x1, 0x00001");
+    assert_eq!(
+        InstructionRV::Auipc {rd: Reg::X2, imm: 0x20}.to_string(), 
+        "auipc x2, 0x00020");
+    assert_eq!(
+        InstructionRV::Auipc {rd: Reg::X3, imm: 0x400}.to_string(), 
+        "auipc x3, 0x00400");
+    assert_eq!(
+        InstructionRV::Auipc {rd: Reg::X4, imm: 0x8000}.to_string(), 
+        "auipc x4, 0x08000");
+    assert_eq!(
+        InstructionRV::Auipc {rd: Reg::X5, imm: 0x7FFFF}.to_string(), 
+        "auipc x5, 0x7FFFF");
+    assert_eq!(
+        InstructionRV::Auipc {rd: Reg::X6, imm: 0x80000}.to_string(), 
+        "auipc x6, 0x80000");
+    assert_eq!(
+        InstructionRV::Auipc {rd: Reg::X7, imm: 0xFFFFF}.to_string(), 
+        "auipc x7, 0xFFFFF");
+}
+
+
 
 //────────────────────────────────────────────────
 //  PRUEBAS DEL CODIGO MAQUINA
@@ -2866,3 +2901,60 @@ fn test_mcode_bgeu() {
         InstructionRV::from_mcode(0x0128f263).to_string(), 
         "bgeu x17, x18, 4"); 
 }
+
+#[test]
+fn test_disassemble_lui() {
+    assert_eq!(
+        InstructionRV::from_mcode(0x00000037).to_string(), 
+        "lui x0, 0x00000");
+    assert_eq!(
+        InstructionRV::from_mcode(0x000010b7).to_string(), 
+        "lui x1, 0x00001");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00020137).to_string(), 
+        "lui x2, 0x00020");
+    assert_eq!(
+        InstructionRV::from_mcode(0x004001b7).to_string(), 
+        "lui x3, 0x00400");
+    assert_eq!(
+        InstructionRV::from_mcode(0x08000237).to_string(), 
+        "lui x4, 0x08000");
+    assert_eq!(
+        InstructionRV::from_mcode(0x7ffff2b7).to_string(), 
+        "lui x5, 0x7FFFF");
+    assert_eq!(
+        InstructionRV::from_mcode(0x80000337).to_string(), 
+        "lui x6, 0x80000");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfffff3b7).to_string(), 
+        "lui x7, 0xFFFFF");
+}
+
+#[test]
+fn test_disassemble_auipc() {
+    assert_eq!(
+        InstructionRV::from_mcode(0x00000017).to_string(), 
+        "auipc x0, 0x00000");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00001097).to_string(), 
+        "auipc x1, 0x00001");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00020117).to_string(), 
+        "auipc x2, 0x00020");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00400197).to_string(), 
+        "auipc x3, 0x00400");
+    assert_eq!(
+        InstructionRV::from_mcode(0x08000217).to_string(), 
+        "auipc x4, 0x08000");
+    assert_eq!(
+        InstructionRV::from_mcode(0x7ffff297).to_string(), 
+        "auipc x5, 0x7FFFF");
+    assert_eq!(
+        InstructionRV::from_mcode(0x80000317).to_string(), 
+        "auipc x6, 0x80000");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfffff397).to_string(), 
+        "auipc x7, 0xFFFFF");
+}
+

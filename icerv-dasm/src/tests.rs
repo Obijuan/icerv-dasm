@@ -34,18 +34,6 @@ fn test_disassemble_jalr() {
     assert_eq!(disassemble(0x004904e7), "jalr x9, 4(x18)");
 }
 
-#[test]
-fn test_disassemble_auipc() {
-    assert_eq!(disassemble(0x00000017), "auipc x0, 0x00000");
-    assert_eq!(disassemble(0x00001097), "auipc x1, 0x00001");
-    assert_eq!(disassemble(0x00020117), "auipc x2, 0x00020");
-    assert_eq!(disassemble(0x00400197), "auipc x3, 0x00400");
-    assert_eq!(disassemble(0x08000217), "auipc x4, 0x08000");
-    assert_eq!(disassemble(0x7ffff297), "auipc x5, 0x7FFFF");
-    assert_eq!(disassemble(0x80000317), "auipc x6, 0x80000");
-    assert_eq!(disassemble(0xfffff397), "auipc x7, 0xFFFFF");
-}
-
 
 
 
