@@ -9,8 +9,6 @@
 //-- Instrucciones RV32I
 //-- https://msyksphinz-self.github.io/riscv-isadoc/html/rvi.html
 
-#[cfg(test)]
-mod tests;
 mod regs;
 mod instructionrv;
 mod mcode;
@@ -112,34 +110,6 @@ fn main_test1() {
 
     println!("\n------ TESTING 1.....");
     let inst = [
-
-        //-- Instruciones Tipo I
-        InstructionRV::Addi{rd: Reg::X1, rs1: Reg::X0, imm: 1},
-        InstructionRV::Slli{rd: Reg::X1, rs1: Reg::X2, imm: 1},
-        InstructionRV::Slti{rd: Reg::X1, rs1: Reg::X2, imm: 1}, 
-        InstructionRV::Sltiu{rd: Reg::X1, rs1: Reg::X2, imm: 1},
-        InstructionRV::Xori{rd: Reg::X1, rs1: Reg::X2, imm: 1},
-        InstructionRV::Srli{rd: Reg::X1, rs1: Reg::X2, imm: 1},
-        InstructionRV::Ori{rd: Reg::X1, rs1: Reg::X2, imm: 1},
-        InstructionRV::Andi{rd: Reg::X1, rs1: Reg::X2, imm: 1},
-        InstructionRV::Srai{rd: Reg::X1, rs1: Reg::X2, imm: 1},
-        InstructionRV::Lb { rd: Reg::X0, offs: 0, rs1: Reg::X1 },
-        InstructionRV::Lh { rd: Reg::X0, offs: 0, rs1: Reg::X1 },
-        InstructionRV::Lw { rd: Reg::X0, offs: 0, rs1: Reg::X1 },
-        InstructionRV::Ld { rd: Reg::X0, offs: 0, rs1: Reg::X1 },
-        InstructionRV::Lbu { rd: Reg::X0, offs: 0, rs1: Reg::X1 },
-        InstructionRV::Lhu { rd: Reg::X0, offs: 0, rs1: Reg::X1 },
-        InstructionRV::Lwu { rd: Reg::X0, offs: 0, rs1: Reg::X1 },
-
-        //-- Instruciones Tipo R
-        InstructionRV::Add { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
-        InstructionRV::Sub { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
-        InstructionRV::Sll { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
-        InstructionRV::Sltu { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
-        InstructionRV::Xor { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
-        InstructionRV::Srl { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
-        InstructionRV::Or { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
-        InstructionRV::Sra { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2},
 
         //-- Instruciones Tipo S
         InstructionRV::Sb { rs2: Reg::X0, offs: 0, rs1: Reg::X1},
@@ -243,5 +213,136 @@ fn main() {
     main1();
 }
 
+#[test]
+fn test1() {
+    //-- Instruciones Tipo I
+  assert_eq!(
+    InstructionRV::Addi{rd: Reg::X1, rs1: Reg::X0, imm: 1}.to_string(),
+    "addi x1, x0, 1");
+  assert_eq!(
+    InstructionRV::Slli{rd: Reg::X1, rs1: Reg::X2, imm: 1}.to_string(),
+    "slli x1, x2, 1");
+  assert_eq!(
+    InstructionRV::Slti{rd: Reg::X1, rs1: Reg::X2, imm: 1}.to_string(),
+    "slti x1, x2, 1");
+  assert_eq!(
+    InstructionRV::Sltiu{rd: Reg::X1, rs1: Reg::X2, imm: 1}.to_string(),
+    "sltiu x1, x2, 1");
+  assert_eq!(
+    InstructionRV::Xori{rd: Reg::X1, rs1: Reg::X2, imm: 1}.to_string(),
+    "xori x1, x2, 1");
+  assert_eq!(
+    InstructionRV::Srli{rd: Reg::X1, rs1: Reg::X2, imm: 1}.to_string(),
+    "srli x1, x2, 1");
+  assert_eq!(
+    InstructionRV::Ori{rd: Reg::X1, rs1: Reg::X2, imm: 1}.to_string(),
+    "ori x1, x2, 1");
+  assert_eq!(
+    InstructionRV::Andi{rd: Reg::X1, rs1: Reg::X2, imm: 1}.to_string(),
+    "andi x1, x2, 1");
+  assert_eq!(
+    InstructionRV::Srai{rd: Reg::X1, rs1: Reg::X2, imm: 1}.to_string(),
+    "srai x1, x2, 1");
+  assert_eq!(
+    InstructionRV::Lb { rd: Reg::X0, offs: 0, rs1: Reg::X1 }.to_string(),
+    "lb x0, 0(x1)");
+  assert_eq!(
+    InstructionRV::Lh { rd: Reg::X0, offs: 0, rs1: Reg::X1 }.to_string(),
+    "lh x0, 0(x1)");
+  assert_eq!(
+    InstructionRV::Lw { rd: Reg::X0, offs: 0, rs1: Reg::X1 }.to_string(),
+    "lw x0, 0(x1)");
+  assert_eq!(
+    InstructionRV::Ld { rd: Reg::X0, offs: 0, rs1: Reg::X1 }.to_string(),
+    "ld x0, 0(x1)");
+  assert_eq!(
+    InstructionRV::Lbu { rd: Reg::X0, offs: 0, rs1: Reg::X1 }.to_string(),
+    "lbu x0, 0(x1)");
+  assert_eq!(
+    InstructionRV::Lhu { rd: Reg::X0, offs: 0, rs1: Reg::X1 }.to_string(),
+    "lhu x0, 0(x1)");
+  assert_eq!(
+    InstructionRV::Lwu { rd: Reg::X0, offs: 0, rs1: Reg::X1 }.to_string(),
+    "lwu x0, 0(x1)");
 
+  //-- Instruciones Tipo R
+  assert_eq!(
+    InstructionRV::Add { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_string(),
+    "add x0, x1, x2");
+  assert_eq!(
+    InstructionRV::Sub { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_string(),
+    "sub x0, x1, x2");
+  assert_eq!(
+    InstructionRV::Sll { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_string(),
+    "sll x0, x1, x2");
+  assert_eq!(
+    InstructionRV::Sltu { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_string(),
+    "sltu x0, x1, x2");
+  assert_eq!(
+    InstructionRV::Xor { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_string(),
+    "xor x0, x1, x2");
+  assert_eq!(
+    InstructionRV::Srl { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_string(),
+    "srl x0, x1, x2");
+  assert_eq!(
+    InstructionRV::Or { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_string(),
+    "or x0, x1, x2");
+  assert_eq!(
+    InstructionRV::Sra { rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_string(),
+    "sra x0, x1, x2");
+
+  //-- Instruciones Tipo S
+  assert_eq!(
+    InstructionRV::Sb { rs2: Reg::X0, offs: 0, rs1: Reg::X1}.to_string(),
+    "sb x0, 0(x1)");
+  assert_eq!(
+    InstructionRV::Sh { rs2: Reg::X2, offs: -1, rs1: Reg::X3}.to_string(),
+    "sh x2, -1(x3)");
+  assert_eq!(
+    InstructionRV::Sw { rs2: Reg::X4, offs: 2047, rs1: Reg::X5}.to_string(),
+    "sw x4, 2047(x5)");
+  assert_eq!(
+    InstructionRV::Sd { rs2: Reg::X5, offs: -2048, rs1: Reg::X6}.to_string(),
+    "sd x5, -2048(x6)");
+
+  //-- Instructiones Tipo B
+  assert_eq!(
+    InstructionRV::Beq {rs1: Reg::X1, rs2: Reg::X2, offs: -4}.to_string(),
+    "beq x1, x2, -4");
+  assert_eq!(
+    InstructionRV::Bne {rs1: Reg::X3, rs2: Reg::X4, offs: -8}.to_string(),
+    "bne x3, x4, -8");
+  assert_eq!(
+    InstructionRV::Blt {rs1: Reg::X5, rs2: Reg::X6, offs: -12}.to_string(),
+    "blt x5, x6, -12");
+  assert_eq!(
+    InstructionRV::Bge {rs1: Reg::X7, rs2: Reg::X8, offs: 24}.to_string(),
+    "bge x7, x8, 24");
+  assert_eq!(
+    InstructionRV::Bltu {rs1: Reg::X9, rs2: Reg::X10, offs: 20}.to_string(),
+    "bltu x9, x10, 20");
+  assert_eq!(
+    InstructionRV::Bgeu {rs1: Reg::X11, rs2: Reg::X12, offs: 16}.to_string(),
+    "bgeu x11, x12, 16");
+
+  //-- Instrucciones Tipo U
+  assert_eq!(
+    InstructionRV::Lui {rd: Reg::X6, imm: 0x80000}.to_string(),
+    "lui x6, 0x80000");
+  assert_eq!(
+    InstructionRV::Auipc {rd: Reg::X4, imm: 0x08000}.to_string(),
+    "auipc x4, 0x08000");
+
+  //-- Instrucciones tipo J
+  assert_eq!(
+    InstructionRV::Jal {rd: Reg::X4, offs: -16}.to_string(),
+    "jal x4, -16");
+  assert_eq!(
+    InstructionRV::Jalr {rd: Reg::X1, offs: -1, rs1: Reg::X10}.to_string(),
+    "jalr x1, -1(x10)");
+
+  //-- Instrucciones tipo ecall
+  //InstructionRV::Ecall,
+  //InstructionRV::Ebreak,
+}
 
