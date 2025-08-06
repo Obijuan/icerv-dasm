@@ -79,7 +79,6 @@ pub enum InstructionRV {
     Jal {rd: Reg, offs: i32},  //-- jal rd, offs
     Jalr {rd: Reg, offs: i32, rs1: Reg},  //-- jalr rd, offs(rs1)
 
-
     //──────────────────────────────────
     //  Instrucciones tipo ecall
     //──────────────────────────────────
@@ -378,6 +377,17 @@ impl InstructionRV {
                     rs1: mcode.rs1()
                 }
             },
+            OpcodeRV::TipoEcallEbreak => {
+                let imm: i32 = mcode.imm12();
+                //-- Instrucción ecall o ebreak
+                if imm == 0 {
+                    Self::Ecall
+                } else if imm == 1 {
+                    Self::Ebreak
+                } else {
+                    Self::Unknown
+                }
+            }
             _ => Self::Unknown,
         }    
     }
@@ -514,14 +524,16 @@ impl InstructionRV {
             Self::Jalr {rd, offs, rs1} => {
                 format!("jalr {}, {}({})", rd.to_str(), offs, rs1.to_str())
             },
+            Self::Ecall => {
+                format!("ecall")
+            },
+            Self::Ebreak => {
+                format!("ebreak")
+            },
 
             Self::Unknown => {
                 "Unknown Instruction".to_string()
             },
-
-            _ => {
-                "Unknown Instruction".to_string()
-            }
         }
     }
 }
@@ -1822,13 +1834,18 @@ fn test_instruction_jalr() {
         "jalr x9, 4(x18)");
 }
 
-//────────────────────────────────────────────────
-//  PRUEBAS DEL CODIGO MAQUINA
-//────────────────────────────────────────────────
-
-
 #[test]
-fn test_mcode_addi() {
+fn test_instuction_ecall_ebreak() {
+    assert_eq!(InstructionRV::Ecall.to_string(), "ecall");
+    assert_eq!(InstructionRV::Ebreak.to_string(), "ebreak");
+}
+
+
+//───────────────────────────.to_string()──────────────
+//  PRUEBAS DEL COD.to_string()IGO MAQUINA
+//────────────────────────────────────────────────
+#[test]
+fn t_mcode_addi() {
     //────────────────────────────────────────────────
     //  Test de la instrucción ADDI
     //────────────────────────────────────────────────
@@ -3112,3 +3129,11 @@ fn test_mcode_jalr() {
         InstructionRV::from_mcode(0x004904e7).to_string(), 
         "jalr x9, 4(x18)");
 }
+
+#[test]
+fn test_disassemble_ecall_ebreak() {
+    assert_eq!(InstructionRV::from_mcode(0x00000073).to_string(), "ecall");
+    assert_eq!(InstructionRV::from_mcode(0x00100073).to_string(), "ebreak");
+}
+
+

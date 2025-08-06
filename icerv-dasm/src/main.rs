@@ -19,138 +19,6 @@ mod opcoderv;
 //-- Registros del RISCV
 use regs::Reg;
 use instructionrv::InstructionRV;
-use mcode::MCode;
-use opcoderv::OpcodeRV;
-
-//────────────────────────────────────────────────
-//  CONSTANTES PARA ACCESO A LA ISA DEL RISCV   
-//────────────────────────────────────────────────
-//  Definir anchura de campos. Estos campos son los que luego se llevan
-//  a la posición concreta en la instrucción, para calcular la máscara
-//  con la que extraer el campo
-//───────────────────────────
-//  ANCHURAS de LOS CAMPOS
-//───────────────────────────
-//────────────────────────────────────────────────
-//  POSICIONES de LOS CAMPOS
-//────────────────────────────────────────────────
-
-//────────────────────────────────────────────────
-//  CALCULAR LAS MASCARAS DE ACCESO A LOS CAMPOS
-//────────────────────────────────────────────────
-//  Se calculan desplazando los campos de la anchura correspondiente
-//  a la posición del campo
-//──────────────────────────────────────────────
-
-fn print_fields(inst: u32) {
-//────────────────────────────────────────────────
-// Entrada: Instrucción RISC-V
-// Salida: Imprime los campos de la instrucción
-//────────────────────────────────────────────────
-
-    //-- Extraer los campos de la instrucción
-    //let opcode = get_opcode(inst);
-
-    let mcode = MCode::new(inst);
-    let opcode = mcode.opcode();
-    let rd: Reg = mcode.rd();
-    let rs1: Reg = mcode.rs1();
-    let func3: u32 = mcode.func3();
-    let imm:i32 = mcode.imm12();
-
-    let rs2 = mcode.rs2();
-    let func7 = mcode.func7();
-
-    //-- Imprimir los campos extraídos
-    println!("   - Opcode: {:#4X}", opcode as u32);
-    println!("   - rd: x{}", rd as u8);
-    println!("   - func3: {:#05b}", func3);
-    println!("   - rs1: x{}", rs1 as u8);
-    println!("   - rs2: x{}", rs2 as u8);
-    println!("   - Inmediato: {:#X}", imm);
-    println!("   - Func7: {:#07b}", func7);
-}
-
-
-
-fn disassemble(inst: u32) -> String {
-
-  //-- Obtener el opcode 
-  let mcode = MCode::new(inst);
-
-  //-- y todos los campos de la instrucción  
-  let opcode = mcode.opcode();
-  let rd: Reg = mcode.rd(); 
-  let rs1: Reg = mcode.rs1();
-  let imm: i32 = mcode.imm12();
-  let offset_jalr: i32 = mcode.imm12();
-  
-  match opcode {
-    OpcodeRV::TipoIArith => {
-        let inst2: InstructionRV = InstructionRV::from_mcode(inst);
-        inst2.to_string()
-    },
-
-    OpcodeRV::TipoILoad => {
-        let inst2: InstructionRV = InstructionRV::from_mcode(inst);
-        inst2.to_string()
-    },
-
-    OpcodeRV::TipoR => {
-        let inst2: InstructionRV = InstructionRV::from_mcode(inst);
-        inst2.to_string()
-    },
-
-    OpcodeRV::TipoS => {
-        let inst2: InstructionRV = InstructionRV::from_mcode(inst);
-        inst2.to_string()
-    },
-
-    OpcodeRV::TipoB => {
-        let inst2: InstructionRV = InstructionRV::from_mcode(inst);
-        inst2.to_string()
-    },
-
-    OpcodeRV::TipoULui => {
-        let inst2: InstructionRV = InstructionRV::from_mcode(inst);
-        inst2.to_string()
-    },
-
-    OpcodeRV::TipoUAuipc => {
-        let inst2: InstructionRV = InstructionRV::from_mcode(inst);
-        inst2.to_string()
-    },
-
-    OpcodeRV::TipoJJal => {
-        let inst2: InstructionRV = InstructionRV::from_mcode(inst);
-        inst2.to_string()
-    },
-
-    OpcodeRV::TipoJJalr => {
-      //-- Instrucción jalr
-      format!("jalr x{}, {}(x{})", rd as u8, offset_jalr, rs1 as u8)
-    },
-
-    OpcodeRV::TipoEcallEbreak => {
-      //-- Instrucción ecall o ebreak
-      if imm == 0 {
-        format!("ecall")
-      } else if imm == 1 {
-        format!("ebreak")
-      } else {
-        format!("DESCONOCIDA")
-      }
-    },
-
-    _ => {
-      //-- No es una instrucción tipo I aritmética
-      println!("   - Instrucción: DESCONOCIDA");
-      print_fields(inst);
-      String::from("DESCONOCIDA")
-    }
-  }
-
-}
 
 fn main1() {
    //-- Instrucciones RISC-V a desensamblar
@@ -193,9 +61,9 @@ fn main1() {
         0x80000337, // 🟢lui x6, 0x80000
         0x08000217, // 🟢auipc x4, 0x08000
         0xff1ff26f, // 🟢jal x4, -16
-        0xfff500e7, // jalr x1, -1(x10)
-        0x00000073, // ecall
-        0x00100073, // ebreak
+        0xfff500e7, // 🟢jalr x1, -1(x10)
+        0x00000073, // 🟢ecall
+        0x00100073, // 🟢ebreak
     ];
 
 
@@ -231,7 +99,8 @@ fn main1() {
         let machine_code: u32 = insts[i];
 
         //-- Pasar la instruccion a String
-        let inst: String = disassemble(insts[i]);
+        let inst = InstructionRV::from_mcode(machine_code).to_string();
+        //let inst: String = disassemble(insts[i]);
 
         //-- Imprimirla!
         println!("🟢 [{machine_code:#010X}]: {inst}");
@@ -294,9 +163,9 @@ fn main_test1() {
         InstructionRV::Jal {rd: Reg::X4, offs: -16},
         InstructionRV::Jalr {rd: Reg::X1, offs: -1, rs1: Reg::X10},
 
-        //0xfff500e7, // jalr x1, -1(x10)
-        //0x00000073, // ecall
-        //0x00100073, // ebreak
+        //-- Instrucciones tipo ecall
+        InstructionRV::Ecall,
+        InstructionRV::Ebreak,
     ];
 
     for i in 0..inst.len() {
