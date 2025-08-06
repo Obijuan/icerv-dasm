@@ -11,6 +11,7 @@
 
 #[cfg(test)]
 mod test;
+
 mod regs;
 mod instructionrv;
 mod mcode;
@@ -23,6 +24,8 @@ use instructionrv::InstructionRV;
 //  PROGRAMA PRINCIPAL
 //────────────────────────────────────────────────
 fn main() {
+
+    //-- Progama a desensamblar
     let mcode = [
         0x00100093, //-- addi x1, x0, 1
         0x00111093, //-- slli x1, x2, 1
@@ -35,6 +38,7 @@ fn main() {
         0x40115093, //-- srai x1, x2, 1
     ];
 
+    //-- Desensamblar programa instrucción a instrucción
     for i in 0..mcode.len() {
         let inst: InstructionRV = InstructionRV::from_mcode(mcode[i]);
         println!("🟢 [{:#010X}]: {}", mcode[i] as u32, inst.to_string());
