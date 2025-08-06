@@ -34,11 +34,9 @@ use opcoderv::OpcodeRV;
 const FIELD_1B: u32 = 0x01;  //-- Campo de 1 bit
 const FIELD_8B: u32 = 0xFF;  //-- Campo de 8 bits
 const FIELD_10B: u32 = 0x3FF; //-- Campo de 10 bits
-const FIELD_20B: u32 = 0xFFFFF; //-- Campo de 20 bits
 //────────────────────────────────────────────────
 //  POSICIONES de LOS CAMPOS
 //────────────────────────────────────────────────
-const IMM20_POS: u8 = 12; 
 const OFFSET10_POS: u8 = 21;
 const OFFSET8_POS: u8 = 12;
 const OFFSET1_POS: u8 = 20;
@@ -49,24 +47,9 @@ const OFFSET1_POS: u8 = 20;
 //  Se calculan desplazando los campos de la anchura correspondiente
 //  a la posición del campo
 //──────────────────────────────────────────────
-const IMM20_MASK: u32 = FIELD_20B << IMM20_POS; 
 const OFFSET8_MASK: u32 = FIELD_8B << OFFSET8_POS; 
 const OFFSET10_MASK: u32 = FIELD_10B << OFFSET10_POS;
 const OFFSET1_MASK: u32 = FIELD_1B << OFFSET1_POS;
-
-fn get_imm20(inst: u32) -> i32 {
-//────────────────────────────────────────────────
-// Entrada: Instrucción RISC-V
-// Salida: Inmediato de 20 bits de la instrucción
-//────────────────────────────────────────────────
-  //-- Aplicar la máscara para extraer el campo
-  //-- y desplazarlo a la posición 0
-  let imm20: u32 = (inst & IMM20_MASK) >> IMM20_POS;
-
-  //-- Convertir el valor a i32
-  //-- Hay que extender el signo
-  sign_ext20(imm20 as i32)
-}
 
 
 fn get_offset_jal(inst: u32) -> i32 {
@@ -124,22 +107,6 @@ fn print_fields(inst: u32) {
     println!("   - Func7: {:#07b}", func7);
 }
 
-fn sign_ext20(value: i32) -> i32 {
-//────────────────────────────────────────────────
-// Entrada: Valor de 20 bits  
-// Salida: Valor extendido a 32 bits con signo
-//────────────────────────────────────────────────
-    //-- Obtener el bit de signo
-    //-- sign_bit = true --> negativo
-    let sign_bit = (value & 0x80000) != 0;
-
-    //-- En caso de ser negativo, extender el signo
-    if sign_bit {
-        value | !0xFFFFF  //-- Extender el signo a 32 bits
-    } else {
-        value  //-- No es negativo, devolver el valor original
-    }
-}
 
 fn sign_ext21(value: i32) -> i32 {
 //────────────────────────────────────────────────
@@ -170,8 +137,6 @@ fn disassemble(inst: u32) -> String {
   let rs1: Reg = mcode.rs1();
   let imm: i32 = mcode.imm12();
   let offset_jalr: i32 = mcode.imm12();
-
-  let imm20: i32 = get_imm20(inst);
   let offset_jal: i32 = get_offset_jal(inst);
   
   match opcode {
@@ -206,7 +171,8 @@ fn disassemble(inst: u32) -> String {
     },
 
     OpcodeRV::TipoUAuipc => {
-      format!("auipc x{}, {:#07X}", rd as u8, imm20 & 0xFFFFF)
+        let inst2: InstructionRV = InstructionRV::from_mcode(inst);
+        inst2.to_string()
     },
 
     OpcodeRV::TipoJJal => {
@@ -278,7 +244,7 @@ fn main1() {
         0x00a4ea63, // 🟢bltu x9, x10, 20
         0x00c5f863, // 🟢bgeu x11, x12, 16
         0x80000337, // 🟢lui x6, 0x80000
-        0x08000217, // auipc x4, 0x08000
+        0x08000217, // 🟢auipc x4, 0x08000
         0xff1ff26f, // jal x4, -16
         0xfff500e7, // jalr x1, -1(x10)
         0x00000073, // ecall
@@ -377,7 +343,10 @@ fn main_test1() {
         InstructionRV::Lui {rd: Reg::X6, imm: 0x80000},
         InstructionRV::Auipc {rd: Reg::X4, imm: 0x08000},
 
-        //0xff1ff26f, // jal x4, -16
+        //-- Instrucciones tipo J
+        InstructionRV::Jal {rd: Reg::X4, offs: -16},
+
+        //0xff1ff26f, //-- jal x4, -16
         //0x00000073, // ecall
         //0x00100073, // ebreak
     ];

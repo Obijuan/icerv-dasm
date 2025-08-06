@@ -7,20 +7,6 @@ fn test_disassemble_ecall_ebreak() {
 }
 
 #[test]
-fn test_disassemble_jal() {
-    assert_eq!(disassemble(0x0000006f), "jal x0, 0");
-    assert_eq!(disassemble(0xffdff0ef), "jal x1, -4");
-    assert_eq!(disassemble(0xff9ff16f), "jal x2, -8");
-    assert_eq!(disassemble(0xff5ff1ef), "jal x3, -12");
-    assert_eq!(disassemble(0xff1ff26f), "jal x4, -16");
-    assert_eq!(disassemble(0x014002ef), "jal x5, 20");
-    assert_eq!(disassemble(0x0100036f), "jal x6, 16");
-    assert_eq!(disassemble(0x00c003ef), "jal x7, 12");
-    assert_eq!(disassemble(0x0080046f), "jal x8, 8");
-    assert_eq!(disassemble(0x004004ef), "jal x9, 4");
-}
-
-#[test]
 fn test_disassemble_jalr() {
     assert_eq!(disassemble(0x00000067), "jalr x0, 0(x0)");
     assert_eq!(disassemble(0xfff500e7), "jalr x1, -1(x10)");

@@ -43,7 +43,14 @@ use crate::opcoderv::OpcodeRV;
    │31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12│11 10 9  8  7 │6  5  4  3  2  1  0 │
    ├──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┼──┴──┴──┴──┴──┼──┴──┴──┴──┴──┴──┴──┤
    │                        imm[31:12]                         |      rd      |      opcode        |
-   ╰───────────────────────────────────────────────────────────┴──────────────┴────────────────────╯     
+   ╰───────────────────────────────────────────────────────────┴──────────────┴────────────────────╯  
+
+    TIPO J
+
+   │31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12│11 10 9  8  7 │6  5  4  3  2  1  0 │
+   ├──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┼──┴──┴──┴──┴──┼──┴──┴──┴──┴──┴──┴──┤
+   │                   offset[20|10:1|11|19:12]                |      rd      |      opcode        |
+   ╰───────────────────────────────────────────────────────────┴──────────────┴────────────────────╯        
 */
 
 //───────────────────────────
@@ -75,6 +82,12 @@ const OFFSET5_POS: u8 = 7;
 const OFFSET6_POS: u8 = 25;
 const OFFSET7_POS: u8 = 25;
 const IMM20_POS: u8 = 12; 
+const OFFSET8_POS: u8 = 12;
+const OFFSET10_POS: u8 = 21;
+const OFFSET1_POS: u8 = 20;
+
+
+
 
 
 
@@ -94,6 +107,9 @@ const OFFSET6_MASK: u32 = FIELD_6B << OFFSET6_POS;
 const OFFSET5_MASK: u32 = FIELD_5B << OFFSET5_POS;
 const OFFSET4_MASK: u32 = FIELD_4B << OFFSET4_POS;
 const IMM20_MASK: u32 = FIELD_20B << IMM20_POS; 
+const OFFSET8_MASK: u32 = FIELD_8B << OFFSET8_POS; 
+const OFFSET10_MASK: u32 = FIELD_10B << OFFSET10_POS;
+const OFFSET1_MASK: u32 = FIELD_1B << OFFSET1_POS;
 
 
 
@@ -144,6 +160,23 @@ fn sign_ext20(value: i32) -> i32 {
     //-- En caso de ser negativo, extender el signo
     if sign_bit {
         value | !0xFFFFF  //-- Extender el signo a 32 bits
+    } else {
+        value  //-- No es negativo, devolver el valor original
+    }
+}
+
+fn sign_ext21(value: i32) -> i32 {
+//────────────────────────────────────────────────
+// Entrada: Valor de 21 bits  
+// Salida: Valor extendido a 32 bits con signo
+//────────────────────────────────────────────────
+    //-- Obtener el bit de signo
+    //-- sign_bit = true --> negativo
+    let sign_bit = (value & 0x100000) != 0;
+
+    //-- En caso de ser negativo, extender el signo
+    if sign_bit {
+        value | !0x1FFFFF  //-- Extender el signo a 32 bits
     } else {
         value  //-- No es negativo, devolver el valor original
     }
@@ -286,7 +319,32 @@ impl MCode {
           //-- Convertir el valor a i32
           //-- Hay que extender el signo
           sign_ext20(imm20 as i32)
-        }
+    }
+
+    pub fn offset_jal(&self) -> i32 {
+    //────────────────────────────────────────────────
+    // Entrada: Instrucción RISC-V
+    // Salida: Valor del offset para instrucciones jal
+    // offset[20|10:1|11|19:12]
+    //────────────────────────────────────────────────
+        //-- Extraer el bit de signo
+        let sign: u32 = (self.value & 0x8000_0000) >> 31;
+        
+        //-- Extraer los bits 19-12
+        let offset8: u32 = (self.value & OFFSET8_MASK) >> OFFSET8_POS;
+        
+        //-- Extraer el bit 11
+        let b11: u32 = (self.value & OFFSET1_MASK) >> OFFSET1_POS;
+        
+        //-- Extraer los bits 10-1
+        let offset10: u32 = (self.value & OFFSET10_MASK) >> OFFSET10_POS;
+        
+        //-- Construir el offset final a partir de todos sus componentes
+        let offset: u32 = (sign << 20) | (offset8 << 12) | b11 << 11 |
+                          (offset10 << 1); 
+                      
+        sign_ext21(offset as i32)
+}
 
 }
 

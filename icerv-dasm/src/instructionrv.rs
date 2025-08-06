@@ -363,6 +363,9 @@ impl InstructionRV {
             OpcodeRV::TipoUAuipc => {
                 Self::Auipc {rd: mcode.rd(), imm: mcode.imm20()}
             }
+            OpcodeRV::TipoJJal => {
+                Self::Jal { rd: mcode.rd(), offs: mcode.offset_jal() }
+            }
             _ => Self::Unknown,
         }    
     }
@@ -489,10 +492,13 @@ impl InstructionRV {
             },
             Self::Lui {rd, imm} => {
                 format!("lui {}, {:#07X}", rd.to_str(), imm&0xFFFFF)
-            }
+            },
             Self::Auipc {rd, imm} => {
                 format!("auipc {}, {:#07X}", rd.to_str(), imm & 0xFFFFF)
-            }
+            },
+            Self::Jal {rd, offs} => {
+                format!("jal {}, {}", rd.to_str(), offs)
+            },
 
             Self::Unknown => {
                 "Unknown Instruction".to_string()
@@ -1733,7 +1739,39 @@ fn test_instruction_auipc() {
         "auipc x7, 0xFFFFF");
 }
 
-
+#[test]
+fn test_instruction_jal() {
+    assert_eq!(
+    InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
+    "jal x0, 0");
+    assert_eq!(
+    InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
+    "jal x1, -4");
+    assert_eq!(
+    InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
+    "jal x2, -8");
+    assert_eq!(
+    InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
+    "jal x3, -12");
+    assert_eq!(
+    InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
+    "jal x4, -16");
+    assert_eq!(
+    InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
+    "jal x5, 20");
+    assert_eq!(
+    InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
+    "jal x6, 16");
+    assert_eq!(
+    InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
+    "jal x7, 12");
+    assert_eq!(
+    InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
+    "jal x8, 8");
+    assert_eq!(
+    InstructionRV::Jal { rd: Reg::X0, offs: 0 }.to_string(), 
+    "jal x9, 4");
+}
 
 //────────────────────────────────────────────────
 //  PRUEBAS DEL CODIGO MAQUINA
@@ -2903,7 +2941,7 @@ fn test_mcode_bgeu() {
 }
 
 #[test]
-fn test_disassemble_lui() {
+fn test_mcode_lui() {
     assert_eq!(
         InstructionRV::from_mcode(0x00000037).to_string(), 
         "lui x0, 0x00000");
@@ -2931,7 +2969,7 @@ fn test_disassemble_lui() {
 }
 
 #[test]
-fn test_disassemble_auipc() {
+fn test_mcode_auipc() {
     assert_eq!(
         InstructionRV::from_mcode(0x00000017).to_string(), 
         "auipc x0, 0x00000");
@@ -2958,3 +2996,16 @@ fn test_disassemble_auipc() {
         "auipc x7, 0xFFFFF");
 }
 
+#[test]
+fn test_mcode_jal() {
+    //assert_eq!(disassemble(0x0000006f), "jal x0, 0");
+    //assert_eq!(disassemble(0xffdff0ef), "jal x1, -4");
+    //assert_eq!(disassemble(0xff9ff16f), "jal x2, -8");
+    //assert_eq!(disassemble(0xff5ff1ef), "jal x3, -12");
+    //assert_eq!(disassemble(0xff1ff26f), "jal x4, -16");
+    //assert_eq!(disassemble(0x014002ef), "jal x5, 20");
+    //assert_eq!(disassemble(0x0100036f), "jal x6, 16");
+    //assert_eq!(disassemble(0x00c003ef), "jal x7, 12");
+    //assert_eq!(disassemble(0x0080046f), "jal x8, 8");
+    //assert_eq!(disassemble(0x004004ef), "jal x9, 4");
+}
