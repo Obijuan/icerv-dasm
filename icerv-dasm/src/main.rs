@@ -292,8 +292,9 @@ fn main_test1() {
 
         //-- Instrucciones tipo J
         InstructionRV::Jal {rd: Reg::X4, offs: -16},
+        InstructionRV::Jalr {rd: Reg::X1, offs: -1, rs1: Reg::X10},
 
-        //0xff1ff26f, //-- jal x4, -16
+        //0xfff500e7, // jalr x1, -1(x10)
         //0x00000073, // ecall
         //0x00100073, // ebreak
     ];
@@ -346,6 +347,7 @@ fn main_test2() {
         0x80000337, //-- lui x6, 0x80000
         0x08000217, //-- auipc x4, 0x08000
         0xff1ff26f, //-- jal x4, -16
+        0xfff500e7, //-- jalr x1, -1(x10)
         0x00000073, //-- ecall
         0x00100073, //-- ebreak
     ];
