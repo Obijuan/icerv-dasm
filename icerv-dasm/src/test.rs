@@ -1,6 +1,5 @@
-use crate::InstructionRV;
-use crate::regs::Reg;
-
+use icerv_dasm::instructionrv::InstructionRV;
+use icerv_dasm::regs::Reg;
 
 #[test]
 fn test1() {

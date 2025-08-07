@@ -12,29 +12,11 @@
 #[cfg(test)]
 mod test;
 
-
-//────────────────────────────────────────────────
-//  MODULOS usados
-//────────────────────────────────────────────────
-
-//──────── Instrucciones completas del RiscV
-pub mod instructionrv;
-
-//──────── Registros del RiscV
-pub mod regs;
-
-//──────── Código máquina
-mod mcode;
-
-//──────── Códigos de operación
-mod opcoderv;
+use icerv_dasm::instructionrv::InstructionRV;
 
 //────────────────────────────────────────────────
 //  PROGRAMA PRINCIPAL
 //────────────────────────────────────────────────
-
-use instructionrv::InstructionRV;
-
 fn main() {
 
     //-- Progama a desensamblar
