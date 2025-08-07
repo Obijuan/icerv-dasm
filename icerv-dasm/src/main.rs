@@ -18,10 +18,10 @@ mod test;
 //────────────────────────────────────────────────
 
 //──────── Instrucciones completas del RiscV
-mod instructionrv;
+pub mod instructionrv;
 
 //──────── Registros del RiscV
-mod regs;
+pub mod regs;
 
 //──────── Código máquina
 mod mcode;
