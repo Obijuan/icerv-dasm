@@ -12,12 +12,11 @@
 use std::{fs::File, io::Read};
 use icerv_dasm::ansi;
 use icerv_dasm::graphics::lineh;
-
+use icerv_dasm::instructionrv::InstructionRV;
 
 #[cfg(test)]
 mod test;
 
-use icerv_dasm::instructionrv::InstructionRV;
 
 //────────────────────────────────────────────────
 //  PROGRAMA PRINCIPAL
