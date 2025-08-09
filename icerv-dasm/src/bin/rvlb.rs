@@ -3,7 +3,7 @@
 //    Ejecutable para visualizar un fichero binario
 //    en bytes
 //────────────────────────────────────────────────
-
+use std::{fs::File, io::Read};
 use icerv_dasm::ansi;
 
 fn lineh(size: usize) 
@@ -109,9 +109,6 @@ fn show_dump(buf: &Vec<u8>)
 //  Mostrar el volcado completo
 //────────────────────────────────────────────────
 {
-    //-- Borrado de pantalla
-    print!("{}", ansi::CLS);
-
     //-- Escribir la cabecera
     println!("Bytes totales: {}", buf.len());
     print!("{}", ansi::BLUE);
@@ -129,8 +126,57 @@ fn show_dump(buf: &Vec<u8>)
     println!();
 }
 
-fn main()  {
+fn main()  
+{
+     //-- Borrado de pantalla
+    print!("{}", ansi::CLS);
 
+    //-- Leer primer argumento
+    let arg = std::env::args().nth(1);
+    let fich = match arg {
+        Some(value) => {
+            value
+        }
+        None => {
+            print!("{}", ansi::RED);
+            println!("Error: Fichero a volcar NO especificado");
+            print!("{}", ansi::RESET);
+            println!("  Uso: rvlb fichero");
+            return;
+        }
+    };
+
+    println!("{}{}{}",ansi::BLUE, fich, ansi::RESET);
+
+    //-- Abrir fichero
+    let ofile = File::open(fich);
+    let mut file = match ofile {
+        Ok(value) => {
+            value
+        }
+        Err(error) => {
+            println!("{}Error: {}{}", ansi::RED, error, ansi::RESET);
+            println!();
+            return
+        }
+    };
+
+    //-- Buffer donde leer el contenido del fichero
+    let mut buffer: Vec<u8> = Vec::new();
+
+    //-- Leer fichero
+    file.read_to_end(&mut buffer)
+        .expect("Error en la lectura!");
+
+    //-- Mostrar el volcado
+    show_dump(&buffer);
+
+}
+
+//-- Pruebas de volcado
+#[test]
+fn test1() 
+{
     //────────────────────────────────────────────────
     //  Definir el vector con los bytes
     //────────────────────────────────────────────────
@@ -142,10 +188,9 @@ fn main()  {
         0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
 
         0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27,
-        0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
+        0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E,
     ];
 
     //-- Mostrar el volcado
     show_dump(&buf);
-
 }
