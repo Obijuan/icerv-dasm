@@ -53,10 +53,10 @@ fn dump_file(fich: String)
      //-- Buffer donde colocar las instrucciones
     let mut buffer_words: Vec<u32> = Vec::new();
     
-    // Bucle para leer el archivo 4 bytes a la vez
+    // Bucle para leer el archivo de 4 en 4 bytes
     while file.read_exact(&mut buffer).is_ok() {
+
         // Convierte los 4 bytes a un entero de 32 bits sin signo (u32)
-        // La instrucción en RISC-V es de 32 bits (4 bytes)
         let instr = u32::from_le_bytes(buffer);
 
         // Meter la instruccion en el buffer de instrucciones
