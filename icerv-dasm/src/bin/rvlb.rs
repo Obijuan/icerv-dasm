@@ -5,14 +5,9 @@
 //────────────────────────────────────────────────
 use std::{fs::File, io::Read};
 use icerv_dasm::ansi;
+use icerv_dasm::graphics::lineh;
 
-fn lineh(size: usize) 
-{
-    for _ in 0..size {
-        print!("─");
-    }
-    println!();
-}
+
 
 fn dump16(addr: u32, buf: &Vec<u8>, index: usize) -> usize
 //────────────────────────────────────────────────

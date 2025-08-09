@@ -14,4 +14,8 @@ pub mod mcode;
 //──────── Códigos de operación
 pub mod opcoderv;
 
+//──────── Secuencias ANSI
 pub mod ansi;
+
+//──────── Dibujos en modo texto
+pub mod graphics;
