@@ -254,6 +254,14 @@ impl Cpurv {
                     self.pc += 4;
                 }
             }
+            InstructionRV::Jal {rd, offs} => {
+
+                //-- Guardar direccion de retorno
+                self.write_reg(*rd, self.pc+4);
+
+                //-- Actualizar el pc
+                self.pc = (self.pc as i32 + *offs) as u32;
+            }
             _ => {}
         }
 
@@ -289,6 +297,8 @@ fn main()
         //-- pass:
         //-- li x1, 1
         InstructionRV::Addi { rd: Reg::X1, rs1: Reg::X0, imm: 1 }, 
+        //-- j .
+        InstructionRV::Jal {rd: Reg::X0, offs: 0},
     ];
 
     let _prog2 = [
