@@ -5,10 +5,37 @@
 use icerv_dasm::instructionrv::InstructionRV;
 use icerv_dasm::regs::Reg;
 
+//-- Estado de la cpu
+#[derive(PartialEq)]
+enum CpuState {
+    RESET,  //-- Cpu en estado inicial
+    RUN,    //-- Cpu en modo normal, ejecutando instrucciones
+    HALT,   //-- Cpu detenida, bien por llegar al maximo de ciclos
+            //-- o bien por completar el programa
+}
+
+impl CpuState {
+    fn to_str(&self) -> String {
+        match self {
+            CpuState::RESET => {
+                format!("RESET")
+            }
+            CpuState::RUN => {
+                format!("RUN")
+            }
+            CpuState::HALT => {
+                format!("HALT")
+            }
+        }
+    }
+}
+
 //-- Modelado de la CPU RiscV
 struct Cpurv {
-    pc: u32,     //-- Contador de programa
-    cycle: u32,  //-- Contador de ciclos (ciclo actual)
+    pc: u32,         //-- Contador de programa
+    cycle: u32,      //-- Contador de ciclos (ciclo actual)
+    max_cycles: u32, //-- Numero maximo de ciclos a ejecutar
+    state: CpuState, //-- Estado de la CPU
 
     //-- Registros RV (Salvo x0 que vale 0 siempre)
     x1: u32,    //-- ra
@@ -48,12 +75,15 @@ impl Cpurv {
 
     //────────────────────────────────────────────────
     //  Constructor de CPU
-    //  Todos los registros se ponen a 0
+    //  La CPU se lleva al estado de reset
+    //  Todos los registros x se ponen a 0
     //────────────────────────────────────────────────    
     fn new() -> Self {
         Cpurv {
             pc: 0,
             cycle: 0,
+            max_cycles: 0xFFFF_FFFF,
+            state: CpuState::RESET,
 
             x1: 0,
             x2: 0,
@@ -127,8 +157,14 @@ impl Cpurv {
         println!("🟢 x30: {:#010X}", self.x30);
         println!("🟢 x31: {:#010X}", self.x31);
         println!("➡️  pc: {:#010X}", self.pc);
-        println!("⏱️  Ciclo: {}", self.cycle);
-        println!("");
+
+        if self.cycle < self.max_cycles {
+            println!("⏱️  Ciclo: {}", self.cycle);
+        } else {
+            println!("⏱️  Ciclo: {} (MAX)", self.cycle);
+        }
+        
+        println!("🚨  Estado: {}", self.state.to_str());
     }
 
     //────────────────────────────────────────────────
@@ -217,6 +253,15 @@ impl Cpurv {
     //──────────────────────────────────────────────── 
     fn exec(&mut self, inst: &InstructionRV) {
     
+        //-- Si la cpu está detenida (HALT), no se ejecuta ya nada
+        if self.state == CpuState::HALT {
+            println!("Estado CPU: HALT");
+            return
+        }
+
+        //-- Por defecto llevamos la cpu a RUN
+        self.state = CpuState::RUN;
+
         println!("  ⚙️  {}", inst.to_string());
 
         //-- Ejecutar instruccion
@@ -268,6 +313,13 @@ impl Cpurv {
         //-- Todas las instrucciones consumen 1 ciclo
         self.cycle += 1;
 
+        //-- Evaluar los ciclos máximos
+        if self.cycle >= self.max_cycles {
+
+            //-- Parar la cpu
+            self.state = CpuState::HALT;
+        }
+
 
     }
 
@@ -276,10 +328,90 @@ impl Cpurv {
 }
 
 //────────────────────────────────────────────────
-//  Ejecutar una instrucción
+//  Ejecutar un programa dado como un array
+//  de instrucciones InstructionRV
 //──────────────────────────────────────────────── 
+fn run(prog: &[InstructionRV], max_cycles: u32)
+{
+    //-- Crear CPU
+    let mut cpu = Cpurv::new();
 
-fn main()
+    //-- Configurar los ciclos máximos
+    cpu.max_cycles = max_cycles;
+
+    //-- Mostrar estado inicial de la cpu
+    cpu.show();
+
+    loop {
+        //-- Obtener la direccion actual (de palabra)
+        let addr = (cpu.pc >> 2) as usize;
+
+        //-- Comprobar si la direccion está dentro del rango
+        if addr >= prog.len() {
+            break;
+        }
+
+        //-- Ejecutar instruccion
+        cpu.exec(&prog[addr]);
+
+        //-- Mostrar el estdo actual
+        cpu.show();
+
+        //-- Terminar cuando han transcurrido el máximo de ciclos
+        if cpu.state == CpuState::HALT {
+            break;
+        }
+    }
+
+    println!("PROGRAMA TERMINADO");
+}
+
+//────────────────────────────────────────────────
+//  Ejecutar un programa dado como un array
+//  de instrucciones InstructionRV
+//──────────────────────────────────────────────── 
+fn run_mcode(prog: &[u32], max_cycles: u32)
+{
+    //-- Crear CPU
+    let mut cpu = Cpurv::new();
+
+    //-- Configurar los ciclos máximos
+    cpu.max_cycles = max_cycles;
+
+    //-- Mostrar estado inicial de la cpu
+    cpu.show();
+
+    loop {
+        //-- Obtener la direccion actual (de palabra)
+        let addr = (cpu.pc >> 2) as usize;
+
+        //-- Comprobar si la direccion está dentro del rango
+        if addr >= prog.len() {
+            break;
+        }
+
+        //-- Obtener instruccion en codigo maquina
+        let mcode = &prog[addr];
+
+        //-- Convertir codigo maquina a tipo instruccion
+        let inst = InstructionRV::from_mcode(*mcode as u32);
+
+        //-- Ejecutar instruccion!
+        cpu.exec(&inst);
+
+        //-- Mostrar el estado actual
+        cpu.show();
+
+        //-- Terminar cuando han transcurrido el máximo de ciclos
+        if cpu.state == CpuState::HALT {
+            break;
+        }
+    }
+
+    println!("PROGRAMA TERMINADO");
+}
+
+fn main1()
 {
     //-- Programa de test a ejecutar
     let prog1 = [
@@ -299,62 +431,44 @@ fn main()
         InstructionRV::Addi { rd: Reg::X1, rs1: Reg::X0, imm: 1 }, 
         //-- j .
         InstructionRV::Jal {rd: Reg::X0, offs: 0},
+
+        //-- fail:
+        //-- li x1, 0
+        InstructionRV::Addi { rd: Reg::X1, rs1: Reg::X0, imm: 0 }, 
+        //-- j .
+        InstructionRV::Jal {rd: Reg::X0, offs: 0},
     ];
 
-    let _prog2 = [
-        InstructionRV::Bne { rs1: Reg::X14, rs2: Reg::X7, offs: 0x0 }
-    ];
-
-    //-- Crear CPU
-    let mut cpu = Cpurv::new();
-
-    //-- Mostrar estado inicial de la cpu
-    cpu.show();
-
-    //-- Seleccionar programa a ejecutar
-    let prog = prog1;
-
-    //-- Contador maximo de ciclos
-    //-- (para evitar bucles infinitos)
-    const MAX_CYCLES: u32 = 10;
-
-    loop {
-        //-- Obtener la direccion actual (de palabra)
-        let addr = (cpu.pc >> 2) as usize;
-
-        //-- Comprobar si la direccion está dentro del rango
-        if addr >= prog.len() {
-            break;
-        }
-
-        //-- Ejecutar instruccion
-        cpu.exec(&prog[addr]);
-
-        //-- Mostrar el estdo actual
-        cpu.show();
-
-        //-- Terminar cuando han transcurrido el máximo de ciclos
-        if cpu.cycle >= MAX_CYCLES {
-            break;
-        }
-    }
-
-    if cpu.cycle == MAX_CYCLES {
-        println!("CONTADOR DE CICLOS MAXIMO ALCANZADO!!");
-    } else {
-        println!("PROGRAMA TERMINADO")
-    }
-
-    // for inst in prog2 {
-    //     //-- Ejecutar instruccion
-    //     cpu.exec(&inst);
-
-    //     //-- Mostrar estado actual
-    //     cpu.show();
-    // }
+    run(&prog1, 10);
     println!();
 }
 
+fn main2() {
+
+    let code = [
+        0x00200193,   //addi x3, x0, 2
+        0x00000693,   //addi x13, x0, 0
+        0x00068713,   //addi x14, x13, 0
+        0x00000393,   //addi x7, x0, 0
+        0x00771663,   //bne x14, x7, fail (+12)
+
+                      //pass:
+        0x00100093,   //addi x1, x0, 1
+        0x0000006F,   //jal x0, 0
+
+                      //fail:
+        0x00000093,   //addi x1, x0, 0
+        0x0000006F,   //jal x0, 0
+    ];
+
+    run_mcode(&code, 10);
+}
+
+
+fn main() 
+{
+    main2();
+}
 
 #[test]
 fn test_addi_1()
