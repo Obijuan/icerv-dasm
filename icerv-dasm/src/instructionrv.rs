@@ -578,6 +578,14 @@ impl InstructionRV {
                 //-- Devolver el codigo maquina como numero
                 mcode.value
             }
+            Self::Xori {rd, rs1, imm} => {
+                //-- Construir el codigo maquina
+                let mcode = MCode::new_typei_arith(
+                    0b_100, *rd as u32, *rs1 as u32, *imm as u32);
+
+                //-- Devolver el codigo maquina como numero
+                mcode.value
+            }
             _ => 0
         }
     }
@@ -3295,7 +3303,7 @@ fn test_mcode2_slti() {
 }
 
 #[test]
-fn test_mcod2e_sltiu() {
+fn test_mcode2_sltiu() {
     assert_eq!(
         InstructionRV::Sltiu { rd: Reg::X0, rs1: Reg::X0, imm: 0 }.to_mcode(),
         0x00003013);
@@ -3323,5 +3331,38 @@ fn test_mcod2e_sltiu() {
     assert_eq!(
         InstructionRV::Sltiu { rd: Reg::X25, rs1: Reg::X7, imm: 31 }.to_mcode(),
         0x01f3bc93);
+
+}
+
+#[test]
+fn test_mcode2_xori() {
+
+    assert_eq!(
+        InstructionRV::Xori { rd: Reg::X0, rs1: Reg::X0, imm: 0 }.to_mcode(),
+        0x00004013);
+    assert_eq!(
+        InstructionRV::Xori { rd: Reg::X1, rs1: Reg::X2, imm: 1 }.to_mcode(),
+        0x00114093);
+    assert_eq!(
+        InstructionRV::Xori { rd: Reg::X31, rs1: Reg::X1, imm: 2 }.to_mcode(),
+        0x0020cf93);
+    assert_eq!(
+        InstructionRV::Xori { rd: Reg::X30, rs1: Reg::X2, imm: 4 }.to_mcode(),
+        0x00414f13);
+    assert_eq!(
+        InstructionRV::Xori { rd: Reg::X29, rs1: Reg::X3, imm: 8 }.to_mcode(),
+        0x0081ce93);
+    assert_eq!(
+        InstructionRV::Xori { rd: Reg::X28, rs1: Reg::X4, imm: 16 }.to_mcode(),
+        0x01024e13);
+    assert_eq!(
+        InstructionRV::Xori { rd: Reg::X27, rs1: Reg::X5, imm: 17 }.to_mcode(),
+        0x0112cd93);
+    assert_eq!(
+        InstructionRV::Xori { rd: Reg::X26, rs1: Reg::X6, imm: 30 }.to_mcode(),
+        0x01e34d13);
+    assert_eq!(
+        InstructionRV::Xori { rd: Reg::X25, rs1: Reg::X7, imm: 31 }.to_mcode(),
+        0x01f3cc93);
 
 }
