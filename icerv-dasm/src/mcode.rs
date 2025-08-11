@@ -227,8 +227,28 @@ impl MCode {
 
     //────────────────────────────────────────────────
     //  Construir una nueva instruccion en codigo maquina
+    //  Instruccion generica a partir del codigo maquina
     //────────────────────────────────────────────────    
     pub fn new(value: u32) -> Self {
+        MCode { value }
+    }
+
+    //────────────────────────────────────────────────
+    //  Construir una nueva instruccion en codigo maquina
+    //  Instruccion Tipo I, a partir de sus campos
+    //────────────────────────────────────────────────    
+    pub fn new_typei_arith(func3: u32, rd: u32, rs1: u32, imm: u32) -> Self {
+
+        let opcode: u32 = OpcodeRV::TipoIArith as u32; 
+
+        //-- imm rs1 func3 rd opcode
+        let value: u32 = 
+            (imm << IMM12_POS)     |
+            (rs1 << RS1_POS)       |
+            (func3 << FUNC3_POS)   |
+            (rd << RD_POS)         |
+            (opcode << OPCODE_POS); 
+
         MCode { value }
     }
 

@@ -1,4 +1,5 @@
-use crate::{mcode, regs::Reg, opcoderv::OpcodeRV};
+use crate::{mcode::MCode, regs::Reg, opcoderv::OpcodeRV};
+
 
 //────────────────────────────────────────────────
 //  POSICIONES Bits aislados
@@ -91,7 +92,7 @@ pub enum InstructionRV {
 impl InstructionRV {
     pub fn from_mcode(mcode: u32) -> Self {
 
-        let mcode = mcode::MCode::new(mcode);
+        let mcode = MCode::new(mcode);
         let func3 = mcode.func3();
         let func7 = mcode.func7();
 
@@ -536,6 +537,26 @@ impl InstructionRV {
             },
         }
     }
+
+    //──────────────────────────────────────────────
+    //  Convertir la instrucción a codigo máquina
+    //  (Ensamblar!)
+    //──────────────────────────────────────────────
+    pub fn to_mcode(&self) -> u32 {
+        match self {
+            Self::Addi {rd, rs1, imm} => {
+
+                //-- Construir el codigo maquina
+                let mcode = MCode::new_typei_arith(
+                    0b_000, *rd as u32, *rs1 as u32, *imm as u32);
+
+                //-- Devolver el codigo maquina como numero
+                mcode.value
+            }
+            _ => 0
+        }
+    }
+
 }
 
 //────────────────────────────────────────────────
@@ -1841,11 +1862,11 @@ fn test_instuction_ecall_ebreak() {
 }
 
 
-//───────────────────────────.to_string()──────────────
-//  PRUEBAS DEL COD.to_string()IGO MAQUINA
-//────────────────────────────────────────────────
+//─────────────────────────────────────────
+//  PRUEBAS DEL CODIGO MAQUINA
+//─────────────────────────────────────────
 #[test]
-fn t_mcode_addi() {
+fn test_mcode_addi() {
     //────────────────────────────────────────────────
     //  Test de la instrucción ADDI
     //────────────────────────────────────────────────
@@ -3136,4 +3157,50 @@ fn test_disassemble_ecall_ebreak() {
     assert_eq!(InstructionRV::from_mcode(0x00100073).to_string(), "ebreak");
 }
 
+
+//────────────────────────────────────────────────
+//  Pruebas del metodo .to_mcode()
+//────────────────────────────────────────────────
+#[test]
+fn test_mcode2_addi() {
+    //────────────────────────────────────────────────
+    //  Test de la instrucción ADDI
+    //────────────────────────────────────────────────
+    assert_eq!(
+        InstructionRV::Addi { rd: Reg::X0, rs1: Reg::X0, imm: 0 }.to_mcode(),
+        0x00000013);
+    assert_eq!(
+        InstructionRV::Addi { rd: Reg::X1, rs1: Reg::X0, imm: 1 }.to_mcode(),
+        0x00100093);
+    // assert_eq!(
+    //     InstructionRV::from_mcode(0x00200113).to_string(),
+    //     "addi x2, x0, 2");
+    // assert_eq!(
+    //     InstructionRV::from_mcode(0xfff00193).to_string(),
+    //     "addi x3, x0, -1");
+    // assert_eq!(
+    //     InstructionRV::from_mcode(0x7ff00213).to_string(),
+    //     "addi x4, x0, 2047");
+    // assert_eq!(
+    //     InstructionRV::from_mcode(0x00308f93).to_string(),
+    //     "addi x31, x1, 3"); 
+    // assert_eq!(
+    //     InstructionRV::from_mcode(0x00410413).to_string(),
+    //     "addi x8, x2, 4");
+    // assert_eq!(
+    //     InstructionRV::from_mcode(0x00820813).to_string(),
+    //     "addi x16, x4, 8");
+    // assert_eq!(
+    //     InstructionRV::from_mcode(0x01040893).to_string(),
+    //     "addi x17, x8, 16");
+    // assert_eq!(
+    //     InstructionRV::from_mcode(0xff040893).to_string(),
+    //     "addi x17, x8, -16");
+    // assert_eq!(
+    //     InstructionRV::from_mcode(0x80040893).to_string(),
+    //     "addi x17, x8, -2048");
+    // assert_eq!(
+    //     InstructionRV::from_mcode(0x0aa00093).to_string(),
+    //     "addi x1, x0, 170");  
+}   
 

@@ -266,6 +266,11 @@ impl Cpurv {
 
         //-- Ejecutar instruccion
         match inst {
+            InstructionRV::Unknown => {
+                println!("INSTRUCCION DESCONOCIDA!");
+                self.state = CpuState::HALT;
+                return
+            }
             InstructionRV::Addi {rd, rs1, imm} => {
 
                 //-- Leer valor del registro fuente
@@ -445,20 +450,54 @@ fn main1()
 
 fn main2() {
 
+    // let code = [
+    //     0x00200193,   //addi x3, x0, 2
+    //     0x00000693,   //addi x13, x0, 0
+    //     0x00068713,   //addi x14, x13, 0
+    //     0x00000393,   //addi x7, x0, 0
+    //     0x00771663,   //bne x14, x7, fail (+12)
+
+    //                   //pass:
+    //     0x00100093,   //addi x1, x0, 1
+    //     0x0000006F,   //jal x0, 0
+
+    //                   //fail:
+    //     0x00000093,   //addi x1, x0, 0
+    //     0x0000006F,   //jal x0, 0
+    // ];
+
     let code = [
-        0x00200193,   //addi x3, x0, 2
-        0x00000693,   //addi x13, x0, 0
-        0x00068713,   //addi x14, x13, 0
-        0x00000393,   //addi x7, x0, 0
-        0x00771663,   //bne x14, x7, fail (+12)
+        //-- li x3, 2
+        InstructionRV::Addi { rd: Reg::X3, rs1: Reg::X0, imm: 2 }.to_mcode(),
 
-                      //pass:
-        0x00100093,   //addi x1, x0, 1
-        0x0000006F,   //jal x0, 0
+        //-- li x13, 0x00000000
+        InstructionRV::Addi { rd: Reg::X13, rs1: Reg::X0, imm: 0x0000_0000 }
+            .to_mcode(),
 
-                      //fail:
-        0x00000093,   //addi x1, x0, 0
-        0x0000006F,   //jal x0, 0
+        //-- addi x14, x13, 0x00
+        InstructionRV::Addi { rd: Reg::X14, rs1: Reg::X13, imm: 0x000 }
+            .to_mcode(),
+
+        //-- li x7, 0x00000000
+        InstructionRV::Addi { rd: Reg::X7, rs1: Reg::X0, imm: 0x0000_0000 }
+            .to_mcode(),
+
+        //-- bne x14, x7, fail;
+        InstructionRV::Bne { rs1: Reg::X14, rs2: Reg::X7, offs: 0x0C }
+            .to_mcode(),
+    
+        //-- pass:
+        //-- li x1, 1
+        InstructionRV::Addi { rd: Reg::X1, rs1: Reg::X0, imm: 1 }
+            .to_mcode(),
+        //-- j .
+        InstructionRV::Jal {rd: Reg::X0, offs: 0}.to_mcode(),
+
+        //-- fail:
+        //-- li x1, 0
+        InstructionRV::Addi { rd: Reg::X1, rs1: Reg::X0, imm: 0 }.to_mcode(), 
+        //-- j .
+        InstructionRV::Jal {rd: Reg::X0, offs: 0}.to_mcode(),
     ];
 
     run_mcode(&code, 10);
