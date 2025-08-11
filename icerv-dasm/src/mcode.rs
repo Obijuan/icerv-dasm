@@ -241,7 +241,7 @@ impl MCode {
 
         let opcode: u32 = OpcodeRV::TipoIArith as u32; 
 
-        //-- imm rs1 func3 rd opcode
+        //-- Crear el codigo maquina a partir de los campos
         let value: u32 = 
             (imm << IMM12_POS)     |
             (rs1 << RS1_POS)       |

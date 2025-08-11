@@ -553,6 +553,23 @@ impl InstructionRV {
                 //-- Devolver el codigo maquina como numero
                 mcode.value
             }
+            Self::Slli {rd, rs1, imm} => {
+
+                //-- Construir el codigo maquina
+                let mcode = MCode::new_typei_arith(
+                    0b_001, *rd as u32, *rs1 as u32, *imm as u32);
+
+                //-- Devolver el codigo maquina como numero
+                mcode.value
+            }
+            Self::Slti {rd, rs1, imm} => {
+                //-- Construir el codigo maquina
+                let mcode = MCode::new_typei_arith(
+                    0b_010, *rd as u32, *rs1 as u32, *imm as u32);
+
+                //-- Devolver el codigo maquina como numero
+                mcode.value
+            }
             _ => 0
         }
     }
@@ -3204,3 +3221,67 @@ fn test_mcode2_addi() {
         0x0aa00093);  
 }   
 
+#[test]
+fn test_mcode2_slli() {
+
+    assert_eq!(
+        InstructionRV::Slli { rd: Reg::X0, rs1: Reg::X0, imm: 0 }.to_mcode(),
+        0x00001013);
+    assert_eq!(
+        InstructionRV::Slli { rd: Reg::X1, rs1: Reg::X2, imm: 1 }.to_mcode(),
+        0x00111093);
+    assert_eq!(
+        InstructionRV::Slli { rd: Reg::X31, rs1: Reg::X1, imm: 2 }.to_mcode(),
+        0x00209f93);
+    assert_eq!(
+        InstructionRV::Slli { rd: Reg::X30, rs1: Reg::X2, imm: 4 }.to_mcode(),
+        0x00411f13);
+    assert_eq!(
+        InstructionRV::Slli { rd: Reg::X29, rs1: Reg::X3, imm: 8 }.to_mcode(),
+        0x00819e93);
+    assert_eq!(
+        InstructionRV::Slli { rd: Reg::X28, rs1: Reg::X4, imm: 16 }.to_mcode(),
+        0x01021e13);
+    assert_eq!(
+        InstructionRV::Slli { rd: Reg::X27, rs1: Reg::X5, imm: 17 }.to_mcode(),
+        0x01129d93);
+    assert_eq!(
+        InstructionRV::Slli { rd: Reg::X26, rs1: Reg::X6, imm: 30 }.to_mcode(),
+        0x01e31d13);
+    assert_eq!(
+        InstructionRV::Slli { rd: Reg::X25, rs1: Reg::X7, imm: 31 }.to_mcode(),
+        0x01f39c93);
+
+}
+
+#[test]
+fn test_mcode2_slti() {
+    assert_eq!(
+        InstructionRV::Slti { rd: Reg::X0, rs1: Reg::X0, imm: 0 }.to_mcode(),
+        0x00002013);
+    assert_eq!(
+        InstructionRV::Slti { rd: Reg::X1, rs1: Reg::X2, imm: 1 }.to_mcode(),
+        0x00112093);
+    assert_eq!(
+        InstructionRV::Slti { rd: Reg::X31, rs1: Reg::X1, imm: 2 }.to_mcode(),
+        0x0020af93);
+    assert_eq!(
+        InstructionRV::Slti { rd: Reg::X30, rs1: Reg::X2, imm: 4 }.to_mcode(),
+        0x00412f13);
+    assert_eq!(
+        InstructionRV::Slti { rd: Reg::X29, rs1: Reg::X3, imm: 8 }.to_mcode(),
+        0x0081ae93);
+    assert_eq!(
+        InstructionRV::Slti { rd: Reg::X28, rs1: Reg::X4, imm: 16 }.to_mcode(),
+        0x01022e13);
+    assert_eq!(
+        InstructionRV::Slti { rd: Reg::X27, rs1: Reg::X5, imm: 17 }.to_mcode(),
+        0x0112ad93);
+    assert_eq!(
+        InstructionRV::Slti { rd: Reg::X26, rs1: Reg::X6, imm: 30 }.to_mcode(),
+        0x01e32d13);
+    assert_eq!(
+        InstructionRV::Slti { rd: Reg::X25, rs1: Reg::X7, imm: 31 }.to_mcode(),
+        0x01f3ac93);
+
+}
