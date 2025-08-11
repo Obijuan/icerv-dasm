@@ -3172,35 +3172,35 @@ fn test_mcode2_addi() {
     assert_eq!(
         InstructionRV::Addi { rd: Reg::X1, rs1: Reg::X0, imm: 1 }.to_mcode(),
         0x00100093);
-    // assert_eq!(
-    //     InstructionRV::from_mcode(0x00200113).to_string(),
-    //     "addi x2, x0, 2");
-    // assert_eq!(
-    //     InstructionRV::from_mcode(0xfff00193).to_string(),
-    //     "addi x3, x0, -1");
-    // assert_eq!(
-    //     InstructionRV::from_mcode(0x7ff00213).to_string(),
-    //     "addi x4, x0, 2047");
-    // assert_eq!(
-    //     InstructionRV::from_mcode(0x00308f93).to_string(),
-    //     "addi x31, x1, 3"); 
-    // assert_eq!(
-    //     InstructionRV::from_mcode(0x00410413).to_string(),
-    //     "addi x8, x2, 4");
-    // assert_eq!(
-    //     InstructionRV::from_mcode(0x00820813).to_string(),
-    //     "addi x16, x4, 8");
-    // assert_eq!(
-    //     InstructionRV::from_mcode(0x01040893).to_string(),
-    //     "addi x17, x8, 16");
-    // assert_eq!(
-    //     InstructionRV::from_mcode(0xff040893).to_string(),
-    //     "addi x17, x8, -16");
-    // assert_eq!(
-    //     InstructionRV::from_mcode(0x80040893).to_string(),
-    //     "addi x17, x8, -2048");
-    // assert_eq!(
-    //     InstructionRV::from_mcode(0x0aa00093).to_string(),
-    //     "addi x1, x0, 170");  
+    assert_eq!(
+        InstructionRV::Addi { rd: Reg::X2, rs1: Reg::X0, imm: 2 }.to_mcode(),
+        0x00200113);
+    assert_eq!(
+        InstructionRV::Addi { rd: Reg::X3, rs1: Reg::X0, imm: -1 }.to_mcode(),
+        0xfff00193);
+    assert_eq!(
+        InstructionRV::Addi { rd: Reg::X4, rs1: Reg::X0, imm: 2047 }.to_mcode(),
+        0x7ff00213);
+    assert_eq!(
+        InstructionRV::Addi { rd: Reg::X31, rs1: Reg::X1, imm: 3 }.to_mcode(),
+        0x00308f93); 
+    assert_eq!(
+        InstructionRV::Addi { rd: Reg::X8, rs1: Reg::X2, imm: 4 }.to_mcode(),
+        0x00410413);
+    assert_eq!(
+        InstructionRV::Addi { rd: Reg::X16, rs1: Reg::X4, imm: 8 }.to_mcode(),
+        0x00820813);
+    assert_eq!(
+        InstructionRV::Addi { rd: Reg::X17, rs1: Reg::X8, imm: 16 }.to_mcode(),
+        0x01040893);
+    assert_eq!(
+        InstructionRV::Addi { rd: Reg::X17, rs1: Reg::X8, imm: -16 }.to_mcode(),
+        0xff040893);
+    assert_eq!(
+        InstructionRV::Addi { rd: Reg::X17, rs1: Reg::X8, imm: -2048 }.to_mcode(),
+        0x80040893);
+    assert_eq!(
+        InstructionRV::Addi { rd: Reg::X1, rs1: Reg::X0, imm: 170 }.to_mcode(),
+        0x0aa00093);  
 }   
 
