@@ -665,6 +665,24 @@ impl InstructionRV {
                 //-- Devolver el codigo maquina como numero
                 mcode.value
             }
+            Self::Lhu { rd, offs, rs1} => {
+                //-- Construir el código máquina
+                let mcode = MCode::new_typei_load(
+                    0b_101, *rd as u32, *rs1 as u32,
+                    *offs as u32);
+
+                //-- Devolver el codigo maquina como numero
+                mcode.value
+            }
+            Self::Lwu { rd, offs, rs1} => {
+                //-- Construir el código máquina
+                let mcode = MCode::new_typei_load(
+                    0b_110, *rd as u32, *rs1 as u32,
+                    *offs as u32);
+
+                //-- Devolver el codigo maquina como numero
+                mcode.value
+            }
             _ => 0
         }
     }
@@ -3795,4 +3813,35 @@ fn test_mcode2_lbu() {
     assert_eq!(
         InstructionRV::Lbu{rd: Reg::X9, offs: 2047, rs1: Reg::X9}.to_mcode(),
         0x7ff4c483);
+}
+
+#[test]
+fn test_mcode2_lhu() {
+    assert_eq!(
+        InstructionRV::Lhu{rd: Reg::X0, offs: 0, rs1: Reg::X1}.to_mcode(),
+        0x0000d003);
+    assert_eq!(
+        InstructionRV::Lhu{rd: Reg::X1, offs: 1, rs1: Reg::X2}.to_mcode(),
+        0x00115083);
+    assert_eq!(
+        InstructionRV::from_mcode(0x0021d103).to_string(), 
+        "lhu x2, 2(x3)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00425203).to_string(), 
+        "lhu x4, 4(x4)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0082d283).to_string(), 
+        "lhu x5, 8(x5)");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfff35303).to_string(), 
+        "lhu x6, -1(x6)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x8003d383).to_string(), 
+        "lhu x7, -2048(x7)");
+    assert_eq!(
+        InstructionRV::from_mcode(0xffe45403).to_string(), 
+        "lhu x8, -2(x8)");
+    assert_eq!(
+        InstructionRV::from_mcode(0x7ff4d483).to_string(), 
+        "lhu x9, 2047(x9)");
 }
