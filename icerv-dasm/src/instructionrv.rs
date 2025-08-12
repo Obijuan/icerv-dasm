@@ -594,6 +594,14 @@ impl InstructionRV {
                 //-- Devolver el codigo maquina como numero
                 mcode.value
             }
+            Self::Ori { rd, rs1, imm } => {
+                //-- Construir el codigo maquina
+                let mcode = MCode::new_typei_arith(
+                    0b_110, *rd as u32, *rs1 as u32, *imm as u32);
+
+                //-- Devolver el codigo maquina como numero
+                mcode.value
+            }
             _ => 0
         }
     }
@@ -809,34 +817,35 @@ fn test_instructions_srli() {
     
 
 #[test]
-fn test_instructions_andi() {
+fn test_instructions_ori() {
+
     assert_eq!(
-        InstructionRV::Andi { rd: Reg::X0, rs1: Reg::X0, imm: 0 }.to_string(),
-        "andi x0, x0, 0");
+        InstructionRV::Ori { rd: Reg::X0, rs1: Reg::X0, imm: 0 }.to_string(),
+        "ori x0, x0, 0");
     assert_eq!(
-        InstructionRV::Andi { rd: Reg::X1, rs1: Reg::X2, imm: 1 }.to_string(),
-        "andi x1, x2, 1");
+        InstructionRV::Ori { rd: Reg::X1, rs1: Reg::X2, imm: 1 }.to_string(),
+        "ori x1, x2, 1");
     assert_eq!(
-        InstructionRV::Andi { rd: Reg::X31, rs1: Reg::X1, imm: 2 }.to_string(),
-        "andi x31, x1, 2");
+        InstructionRV::Ori { rd: Reg::X31,rs1: Reg::X1,imm: 2 }.to_string(),
+        "ori x31, x1, 2");
     assert_eq!(
-        InstructionRV::Andi { rd: Reg::X30, rs1: Reg::X2, imm: 4 }.to_string(),
-        "andi x30, x2, 4");
+        InstructionRV::Ori { rd: Reg::X30,rs1: Reg::X2,imm: 4 }.to_string(),
+        "ori x30, x2, 4");
     assert_eq!(
-        InstructionRV::Andi { rd: Reg::X29, rs1: Reg::X3, imm: 8 }.to_string(),
-        "andi x29, x3, 8");
+        InstructionRV::Ori { rd: Reg::X29,rs1: Reg::X3,imm: 8 }.to_string(),
+        "ori x29, x3, 8");
     assert_eq!(
-        InstructionRV::Andi { rd: Reg::X28, rs1: Reg::X4, imm: 16 }.to_string(),
-        "andi x28, x4, 16");
+        InstructionRV::Ori { rd: Reg::X28,rs1: Reg::X4,imm: 16 }.to_string(),
+        "ori x28, x4, 16");
     assert_eq!(
-        InstructionRV::Andi { rd: Reg::X27, rs1: Reg::X5, imm: 17 }.to_string(),
-        "andi x27, x5, 17");
+        InstructionRV::Ori { rd: Reg::X27,rs1: Reg::X5,imm: 17 }.to_string(),
+        "ori x27, x5, 17");
     assert_eq!(
-        InstructionRV::Andi { rd: Reg::X26, rs1: Reg::X6, imm: 30 }.to_string(),
-        "andi x26, x6, 30");
+        InstructionRV::Ori { rd: Reg::X26,rs1: Reg::X6,imm: 30 }.to_string(),
+        "ori x26, x6, 30");
     assert_eq!(
-        InstructionRV::Andi { rd: Reg::X25, rs1: Reg::X7, imm: 31 }.to_string(),
-        "andi x25, x7, 31");
+        InstructionRV::Ori { rd: Reg::X25,rs1: Reg::X7,imm: 31 }.to_string(),
+        "ori x25, x7, 31");
 
 }
 
@@ -2111,6 +2120,39 @@ fn test_mcode_srli() {
         "srli x25, x7, 31");
 
 }
+
+#[test]
+fn test_mcode_ori() {
+    assert_eq!(
+        InstructionRV::from_mcode(0x00006013).to_string(),
+        "ori x0, x0, 0");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00116093).to_string(),
+        "ori x1, x2, 1");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0020ef93).to_string(),
+        "ori x31, x1, 2");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00416f13).to_string(),
+        "ori x30, x2, 4");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0081ee93).to_string(),
+        "ori x29, x3, 8");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01026e13).to_string(),
+        "ori x28, x4, 16");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0112ed93).to_string(),
+        "ori x27, x5, 17");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01e36d13).to_string(),
+        "ori x26, x6, 30");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01f3ec93).to_string(),
+        "ori x25, x7, 31");
+
+}
+
 
 #[test]
 fn test_mcode_andi() {
@@ -3404,5 +3446,37 @@ fn test_mcode2_srli() {
     assert_eq!(
         InstructionRV::Srli { rd: Reg::X25, rs1: Reg::X7, imm: 31 }.to_mcode(),
         0x01f3dc93);
+
+}
+
+#[test]
+fn test_mcode2_ori() {
+    assert_eq!(
+        InstructionRV::Ori { rd: Reg::X0, rs1: Reg::X0, imm: 0 }.to_mcode(),
+        0x00006013);
+    assert_eq!(
+        InstructionRV::Ori { rd: Reg::X1, rs1: Reg::X2, imm: 1 }.to_mcode(),
+        0x00116093);
+    assert_eq!(
+        InstructionRV::Ori { rd: Reg::X31, rs1: Reg::X1, imm: 2 }.to_mcode(),
+        0x0020ef93);
+    assert_eq!(
+        InstructionRV::Ori { rd: Reg::X30, rs1: Reg::X2, imm: 4 }.to_mcode(),
+        0x00416f13);
+    assert_eq!(
+        InstructionRV::Ori { rd: Reg::X29, rs1: Reg::X3, imm: 8 }.to_mcode(),
+        0x0081ee93);
+    assert_eq!(
+        InstructionRV::Ori { rd: Reg::X28, rs1: Reg::X4, imm: 16 }.to_mcode(),
+        0x01026e13);
+    assert_eq!(
+        InstructionRV::Ori { rd: Reg::X27, rs1: Reg::X5, imm: 17 }.to_mcode(),
+        0x0112ed93);
+    assert_eq!(
+        InstructionRV::Ori { rd: Reg::X26, rs1: Reg::X6, imm: 30 }.to_mcode(),
+        0x01e36d13);
+    assert_eq!(
+        InstructionRV::Ori { rd: Reg::X25, rs1: Reg::X7, imm: 31 }.to_mcode(),
+        0x01f3ec93);
 
 }
