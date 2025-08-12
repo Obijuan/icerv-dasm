@@ -683,6 +683,15 @@ impl InstructionRV {
                 //-- Devolver el codigo maquina como numero
                 mcode.value
             }
+            Self::Add { rd, rs1, rs2} => {
+                //-- Construir el código máquina
+                let mcode = MCode::new_typer(
+                    0b_0000000, 0b_000, *rd as u32, 
+                    *rs1 as u32, *rs2 as u32);
+
+                //-- Devolver el codigo maquina como numero
+                mcode.value
+            }
             _ => 0
         }
     }
@@ -3875,4 +3884,41 @@ fn test_mcode2_lwu() {
     assert_eq!(
         InstructionRV::Lwu{rd: Reg::X9, offs: 2047, rs1: Reg::X9}.to_mcode(),
         0x7ff4e483);
+}
+
+#[test]
+fn test_mcode2_add() {
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_mcode(), 
+        0x00208033);
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X3, rs1: Reg::X4, rs2: Reg::X5}.to_mcode(),
+        0x005201b3);
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X6, rs1: Reg::X7, rs2: Reg::X8}.to_mcode(),
+        0x00838333);
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X9, rs1: Reg::X10, rs2: Reg::X11}.to_mcode(),
+        0x00b504b3);
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X12, rs1: Reg::X12, rs2: Reg::X14}.to_mcode(),
+        0x00e60633);
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X15, rs1: Reg::X16, rs2: Reg::X17}.to_mcode(),
+        0x011807b3);
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X18, rs1: Reg::X19, rs2: Reg::X20}.to_mcode(),
+        0x01498933);
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X21, rs1: Reg::X22, rs2: Reg::X23}.to_mcode(),
+        0x017b0ab3);
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X24, rs1: Reg::X25, rs2: Reg::X26}.to_mcode(),
+        0x01ac8c33);
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X27, rs1: Reg::X28, rs2: Reg::X29}.to_mcode(),
+        0x01de0db3);
+    assert_eq!(
+        InstructionRV::Add{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_mcode(),
+        0x01ff8f33);
 }
