@@ -422,25 +422,25 @@ impl InstructionRV {
             Self::Srai {rd, rs1, imm} => {
                 format!("srai {}, {}, {}", rd.to_str(), rs1.to_str(), imm)
             },
-            Self::Lb { rd, offs, rs1, } => {
+            Self::Lb { rd, offs, rs1} => {
                 format!("lb {}, {}({})", rd.to_str(), offs, rs1.to_str())
             },
-            Self::Lh { rd, offs, rs1, } => {
+            Self::Lh { rd, offs, rs1} => {
                 format!("lh {}, {}({})", rd.to_str(), offs, rs1.to_str())
             },
-            Self::Lw { rd, offs, rs1, } => {
+            Self::Lw { rd, offs, rs1} => {
                 format!("lw {}, {}({})", rd.to_str(), offs, rs1.to_str())
             },
-            Self::Ld { rd, offs, rs1, } => {
+            Self::Ld { rd, offs, rs1} => {
                 format!("ld {}, {}({})", rd.to_str(), offs, rs1.to_str())
             },
-            Self::Lbu { rd, offs, rs1, } => {
+            Self::Lbu { rd, offs, rs1} => {
                 format!("lbu {}, {}({})", rd.to_str(), offs, rs1.to_str())
             },
-            Self::Lhu { rd, offs, rs1, } => {
+            Self::Lhu { rd, offs, rs1} => {
                 format!("lhu {}, {}({})", rd.to_str(), offs, rs1.to_str())
             },
-            Self::Lwu { rd, offs, rs1, } => {
+            Self::Lwu { rd, offs, rs1} => {
                 format!("lwu {}, {}({})", rd.to_str(), offs, rs1.to_str())
             },
             Self::Add { rd, rs1, rs2} => {
@@ -624,6 +624,15 @@ impl InstructionRV {
                 //-- Construir el código máquina
                 let mcode = MCode::new_typei_load(
                     0b_000, *rd as u32, *rs1 as u32,
+                    *offs as u32);
+
+                //-- Devolver el codigo maquina como numero
+                mcode.value
+            }
+            Self::Lh { rd, offs, rs1} => {
+                //-- Construir el código máquina
+                let mcode = MCode::new_typei_load(
+                    0b_001, *rd as u32, *rs1 as u32,
                     *offs as u32);
 
                 //-- Devolver el codigo maquina como numero
@@ -3635,4 +3644,35 @@ fn test_mcode2_lb() {
     assert_eq!(
         InstructionRV::Lb { rd: Reg::X9, offs: 2047, rs1: Reg::X9 }.to_mcode(),
         0x7ff48483);
+}
+
+#[test]
+fn test_mcode2_lh() {
+    assert_eq!(
+        InstructionRV::Lh{ rd: Reg::X0, offs: 0, rs1: Reg::X1}.to_mcode(), 
+        0x00009003);
+    assert_eq!(
+        InstructionRV::Lh{ rd: Reg::X1, offs: 1, rs1: Reg::X2}.to_mcode(),
+        0x00111083);
+    assert_eq!(
+        InstructionRV::Lh{ rd: Reg::X2, offs: 2, rs1: Reg::X3}.to_mcode(),
+        0x00219103);
+    assert_eq!(
+        InstructionRV::Lh{ rd: Reg::X4, offs: 4, rs1: Reg::X4}.to_mcode(),
+        0x00421203);
+    assert_eq!(
+        InstructionRV::Lh{ rd: Reg::X5, offs: 8, rs1: Reg::X5}.to_mcode(),
+        0x00829283);
+    assert_eq!(
+        InstructionRV::Lh{ rd: Reg::X6, offs: -1, rs1: Reg::X6}.to_mcode(),
+        0xfff31303);
+    assert_eq!(
+        InstructionRV::Lh{ rd: Reg::X7, offs: -2048, rs1: Reg::X7}.to_mcode(),
+        0x80039383);
+    assert_eq!(
+        InstructionRV::Lh{ rd: Reg::X8, offs: -2, rs1: Reg::X8}.to_mcode(),
+        0xffe41403);
+    assert_eq!(
+        InstructionRV::Lh{ rd: Reg::X9, offs: 2047, rs1: Reg::X9}.to_mcode(),
+        0x7ff49483); 
 }
