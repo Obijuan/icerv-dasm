@@ -3845,3 +3845,34 @@ fn test_mcode2_lhu() {
         InstructionRV::from_mcode(0x7ff4d483).to_string(), 
         "lhu x9, 2047(x9)");
 }
+
+#[test]
+fn test_mcode2_lwu() {
+    assert_eq!(
+        InstructionRV::Lwu{rd: Reg::X0, offs: 0, rs1: Reg::X1}.to_mcode(), 
+        0x0000e003);
+    assert_eq!(
+        InstructionRV::Lwu{rd: Reg::X1, offs: 1, rs1: Reg::X2}.to_mcode(), 
+        0x00116083);
+    assert_eq!(
+        InstructionRV::Lwu{rd: Reg::X2, offs: 2, rs1: Reg::X3}.to_mcode(), 
+        0x0021e103);
+    assert_eq!(
+        InstructionRV::Lwu{rd: Reg::X4, offs: 4, rs1: Reg::X4}.to_mcode(), 
+        0x00426203);
+    assert_eq!(
+        InstructionRV::Lwu{rd: Reg::X5, offs: 8, rs1: Reg::X5}.to_mcode(), 
+        0x0082e283);
+    assert_eq!(
+        InstructionRV::Lwu{rd: Reg::X6, offs: -1, rs1: Reg::X6}.to_mcode(),
+        0xfff36303);
+    assert_eq!(
+        InstructionRV::Lwu{rd: Reg::X7, offs: -2048, rs1: Reg::X7}.to_mcode(),
+        0x8003e383);
+    assert_eq!(
+        InstructionRV::Lwu{rd: Reg::X8, offs: -2, rs1: Reg::X8}.to_mcode(),
+        0xffe46403);
+    assert_eq!(
+        InstructionRV::Lwu{rd: Reg::X9, offs: 2047, rs1: Reg::X9}.to_mcode(),
+        0x7ff4e483);
+}
