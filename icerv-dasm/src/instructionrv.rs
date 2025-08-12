@@ -619,6 +619,16 @@ impl InstructionRV {
                 //-- Devolver el codigo maquina como numero
                 mcode.value
             }
+            Self::Lb { rd, offs, rs1, } => {
+
+                //-- Construir el código máquina
+                let mcode = MCode::new_typei_load(
+                    0b_000, *rd as u32, *rs1 as u32,
+                    *offs as u32);
+
+                //-- Devolver el codigo maquina como numero
+                mcode.value
+            }
             _ => 0
         }
     }
@@ -3596,3 +3606,33 @@ fn test_mcode2_srai() {
    
 }
 
+#[test]
+fn test_mcode2_lb() {
+    assert_eq!(
+        InstructionRV::Lb { rd: Reg::X0, offs: 0, rs1: Reg::X1 }.to_mcode(),
+        0x00008003);
+    assert_eq!(
+        InstructionRV::Lb { rd: Reg::X1, offs: 1, rs1: Reg::X2 }.to_mcode(),
+        0x00110083);
+    assert_eq!(
+        InstructionRV::Lb { rd: Reg::X2, offs: 2, rs1: Reg::X3 }.to_mcode(),
+        0x00218103);
+    assert_eq!(
+        InstructionRV::Lb { rd: Reg::X4, offs: 4, rs1: Reg::X4 }.to_mcode(),
+        0x00420203);
+    assert_eq!(
+        InstructionRV::Lb { rd: Reg::X5, offs: 8, rs1: Reg::X5 }.to_mcode(),
+        0x00828283);
+    assert_eq!(
+        InstructionRV::Lb { rd: Reg::X6, offs: -1, rs1: Reg::X6 }.to_mcode(),
+        0xfff30303);
+    assert_eq!(
+        InstructionRV::Lb { rd: Reg::X7, offs: -2048, rs1: Reg::X7 }.to_mcode(),
+        0x80038383);
+    assert_eq!(
+        InstructionRV::Lb { rd: Reg::X8, offs: -2, rs1: Reg::X8 }.to_mcode(),
+        0xffe40403);
+    assert_eq!(
+        InstructionRV::Lb { rd: Reg::X9, offs: 2047, rs1: Reg::X9 }.to_mcode(),
+        0x7ff48483);
+}
