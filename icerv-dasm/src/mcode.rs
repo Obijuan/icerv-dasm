@@ -354,6 +354,22 @@ impl MCode {
     }    
 
     //────────────────────────────────────────────────
+    //  Construir una nueva instruccion en codigo maquina
+    //  Instruccion Auipc
+    //────────────────────────────────────────────────    
+    pub fn new_auipc(rd: u32, imm: u32) -> Self {
+        let opcode: u32 = OpcodeRV::TipoUAuipc as u32;
+
+        //-- Crear el codigo maquina a partir de los campos
+        let value: u32 = 
+            (imm << IMM20_POS)     |
+            (rd << RD_POS)         |
+            (opcode << OPCODE_POS); 
+
+        MCode { value }
+    }    
+
+    //────────────────────────────────────────────────
     //  Obtener el opcode de la instruccion
     //────────────────────────────────────────────────    
     pub fn opcode(&self) -> OpcodeRV {

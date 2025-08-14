@@ -870,6 +870,13 @@ impl InstructionRV {
                 //-- Devolver el codigo maquina como numero
                 mcode.value
             }
+            Self::Auipc {rd, imm} => {
+                 //-- Construir el código máquina
+                let mcode = MCode::new_auipc(*rd as u32, *imm as u32);
+
+                //-- Devolver el codigo maquina como numero
+                mcode.value
+            }
             _ => 0
         }
     }
@@ -4854,21 +4861,56 @@ fn test_mcode2_bgeu() {
 #[test]
 fn test_mcode2_lui() {
     assert_eq!(
-        InstructionRV::Lui {rd: Reg::X0, imm: 0}.to_mcode(), 0x00000037);
+        InstructionRV::Lui {rd: Reg::X0, imm: 0}.to_mcode(), 
+        0x00000037);
     assert_eq!(
         InstructionRV::Lui {rd: Reg::X1, imm: 0x00001}.to_mcode(), 
         0x000010b7);
     assert_eq!(
-        InstructionRV::Lui {rd: Reg::X2, imm: 0x00020}.to_mcode(), 0x00020137);
+        InstructionRV::Lui {rd: Reg::X2, imm: 0x00020}.to_mcode(), 
+        0x00020137);
     assert_eq!(
-        InstructionRV::Lui {rd: Reg::X3, imm: 0x00400}.to_mcode(), 0x004001b7);
+        InstructionRV::Lui {rd: Reg::X3, imm: 0x00400}.to_mcode(), 
+        0x004001b7);
     assert_eq!(
-        InstructionRV::Lui {rd: Reg::X4, imm: 0x08000}.to_mcode(), 0x08000237);
+        InstructionRV::Lui {rd: Reg::X4, imm: 0x08000}.to_mcode(), 
+        0x08000237);
     assert_eq!(
-        InstructionRV::Lui {rd: Reg::X5, imm: 0x7FFFF}.to_mcode(), 0x7ffff2b7);
+        InstructionRV::Lui {rd: Reg::X5, imm: 0x7FFFF}.to_mcode(), 
+        0x7ffff2b7);
     assert_eq!(
-        InstructionRV::Lui {rd: Reg::X6, imm: 0x80000}.to_mcode(), 0x80000337);
+        InstructionRV::Lui {rd: Reg::X6, imm: 0x80000}.to_mcode(), 
+        0x80000337);
     assert_eq!(
         InstructionRV::Lui {rd: Reg::X7, imm: 0xFFFFF}.to_mcode(), 
         0xfffff3b7);
+}
+
+
+#[test]
+fn test_mcode2_auipc() {
+    assert_eq!(
+        InstructionRV::Auipc {rd: Reg::X0, imm: 0x00000}.to_mcode(), 
+        0x00000017);
+    assert_eq!(
+        InstructionRV::Auipc {rd: Reg::X1, imm: 0x00001}.to_mcode(),
+        0x00001097);
+    assert_eq!(
+        InstructionRV::Auipc {rd: Reg::X2, imm: 0x00020}.to_mcode(),
+        0x00020117);
+    assert_eq!(
+        InstructionRV::Auipc {rd: Reg::X3, imm: 0x00400}.to_mcode(),
+        0x00400197);
+    assert_eq!(
+        InstructionRV::Auipc {rd: Reg::X4, imm: 0x08000}.to_mcode(),
+        0x08000217);
+    assert_eq!(
+        InstructionRV::Auipc {rd: Reg::X5, imm: 0x7FFFF}.to_mcode(),
+        0x7ffff297);
+    assert_eq!(
+        InstructionRV::Auipc {rd: Reg::X6, imm: 0x80000}.to_mcode(),
+        0x80000317);
+    assert_eq!(
+        InstructionRV::Auipc {rd: Reg::X7, imm: 0xFFFFF}.to_mcode(),
+        0xfffff397);
 }
