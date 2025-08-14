@@ -4745,35 +4745,35 @@ fn test_mcode2_blt() {
 #[test]
 fn test_mcode2_bge() {
     assert_eq!(
-        InstructionRV::from_mcode(0x00005063).to_string(), 
-        "bge x0, x0, 0");
+        InstructionRV::Bge{rs1: Reg::X0, rs2: Reg::X0, offs: 0}.to_mcode(),
+        0x00005063);
     assert_eq!(
-        InstructionRV::from_mcode(0xfe20dee3).to_string(), 
-        "bge x1, x2, -4");
+        InstructionRV::Bge{rs1: Reg::X1, rs2: Reg::X2, offs: -4}.to_mcode(),
+        0xfe20dee3);
     assert_eq!(
-        InstructionRV::from_mcode(0xfe41dce3).to_string(), 
-        "bge x3, x4, -8");
+        InstructionRV::Bge{rs1: Reg::X3, rs2: Reg::X4, offs: -8}.to_mcode(),
+        0xfe41dce3);
     assert_eq!(
-        InstructionRV::from_mcode(0xfe62dae3).to_string(), 
-        "bge x5, x6, -12");
+        InstructionRV::Bge{rs1: Reg::X5, rs2: Reg::X6, offs: -12}.to_mcode(),
+        0xfe62dae3);
     assert_eq!(
-        InstructionRV::from_mcode(0x0083dc63).to_string(), 
-        "bge x7, x8, 24");
+        InstructionRV::Bge{rs1: Reg::X7, rs2: Reg::X8, offs: 24}.to_mcode(),
+        0x0083dc63);
     assert_eq!(
-        InstructionRV::from_mcode(0x00a4da63).to_string(), 
-        "bge x9, x10, 20");
+        InstructionRV::Bge{rs1: Reg::X9, rs2: Reg::X10, offs: 20}.to_mcode(),
+        0x00a4da63);
     assert_eq!(
-        InstructionRV::from_mcode(0x00c5d863).to_string(), 
-        "bge x11, x12, 16");
+        InstructionRV::Bge{rs1: Reg::X11, rs2: Reg::X12, offs: 16}.to_mcode(),
+        0x00c5d863);
     assert_eq!(
-        InstructionRV::from_mcode(0x00e6d663).to_string(), 
-        "bge x13, x14, 12");
+        InstructionRV::Bge{rs1: Reg::X13, rs2: Reg::X14, offs: 12}.to_mcode(),
+        0x00e6d663);
     assert_eq!(
-        InstructionRV::from_mcode(0x0107d463).to_string(), 
-        "bge x15, x16, 8");
+        InstructionRV::Bge{rs1: Reg::X15, rs2: Reg::X16, offs: 8}.to_mcode(),
+        0x0107d463);
     assert_eq!(
-        InstructionRV::from_mcode(0x0128d263).to_string(), 
-        "bge x17, x18, 4"); 
+        InstructionRV::Bge{rs1: Reg::X17, rs2: Reg::X18, offs: 4}.to_mcode(),
+        0x0128d263); 
 }
 
 #[test]
