@@ -4813,33 +4813,33 @@ fn test_mcode2_bltu() {
 #[test]
 fn test_mcode2_bgeu() {
     assert_eq!(
-        InstructionRV::from_mcode(0x00007063).to_string(), 
-        "bgeu x0, x0, 0");
+        InstructionRV::Bgeu{rs1: Reg::X0, rs2: Reg::X0, offs: 0}.to_mcode(), 
+        0x00007063);
     assert_eq!(
-        InstructionRV::from_mcode(0xfe20fee3).to_string(), 
-        "bgeu x1, x2, -4");
+        InstructionRV::Bgeu{rs1: Reg::X1, rs2: Reg::X2, offs: -4}.to_mcode(),
+        0xfe20fee3);
     assert_eq!(
-        InstructionRV::from_mcode(0xfe41fce3).to_string(), 
-        "bgeu x3, x4, -8");
+        InstructionRV::Bgeu{rs1: Reg::X3, rs2: Reg::X4, offs: -8}.to_mcode(),
+        0xfe41fce3);
     assert_eq!(
-        InstructionRV::from_mcode(0xfe62fae3).to_string(), 
-        "bgeu x5, x6, -12");
+        InstructionRV::Bgeu{rs1: Reg::X5, rs2: Reg::X6, offs: -12}.to_mcode(),
+        0xfe62fae3);
     assert_eq!(
-        InstructionRV::from_mcode(0x0083fc63).to_string(), 
-        "bgeu x7, x8, 24");
+        InstructionRV::Bgeu{rs1: Reg::X7, rs2: Reg::X8, offs: 24}.to_mcode(),
+        0x0083fc63);
     assert_eq!(
-        InstructionRV::from_mcode(0x00a4fa63).to_string(), 
-        "bgeu x9, x10, 20");
+        InstructionRV::Bgeu{rs1: Reg::X9, rs2: Reg::X10, offs: 20}.to_mcode(),
+        0x00a4fa63);
     assert_eq!(
-        InstructionRV::from_mcode(0x00c5f863).to_string(), 
-        "bgeu x11, x12, 16");
+        InstructionRV::Bgeu{rs1: Reg::X11, rs2: Reg::X12, offs: 16}.to_mcode(),
+        0x00c5f863);
     assert_eq!(
-        InstructionRV::from_mcode(0x00e6f663).to_string(), 
-        "bgeu x13, x14, 12");
+        InstructionRV::Bgeu{rs1: Reg::X13, rs2: Reg::X14, offs: 12}.to_mcode(),
+        0x00e6f663);
     assert_eq!(
-        InstructionRV::from_mcode(0x0107f463).to_string(), 
-        "bgeu x15, x16, 8");
+        InstructionRV::Bgeu{rs1: Reg::X15, rs2: Reg::X16, offs: 8}.to_mcode(),
+        0x0107f463);
     assert_eq!(
-        InstructionRV::from_mcode(0x0128f263).to_string(), 
-        "bgeu x17, x18, 4"); 
+        InstructionRV::Bgeu{rs1: Reg::X17, rs2: Reg::X18, offs: 4}.to_mcode(),
+        0x0128f263); 
 }
