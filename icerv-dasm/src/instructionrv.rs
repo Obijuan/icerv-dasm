@@ -4383,33 +4383,33 @@ fn test_mcode2_and() {
         InstructionRV::And{rd: Reg::X0, rs1: Reg::X1, rs2: Reg::X2}.to_mcode(), 
         0x0020f033);
      assert_eq!(
-        InstructionRV::from_mcode(0x005271b3).to_string(), 
-        "and x3, x4, x5");
+        InstructionRV::And{rd: Reg::X3, rs1: Reg::X4, rs2: Reg::X5}.to_mcode(), 
+        0x005271b3);
      assert_eq!(
-        InstructionRV::from_mcode(0x0083f333).to_string(), 
-        "and x6, x7, x8");
+        InstructionRV::And{rd: Reg::X6, rs1: Reg::X7, rs2: Reg::X8}.to_mcode(), 
+        0x0083f333);
      assert_eq!(
-        InstructionRV::from_mcode(0x00b574b3).to_string(), 
-        "and x9, x10, x11");
+        InstructionRV::And{rd: Reg::X9, rs1: Reg::X10, rs2: Reg::X11}.to_mcode(), 
+        0x00b574b3);
      assert_eq!(
-        InstructionRV::from_mcode(0x00e67633).to_string(), 
-        "and x12, x12, x14");
+        InstructionRV::And{rd: Reg::X12, rs1: Reg::X12, rs2: Reg::X14}.to_mcode(), 
+        0x00e67633);
      assert_eq!(
-        InstructionRV::from_mcode(0x011877b3).to_string(), 
-        "and x15, x16, x17");
+        InstructionRV::And{rd: Reg::X15, rs1: Reg::X16, rs2: Reg::X17}.to_mcode(), 
+        0x011877b3);
      assert_eq!(
-        InstructionRV::from_mcode(0x0149f933).to_string(), 
-        "and x18, x19, x20");
+        InstructionRV::And{rd: Reg::X18, rs1: Reg::X19, rs2: Reg::X20}.to_mcode(), 
+        0x0149f933);
      assert_eq!(
-        InstructionRV::from_mcode(0x017b7ab3).to_string(), 
-        "and x21, x22, x23");
+        InstructionRV::And{rd: Reg::X21, rs1: Reg::X22, rs2: Reg::X23}.to_mcode(),
+        0x017b7ab3);
      assert_eq!(
-        InstructionRV::from_mcode(0x01acfc33).to_string(), 
-        "and x24, x25, x26");
+        InstructionRV::And{rd: Reg::X24, rs1: Reg::X25, rs2: Reg::X26}.to_mcode(),
+        0x01acfc33);
      assert_eq!(
-        InstructionRV::from_mcode(0x01de7db3).to_string(), 
-        "and x27, x28, x29");
+        InstructionRV::And{rd: Reg::X27, rs1: Reg::X28, rs2: Reg::X29}.to_mcode(),
+        0x01de7db3);
      assert_eq!(
-        InstructionRV::from_mcode(0x01ffff33).to_string(), 
-        "and x30, x31, x31");
+        InstructionRV::And{rd: Reg::X30, rs1: Reg::X31, rs2: Reg::X31}.to_mcode(),
+        0x01ffff33);
 }
