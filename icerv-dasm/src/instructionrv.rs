@@ -863,6 +863,13 @@ impl InstructionRV {
                 //-- Devolver el codigo maquina como numero
                 mcode.value
             }
+            Self::Lui {rd, imm} => {
+                //-- Construir el código máquina
+                let mcode = MCode::new_lui(*rd as u32, *imm as u32);
+
+                //-- Devolver el codigo maquina como numero
+                mcode.value
+            }
             _ => 0
         }
     }
@@ -4842,4 +4849,26 @@ fn test_mcode2_bgeu() {
     assert_eq!(
         InstructionRV::Bgeu{rs1: Reg::X17, rs2: Reg::X18, offs: 4}.to_mcode(),
         0x0128f263); 
+}
+
+#[test]
+fn test_mcode2_lui() {
+    assert_eq!(
+        InstructionRV::Lui {rd: Reg::X0, imm: 0}.to_mcode(), 0x00000037);
+    assert_eq!(
+        InstructionRV::Lui {rd: Reg::X1, imm: 0x00001}.to_mcode(), 
+        0x000010b7);
+    assert_eq!(
+        InstructionRV::Lui {rd: Reg::X2, imm: 0x00020}.to_mcode(), 0x00020137);
+    assert_eq!(
+        InstructionRV::Lui {rd: Reg::X3, imm: 0x00400}.to_mcode(), 0x004001b7);
+    assert_eq!(
+        InstructionRV::Lui {rd: Reg::X4, imm: 0x08000}.to_mcode(), 0x08000237);
+    assert_eq!(
+        InstructionRV::Lui {rd: Reg::X5, imm: 0x7FFFF}.to_mcode(), 0x7ffff2b7);
+    assert_eq!(
+        InstructionRV::Lui {rd: Reg::X6, imm: 0x80000}.to_mcode(), 0x80000337);
+    assert_eq!(
+        InstructionRV::Lui {rd: Reg::X7, imm: 0xFFFFF}.to_mcode(), 
+        0xfffff3b7);
 }

@@ -337,6 +337,21 @@ impl MCode {
             MCode { value }
     }
 
+    //────────────────────────────────────────────────
+    //  Construir una nueva instruccion en codigo maquina
+    //  Instruccion Lui
+    //────────────────────────────────────────────────    
+    pub fn new_lui(rd: u32, imm: u32) -> Self {
+        let opcode: u32 = OpcodeRV::TipoULui as u32;
+
+        //-- Crear el codigo maquina a partir de los campos
+        let value: u32 = 
+            (imm << IMM20_POS)     |
+            (rd << RD_POS)         |
+            (opcode << OPCODE_POS); 
+
+        MCode { value }
+    }    
 
     //────────────────────────────────────────────────
     //  Obtener el opcode de la instruccion
