@@ -290,6 +290,28 @@ impl MCode {
     }
 
     //────────────────────────────────────────────────
+    //  Construir una nueva instruccion en codigo maquina
+    //  Instruccion Tipo S, a partir de sus campos
+    //────────────────────────────────────────────────    
+    pub fn new_types(func3: u32, rs2: u32, offs: i32, rs1: u32) -> Self {
+        let opcode: u32 = OpcodeRV::TipoS as u32;
+
+        let offs7: u32 = ((offs >> 5) & 0x00000_FFF) as u32;
+        let offs5: u32 = (offs & 0x000000_1F) as u32;
+
+        //-- Crear el código máquina a partir de los campos
+        let value:u32 =
+            (offs7 << OFFSET7_POS) |
+            (rs2 << RS2_POS)       |
+            (rs1 << RS1_POS)       |
+            (func3 << FUNC3_POS)   |
+            (offs5 << OFFSET5_POS) |
+            (opcode << OPCODE_POS);
+
+            MCode { value }
+    }
+
+    //────────────────────────────────────────────────
     //  Obtener el opcode de la instruccion
     //────────────────────────────────────────────────    
     pub fn opcode(&self) -> OpcodeRV {
