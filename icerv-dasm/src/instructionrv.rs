@@ -4779,35 +4779,35 @@ fn test_mcode2_bge() {
 #[test]
 fn test_mcode2_bltu() {
     assert_eq!(
-        InstructionRV::from_mcode(0x00006063).to_string(), 
-        "bltu x0, x0, 0");
+        InstructionRV::Bltu{rs1: Reg::X0, rs2: Reg::X0, offs: 0}.to_mcode(), 
+        0x00006063);
     assert_eq!(
-        InstructionRV::from_mcode(0xfe20eee3).to_string(), 
-        "bltu x1, x2, -4");
+        InstructionRV::Bltu{rs1: Reg::X1, rs2: Reg::X2, offs: -4}.to_mcode(), 
+        0xfe20eee3);
     assert_eq!(
-        InstructionRV::from_mcode(0xfe41ece3).to_string(), 
-        "bltu x3, x4, -8");
+        InstructionRV::Bltu{rs1: Reg::X3, rs2: Reg::X4, offs: -8}.to_mcode(), 
+        0xfe41ece3);
     assert_eq!(
-        InstructionRV::from_mcode(0xfe62eae3).to_string(), 
-        "bltu x5, x6, -12");
+        InstructionRV::Bltu{rs1: Reg::X5, rs2: Reg::X6, offs: -12}.to_mcode(), 
+        0xfe62eae3);
     assert_eq!(
-        InstructionRV::from_mcode(0x0083ec63).to_string(), 
-        "bltu x7, x8, 24");
+        InstructionRV::Bltu{rs1: Reg::X7, rs2: Reg::X8, offs: 24}.to_mcode(), 
+        0x0083ec63);
     assert_eq!(
-        InstructionRV::from_mcode(0x00a4ea63).to_string(), 
-        "bltu x9, x10, 20");
+        InstructionRV::Bltu{rs1: Reg::X9, rs2: Reg::X10, offs: 20}.to_mcode(), 
+        0x00a4ea63);
     assert_eq!(
-        InstructionRV::from_mcode(0x00c5e863).to_string(), 
-        "bltu x11, x12, 16");
+        InstructionRV::Bltu{rs1: Reg::X11, rs2: Reg::X12, offs: 16}.to_mcode(), 
+        0x00c5e863);
     assert_eq!(
-        InstructionRV::from_mcode(0x00e6e663).to_string(), 
-        "bltu x13, x14, 12");
+        InstructionRV::Bltu{rs1: Reg::X13, rs2: Reg::X14, offs: 12}.to_mcode(), 
+        0x00e6e663);
     assert_eq!(
-        InstructionRV::from_mcode(0x0107e463).to_string(), 
-        "bltu x15, x16, 8");
+        InstructionRV::Bltu{rs1: Reg::X15, rs2: Reg::X16, offs: 8}.to_mcode(), 
+        0x0107e463);
     assert_eq!(
-        InstructionRV::from_mcode(0x0128e263).to_string(), 
-        "bltu x17, x18, 4"); 
+        InstructionRV::Bltu{rs1: Reg::X17, rs2: Reg::X18, offs: 4}.to_mcode(), 
+        0x0128e263); 
 }
 
 #[test]
