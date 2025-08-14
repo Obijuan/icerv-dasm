@@ -809,6 +809,60 @@ impl InstructionRV {
                 //-- Devolver el codigo maquina como numero
                 mcode.value
             }
+            Self::Beq { rs1, rs2, offs } => {
+                //-- Construir el código máquina
+                let mcode = MCode::new_typeb(
+                    0b_000, *rs1 as u32, 
+                    *rs2 as u32, *offs);
+
+                //-- Devolver el codigo maquina como numero
+                mcode.value
+            }
+            Self::Bne { rs1, rs2, offs } => {
+                //-- Construir el código máquina
+                let mcode = MCode::new_typeb(
+                    0b_001, *rs1 as u32, 
+                    *rs2 as u32, *offs);
+
+                //-- Devolver el codigo maquina como numero
+                mcode.value
+            }
+            Self::Blt { rs1, rs2, offs } => {
+                //-- Construir el código máquina
+                let mcode = MCode::new_typeb(
+                    0b_100, *rs1 as u32, 
+                    *rs2 as u32, *offs);
+
+                //-- Devolver el codigo maquina como numero
+                mcode.value
+            }
+            Self::Bge { rs1, rs2, offs } => {
+                //-- Construir el código máquina
+                let mcode = MCode::new_typeb(
+                    0b_101, *rs1 as u32, 
+                    *rs2 as u32, *offs);
+
+                //-- Devolver el codigo maquina como numero
+                mcode.value
+            }
+            Self::Bltu { rs1, rs2, offs } => {
+                //-- Construir el código máquina
+                let mcode = MCode::new_typeb(
+                    0b_110, *rs1 as u32, 
+                    *rs2 as u32, *offs);
+
+                //-- Devolver el codigo maquina como numero
+                mcode.value
+            }
+            Self::Bgeu { rs1, rs2, offs } => {
+                //-- Construir el código máquina
+                let mcode = MCode::new_typeb(
+                    0b_111, *rs1 as u32, 
+                    *rs2 as u32, *offs);
+
+                //-- Devolver el codigo maquina como numero
+                mcode.value
+            }
             _ => 0
         }
     }
@@ -4584,4 +4638,208 @@ fn test_mcode2_sd() {
     assert_eq!(
         InstructionRV::Sd{rs2: Reg::X16, offs: 64, rs1: Reg::X17}.to_mcode(), 
         0x0508b023);
+}
+
+#[test]
+fn test_mcode2_beq() {
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X0, rs2: Reg::X0, offs: 0}.to_mcode(), 
+        0x00000063); 
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X1, rs2: Reg::X2, offs: -4}.to_mcode(),
+        0xfe208ee3); 
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X3, rs2: Reg::X4, offs: -8}.to_mcode(),
+        0xfe418ce3); 
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X5, rs2: Reg::X6, offs: -12}.to_mcode(),
+        0xfe628ae3); 
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X7, rs2: Reg::X8, offs: 24}.to_mcode(),
+        0x00838c63); 
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X9, rs2: Reg::X10, offs: 20}.to_mcode(),
+        0x00a48a63); 
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X11, rs2: Reg::X12, offs: 16}.to_mcode(),
+        0x00c58863); 
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X13, rs2: Reg::X14, offs: 12}.to_mcode(),
+        0x00e68663); 
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X15, rs2: Reg::X16, offs: 8}.to_mcode(),
+        0x01078463); 
+    assert_eq!(
+        InstructionRV::Beq {rs1: Reg::X17, rs2: Reg::X18, offs: 4}.to_mcode(),
+        0x01288263); 
+}
+
+#[test]
+fn test_mcode2_bne() {
+    assert_eq!(
+        InstructionRV::Bne{rs1: Reg::X0, rs2: Reg::X0, offs: 0}.to_mcode(), 
+        0x00001063);
+    assert_eq!(
+        InstructionRV::Bne{rs1: Reg::X1, rs2: Reg::X2, offs: -4}.to_mcode(), 
+        0xfe209ee3);
+    assert_eq!(
+        InstructionRV::from_mcode(0xfe419ce3).to_string(), 
+        "bne x3, x4, -8");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfe629ae3).to_string(), 
+        "bne x5, x6, -12");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00839c63).to_string(), 
+        "bne x7, x8, 24");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00a49a63).to_string(), 
+        "bne x9, x10, 20");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00c59863).to_string(), 
+        "bne x11, x12, 16");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00e69663).to_string(), 
+        "bne x13, x14, 12");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01079463).to_string(), 
+        "bne x15, x16, 8");
+    assert_eq!(
+        InstructionRV::from_mcode(0x01289263).to_string(), 
+        "bne x17, x18, 4");
+}
+
+#[test]
+fn test_mcode2_blt() {
+    assert_eq!(
+        InstructionRV::from_mcode(0x00004063).to_string(), 
+        "blt x0, x0, 0");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfe20cee3).to_string(), 
+        "blt x1, x2, -4");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfe41cce3).to_string(), 
+        "blt x3, x4, -8");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfe62cae3).to_string(), 
+        "blt x5, x6, -12");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0083cc63).to_string(), 
+        "blt x7, x8, 24");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00a4ca63).to_string(), 
+        "blt x9, x10, 20");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00c5c863).to_string(), 
+        "blt x11, x12, 16");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00e6c663).to_string(), 
+        "blt x13, x14, 12");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0107c463).to_string(), 
+        "blt x15, x16, 8");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0128c263).to_string(), 
+        "blt x17, x18, 4"); 
+}
+
+#[test]
+fn test_mcode2_bge() {
+    assert_eq!(
+        InstructionRV::from_mcode(0x00005063).to_string(), 
+        "bge x0, x0, 0");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfe20dee3).to_string(), 
+        "bge x1, x2, -4");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfe41dce3).to_string(), 
+        "bge x3, x4, -8");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfe62dae3).to_string(), 
+        "bge x5, x6, -12");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0083dc63).to_string(), 
+        "bge x7, x8, 24");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00a4da63).to_string(), 
+        "bge x9, x10, 20");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00c5d863).to_string(), 
+        "bge x11, x12, 16");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00e6d663).to_string(), 
+        "bge x13, x14, 12");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0107d463).to_string(), 
+        "bge x15, x16, 8");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0128d263).to_string(), 
+        "bge x17, x18, 4"); 
+}
+
+#[test]
+fn test_mcode2_bltu() {
+    assert_eq!(
+        InstructionRV::from_mcode(0x00006063).to_string(), 
+        "bltu x0, x0, 0");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfe20eee3).to_string(), 
+        "bltu x1, x2, -4");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfe41ece3).to_string(), 
+        "bltu x3, x4, -8");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfe62eae3).to_string(), 
+        "bltu x5, x6, -12");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0083ec63).to_string(), 
+        "bltu x7, x8, 24");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00a4ea63).to_string(), 
+        "bltu x9, x10, 20");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00c5e863).to_string(), 
+        "bltu x11, x12, 16");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00e6e663).to_string(), 
+        "bltu x13, x14, 12");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0107e463).to_string(), 
+        "bltu x15, x16, 8");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0128e263).to_string(), 
+        "bltu x17, x18, 4"); 
+}
+
+#[test]
+fn test_mcode2_bgeu() {
+    assert_eq!(
+        InstructionRV::from_mcode(0x00007063).to_string(), 
+        "bgeu x0, x0, 0");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfe20fee3).to_string(), 
+        "bgeu x1, x2, -4");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfe41fce3).to_string(), 
+        "bgeu x3, x4, -8");
+    assert_eq!(
+        InstructionRV::from_mcode(0xfe62fae3).to_string(), 
+        "bgeu x5, x6, -12");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0083fc63).to_string(), 
+        "bgeu x7, x8, 24");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00a4fa63).to_string(), 
+        "bgeu x9, x10, 20");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00c5f863).to_string(), 
+        "bgeu x11, x12, 16");
+    assert_eq!(
+        InstructionRV::from_mcode(0x00e6f663).to_string(), 
+        "bgeu x13, x14, 12");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0107f463).to_string(), 
+        "bgeu x15, x16, 8");
+    assert_eq!(
+        InstructionRV::from_mcode(0x0128f263).to_string(), 
+        "bgeu x17, x18, 4"); 
 }
