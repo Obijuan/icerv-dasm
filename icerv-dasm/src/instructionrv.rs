@@ -4555,33 +4555,33 @@ fn test_mcode2_sw() {
 #[test]
 fn test_mcode2_sd() {
     assert_eq!(
-        InstructionRV::from_mcode(0x0000b023).to_string(), 
-        "sd x0, 0(x1)");
+        InstructionRV::Sd{rs2: Reg::X0, offs: 0, rs1: Reg::X1}.to_mcode(), 
+        0x0000b023);
     assert_eq!(
-        InstructionRV::from_mcode(0xfe21bfa3).to_string(), 
-        "sd x2, -1(x3)");
+        InstructionRV::Sd{rs2: Reg::X2, offs: -1, rs1: Reg::X3}.to_mcode(), 
+        0xfe21bfa3);
     assert_eq!(
-        InstructionRV::from_mcode(0x7e42bfa3).to_string(), 
-        "sd x4, 2047(x5)");
+        InstructionRV::Sd{rs2: Reg::X4, offs: 2047, rs1: Reg::X5}.to_mcode(), 
+        0x7e42bfa3);
     assert_eq!(
-        InstructionRV::from_mcode(0x80533023).to_string(), 
-        "sd x5, -2048(x6)");
+        InstructionRV::Sd{rs2: Reg::X5, offs: -2048, rs1: Reg::X6}.to_mcode(), 
+        0x80533023);
     assert_eq!(
-        InstructionRV::from_mcode(0x0063b123).to_string(), 
-        "sd x6, 2(x7)");
+        InstructionRV::Sd{rs2: Reg::X6, offs: 2, rs1: Reg::X7}.to_mcode(), 
+        0x0063b123);
     assert_eq!(
-        InstructionRV::from_mcode(0x0084b223).to_string(), 
-        "sd x8, 4(x9)");
+        InstructionRV::Sd{rs2: Reg::X8, offs: 4, rs1: Reg::X9}.to_mcode(), 
+        0x0084b223);
     assert_eq!(
-        InstructionRV::from_mcode(0x00a5b423).to_string(), 
-        "sd x10, 8(x11)");
+        InstructionRV::Sd{rs2: Reg::X10, offs: 8, rs1: Reg::X11}.to_mcode(), 
+        0x00a5b423);
     assert_eq!(
-        InstructionRV::from_mcode(0x00c6b823).to_string(), 
-        "sd x12, 16(x13)");
+        InstructionRV::Sd{rs2: Reg::X12, offs: 16, rs1: Reg::X13}.to_mcode(), 
+        0x00c6b823);
     assert_eq!(
-        InstructionRV::from_mcode(0x02e7b023).to_string(), 
-        "sd x14, 32(x15)");
+        InstructionRV::Sd{rs2: Reg::X14, offs: 32, rs1: Reg::X15}.to_mcode(), 
+        0x02e7b023);
     assert_eq!(
-        InstructionRV::from_mcode(0x0508b023).to_string(), 
-        "sd x16, 64(x17)");
+        InstructionRV::Sd{rs2: Reg::X16, offs: 64, rs1: Reg::X17}.to_mcode(), 
+        0x0508b023);
 }
