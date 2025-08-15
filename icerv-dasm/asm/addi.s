@@ -516,16 +516,37 @@
     li  x7, 22
     bne x6, x7, fail
 
-#
-#  
-#  
-#  
-#
+#───────────────────────────────────────────────────────────────────────────
+#  INSTRUCCION ADDI: TEST 24
+#                 testnum, inst, result, imm
 #  TEST_IMM_ZEROSRC1( 24, addi, 32, 32 );
+#───────────────────────────────────────────────────────────────────────────
+    #-- Testnum
+    li  x3, 24
+
+    #-- imm
+    addi x1, x0, 32
+
+    #-- Result
+    li  x7, 32
+    bne x1, x7, fail;
+
+#───────────────────────────────────────────────────────────────────────────
+#  INSTRUCCION ADDI: TEST 25
+#                 testnum, inst, val1, imm
 #  TEST_IMM_ZERODEST( 25, addi, 33, 50 );
-#
+#───────────────────────────────────────────────────────────────────────────
+    #-- Testnum
+    li  x3, 25
 
+    #-- val1
+    li  x1, 33
 
+    #-- imm
+    addi x0, x1, 50
+
+    li  x7, 0
+    bne x0, x7, fail;
 
 
     #-- Test OK
@@ -541,31 +562,4 @@ pass:
 fail:
     li x1, 0
     j .
-
-
-# #define TEST_IMM_DEST_BYPASS( testnum, nop_cycles, inst, result, val1, imm ) \
-#     TEST_CASE( testnum, x6, result, \
-#       li  x4, 0; \
-# 1:    li  x1, MASK_XLEN(val1); \
-#       addi x14, x1, SEXT_IMM(imm); \
-#       TEST_INSERT_NOPS_ ## nop_cycles \
-#       addi  x6, x14, 0; \
-#       addi  x4, x4, 1; \
-#       li  x5, 2; \
-#       bne x4, x5, 1b \
-#     )
-
-# #define TEST_CASE( testnum, testreg, correctval, code... ) \
-# test_ ## testnum: \
-#     li x3, testnum
-#     li x4, 0
-# 1:  li x1, val1
-#       addi x14, x1, imm
-#       TEST_INSERT_NOPS_ nop_cycles 
-#       addi  x6, x14, 0
-#       addi  x4, x4, 1
-#       li  x5, 2
-#       bne x4, x5, 1b 
-#     li  x7, result
-#     bne x6, x7, fail
 
