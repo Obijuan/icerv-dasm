@@ -372,12 +372,40 @@
     bne x6, x7, fail
 
 
+#───────────────────────────────────────────────────────────────────────────
+#  INSTRUCCION ADDI: TEST 19
+#          testnum, nop_cycles, inst, result, val1, imm 
+#  TEST_IMM_DEST_BYPASS( 19, 1, addi, 23, 13, 10 );
+#───────────────────────────────────────────────────────────────────────────
+
+    #-- Numero de test
+    li x3, 19
+
+    li x4, 0
+
+    #-- Valor 1
+1:  li x1, 13
+
+      #-- Valor inmediato
+      addi x14, x1, 10
+
+      #TEST_INSERT_NOPS_ nop_cycles 
+      nop
+      addi  x6, x14, 0
+      addi  x4, x4, 1
+      li  x5, 2
+      bne x4, x5, 1b
+
+    #-- Resultado esperado 
+    li  x7, 23
+    bne x6, x7, fail
+
   #-------------------------------------------------------------
   # Bypassing tests
   #-------------------------------------------------------------
 
 #  
-#  TEST_IMM_DEST_BYPASS( 19, 1, addi, 23, 13, 10 );
+#  
 #  TEST_IMM_DEST_BYPASS( 20, 2, addi, 22, 13,  9 );
 #
 #  TEST_IMM_SRC1_BYPASS( 21, 0, addi, 24, 13, 11 );
