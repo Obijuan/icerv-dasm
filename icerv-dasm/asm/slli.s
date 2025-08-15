@@ -86,7 +86,6 @@
     #-- Comprobar el resultado obtenido (x14) con el esperado (x7)
     bne x14, x7, fail;
 
-   
 #───────────────────────────────────────────────────────────────────────────
 #         testnum,  inst,  result,      val1,      imm
 #   TEST_IMM_OP( 6,  slli, 0x80000000, 0x00000001, 31 );
@@ -107,72 +106,68 @@
     #-- Comprobar el resultado obtenido (x14) con el esperado (x7)
     bne x14, x7, fail;
 
-     #-- 🚧 DEBUG 🚧
-    jal x0, pass
-
 #───────────────────────────────────────────────────────────────────────────
-#  INSTRUCCION ADDI: TEST 7
-#         testnum,  inst,  result,            val1,               imm
-#  TEST_IMM_OP( 7,  addi, 0xffffffff7ffff800, 0xffffffff80000000, 0x800 );
+#         testnum,  inst,  result,      val1,      imm
+#   TEST_IMM_OP( 7,  slli, 0xffffffff, 0xffffffff, 0  );
 #───────────────────────────────────────────────────────────────────────────
 
     #-- Numero de test
     li x3, 7
 
     #-- Valor 1
-    li x13, 0x80000000
+    li x13, 0xffffffff
 
-    #-- Resultado obtenido: Sumar valor 1  y valor inmediato
-    addi x14, x13, 0xFFFFF800
+    #-- Resultado obtenido
+    slli x14, x13, 0
 
     #-- x7: Valor del resultado esperado
-    li x7, 0x7FFFF800
+    li x7, 0xffffffff
 
     #-- Comprobar el resultado obtenido (x14) con el esperado (x7)
     bne x14, x7, fail;
 
 #───────────────────────────────────────────────────────────────────────────
-#  INSTRUCCION ADDI: TEST 8
-#         testnum,  inst,  result,            val1,               imm
-#  TEST_IMM_OP( 8,  addi, 0x00000000000007ff, 0x00000000, 0x7ff );
+#         testnum,  inst,  result,       val1,   imm
+#  TEST_IMM_OP( 8,  slli, 0xfffffffe, 0xffffffff, 1  );
 #───────────────────────────────────────────────────────────────────────────
 
     #-- Numero de test
     li x3, 8
 
     #-- Valor 1
-    li x13, 0x00000000
+    li x13, 0xffffffff
 
-    #-- Resultado obtenido: Sumar valor 1  y valor inmediato
-    addi x14, x13, 0x7ff
+    #-- Resultado obtenido
+    slli x14, x13, 1
 
     #-- x7: Valor del resultado esperado
-    li x7, 0x000007ff
+    li x7, 0xfffffffe
 
     #-- Comprobar el resultado obtenido (x14) con el esperado (x7)
     bne x14, x7, fail;
 
 #───────────────────────────────────────────────────────────────────────────
-#  INSTRUCCION ADDI: TEST 9
-#         testnum,  inst,  result,            val1,               imm
-#  TEST_IMM_OP( 9,  addi, 0x000000007fffffff, 0x7fffffff, 0x000 );
+#         testnum,  inst,  result,      val1,    imm
+#  TEST_IMM_OP( 9,  slli, 0xffffff80, 0xffffffff, 7  );
 #───────────────────────────────────────────────────────────────────────────
 
     #-- Numero de test
     li x3, 9
 
     #-- Valor 1
-    li x13, 0x7fffffff
+    li x13, 0xffffffff
 
-    #-- Resultado obtenido: Sumar valor 1  y valor inmediato
-    addi x14, x13, 0x000
+    #-- Resultado obtenido
+    slli x14, x13, 7
 
     #-- x7: Valor del resultado esperado
-    li x7, 0x7fffffff
+    li x7, 0xffffff80
 
     #-- Comprobar el resultado obtenido (x14) con el esperado (x7)
     bne x14, x7, fail;
 
+    #-- 🚧 DEBUG 🚧
+    jal x0, pass
 #───────────────────────────────────────────────────────────────────────────
 #  INSTRUCCION ADDI: TEST 10
 #         testnum,  inst,  result,            val1,               imm
@@ -563,15 +558,9 @@ fail:
     li x1, 0
     j .
 
-#   
-#   
-#   
-#   
-#  
 
-#   TEST_IMM_OP( 7,  slli, 0xffffffffffffffff, 0xffffffffffffffff, 0  );
-#   TEST_IMM_OP( 8,  slli, 0xfffffffffffffffe, 0xffffffffffffffff, 1  );
-#   TEST_IMM_OP( 9,  slli, 0xffffffffffffff80, 0xffffffffffffffff, 7  );
+#   
+#   
 #   TEST_IMM_OP( 10, slli, 0xffffffffffffc000, 0xffffffffffffffff, 14 );
 #   TEST_IMM_OP( 11, slli, 0xffffffff80000000, 0xffffffffffffffff, 31 );
 
