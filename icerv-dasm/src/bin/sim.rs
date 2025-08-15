@@ -332,50 +332,11 @@ impl Cpurv {
 
 }
 
-//────────────────────────────────────────────────
-//  Ejecutar un programa dado como un array
-//  de instrucciones InstructionRV
-//──────────────────────────────────────────────── 
-fn run(prog: &[InstructionRV], max_cycles: u32)
-{
-    //-- Crear CPU
-    let mut cpu = Cpurv::new();
-
-    //-- Configurar los ciclos máximos
-    cpu.max_cycles = max_cycles;
-
-    //-- Mostrar estado inicial de la cpu
-    cpu.show();
-
-    loop {
-        //-- Obtener la direccion actual (de palabra)
-        let addr = (cpu.pc >> 2) as usize;
-
-        //-- Comprobar si la direccion está dentro del rango
-        if addr >= prog.len() {
-            break;
-        }
-
-        //-- Ejecutar instruccion
-        cpu.exec(&prog[addr]);
-
-        //-- Mostrar el estdo actual
-        cpu.show();
-
-        //-- Terminar cuando han transcurrido el máximo de ciclos
-        if cpu.state == CpuState::HALT {
-            break;
-        }
-    }
-
-    println!("PROGRAMA TERMINADO");
-}
 
 //────────────────────────────────────────────────
-//  Ejecutar un programa dado como un array
-//  de instrucciones InstructionRV
+//  Ejecutar un programa dado en código máquina
 //──────────────────────────────────────────────── 
-fn run_mcode(prog: &[u32], max_cycles: u32)
+fn run_mcode(prog: &[u32], max_cycles: u32) -> Cpurv
 {
     //-- Crear CPU
     let mut cpu = Cpurv::new();
@@ -414,57 +375,11 @@ fn run_mcode(prog: &[u32], max_cycles: u32)
     }
 
     println!("PROGRAMA TERMINADO");
+    cpu
 }
 
-fn main1()
-{
-    //-- Programa de test a ejecutar
-    let prog1 = [
-        //-- li x3, 2
-        InstructionRV::Addi { rd: Reg::X3, rs1: Reg::X0, imm: 2 }, 
-        //-- li x13, 0x00000000
-        InstructionRV::Addi { rd: Reg::X13, rs1: Reg::X0, imm: 0x0000_0000 }, 
-        //-- addi x14, x13, 0x00
-        InstructionRV::Addi { rd: Reg::X14, rs1: Reg::X13, imm: 0x000 },
-        //-- li x7, 0x00000000
-        InstructionRV::Addi { rd: Reg::X7, rs1: Reg::X0, imm: 0x0000_0000 },
-        //-- bne x14, x7, fail;
-        InstructionRV::Bne { rs1: Reg::X14, rs2: Reg::X7, offs: 0x0C },
 
-        //-- pass:
-        //-- li x1, 1
-        InstructionRV::Addi { rd: Reg::X1, rs1: Reg::X0, imm: 1 }, 
-        //-- j .
-        InstructionRV::Jal {rd: Reg::X0, offs: 0},
-
-        //-- fail:
-        //-- li x1, 0
-        InstructionRV::Addi { rd: Reg::X1, rs1: Reg::X0, imm: 0 }, 
-        //-- j .
-        InstructionRV::Jal {rd: Reg::X0, offs: 0},
-    ];
-
-    run(&prog1, 10);
-    println!();
-}
-
-fn main2() {
-
-    // let code = [
-    //     0x00200193,   //addi x3, x0, 2
-    //     0x00000693,   //addi x13, x0, 0
-    //     0x00068713,   //addi x14, x13, 0
-    //     0x00000393,   //addi x7, x0, 0
-    //     0x00771663,   //bne x14, x7, fail (+12)
-
-    //                   //pass:
-    //     0x00100093,   //addi x1, x0, 1
-    //     0x0000006F,   //jal x0, 0
-
-    //                   //fail:
-    //     0x00000093,   //addi x1, x0, 0
-    //     0x0000006F,   //jal x0, 0
-    // ];
+fn main1() {
 
     let code = [
         //-- li x3, 2
@@ -504,57 +419,107 @@ fn main2() {
 }
 
 
+fn main2() {
+
+    let code = [
+
+        0x00200193,  // li x3, 2
+        0x00000693,  // li x13, 0x00000000
+        0x00068713,  // addi x14, x13, 0x00
+        0x00000393,  // li x7, 0x00000000
+        0x00771663,  // bne x14, x7, fail;
+
+        //-- Pass:
+        0x00100093,  // li x1, 1
+        0x0000006F,  // j .
+
+        //-- Fail:
+        0x00000093,  //li x1, 0
+        0x0000006F,  //j .
+    ];
+
+    let cpu = run_mcode(&code, 10);
+    assert_eq!(cpu.x1, 1);
+}
+
 fn main() 
 {
     main2();
 }
+
 
 #[test]
 fn test_addi_1()
 {
     //-- Programa de test a ejecutar
     let prog = [
-        InstructionRV::Addi { rd: Reg::X1, rs1: Reg::X0, imm: 1 }, //-- addi x1, x0, 1
-        InstructionRV::Addi { rd: Reg::X2, rs1: Reg::X0, imm: 2 }, //-- addi x2, x0, 2
-        InstructionRV::Addi { rd: Reg::X3, rs1: Reg::X0, imm: 3 }, //-- addi x3, x0, 3
-        InstructionRV::Addi { rd: Reg::X4, rs1: Reg::X0, imm: 4 }, //-- addi x4, x0, 4
-        InstructionRV::Addi { rd: Reg::X5, rs1: Reg::X0, imm: 5 }, //-- addi x5, x0, 5
-        InstructionRV::Addi { rd: Reg::X6, rs1: Reg::X0, imm: 6 }, //-- addi x6, x0, 6
-        InstructionRV::Addi { rd: Reg::X7, rs1: Reg::X0, imm: 7 }, //-- addi x7, x0, 7
-        InstructionRV::Addi { rd: Reg::X8, rs1: Reg::X0, imm: 8 }, //-- addi x8, x0, 8
-        InstructionRV::Addi { rd: Reg::X9, rs1: Reg::X0, imm: 9 }, //-- addi x9, x0, 9
-        InstructionRV::Addi { rd: Reg::X10, rs1: Reg::X0, imm: 10 }, //-- addi x10, x0, 10
-        InstructionRV::Addi { rd: Reg::X11, rs1: Reg::X0, imm: 11 }, //-- addi x11, x0, 11
-        InstructionRV::Addi { rd: Reg::X12, rs1: Reg::X0, imm: 12 }, //-- addi x12, x0, 12
-        InstructionRV::Addi { rd: Reg::X13, rs1: Reg::X0, imm: 13 }, //-- addi x13, x0, 13
-        InstructionRV::Addi { rd: Reg::X14, rs1: Reg::X0, imm: 14 }, //-- addi x14, x0, 14
-        InstructionRV::Addi { rd: Reg::X15, rs1: Reg::X0, imm: 15 }, //-- addi x15, x0, 15
-        InstructionRV::Addi { rd: Reg::X16, rs1: Reg::X0, imm: 16 }, //-- addi x16, x0, 16
-        InstructionRV::Addi { rd: Reg::X17, rs1: Reg::X0, imm: 17 }, //-- addi x17, x0, 17
-        InstructionRV::Addi { rd: Reg::X18, rs1: Reg::X0, imm: 18 }, //-- addi x18, x0, 18
-        InstructionRV::Addi { rd: Reg::X19, rs1: Reg::X0, imm: 19 }, //-- addi x19, x0, 19
-        InstructionRV::Addi { rd: Reg::X20, rs1: Reg::X0, imm: 20 }, //-- addi x20, x0, 20
-        InstructionRV::Addi { rd: Reg::X21, rs1: Reg::X0, imm: 21 }, //-- addi x21, x0, 21
-        InstructionRV::Addi { rd: Reg::X22, rs1: Reg::X0, imm: 22 }, //-- addi x22, x0, 22
-        InstructionRV::Addi { rd: Reg::X23, rs1: Reg::X0, imm: 23 }, //-- addi x23, x0, 23
-        InstructionRV::Addi { rd: Reg::X24, rs1: Reg::X0, imm: 24 }, //-- addi x24, x0, 24
-        InstructionRV::Addi { rd: Reg::X25, rs1: Reg::X0, imm: 25 }, //-- addi x25, x0, 25
-        InstructionRV::Addi { rd: Reg::X26, rs1: Reg::X0, imm: 26 }, //-- addi x26, x0, 26
-        InstructionRV::Addi { rd: Reg::X27, rs1: Reg::X0, imm: 27 }, //-- addi x27, x0, 27
-        InstructionRV::Addi { rd: Reg::X28, rs1: Reg::X0, imm: 28 }, //-- addi x28, x0, 28
-        InstructionRV::Addi { rd: Reg::X29, rs1: Reg::X0, imm: 29 }, //-- addi x29, x0, 29
-        InstructionRV::Addi { rd: Reg::X30, rs1: Reg::X0, imm: 30 }, //-- addi x30, x0, 30
-        InstructionRV::Addi { rd: Reg::X31, rs1: Reg::X0, imm: 31 }, //-- addi x31, x0, 31
+        InstructionRV::Addi { rd: Reg::X1, rs1: Reg::X0, imm: 1 }
+            .to_mcode(), 
+        InstructionRV::Addi { rd: Reg::X2, rs1: Reg::X0, imm: 2 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X3, rs1: Reg::X0, imm: 3 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X4, rs1: Reg::X0, imm: 4 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X5, rs1: Reg::X0, imm: 5 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X6, rs1: Reg::X0, imm: 6 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X7, rs1: Reg::X0, imm: 7 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X8, rs1: Reg::X0, imm: 8 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X9, rs1: Reg::X0, imm: 9 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X10, rs1: Reg::X0, imm: 10 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X11, rs1: Reg::X0, imm: 11 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X12, rs1: Reg::X0, imm: 12 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X13, rs1: Reg::X0, imm: 13 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X14, rs1: Reg::X0, imm: 14 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X15, rs1: Reg::X0, imm: 15 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X16, rs1: Reg::X0, imm: 16 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X17, rs1: Reg::X0, imm: 17 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X18, rs1: Reg::X0, imm: 18 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X19, rs1: Reg::X0, imm: 19 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X20, rs1: Reg::X0, imm: 20 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X21, rs1: Reg::X0, imm: 21 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X22, rs1: Reg::X0, imm: 22 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X23, rs1: Reg::X0, imm: 23 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X24, rs1: Reg::X0, imm: 24 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X25, rs1: Reg::X0, imm: 25 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X26, rs1: Reg::X0, imm: 26 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X27, rs1: Reg::X0, imm: 27 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X28, rs1: Reg::X0, imm: 28 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X29, rs1: Reg::X0, imm: 29 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X30, rs1: Reg::X0, imm: 30 }
+            .to_mcode(),
+        InstructionRV::Addi { rd: Reg::X31, rs1: Reg::X0, imm: 31 }
+            .to_mcode(),
     ];
 
-    //-- Crear CPU
-    let mut cpu = Cpurv::new();
+    //-- Ejecutar el programa!
+    let cpu = run_mcode(&prog, 100);
 
-    for inst in prog {
-
-        //-- Ejecutar instruccion
-        cpu.exec(&inst);
-    }
     //-- Mostrar estado final
     cpu.show();
 
@@ -597,4 +562,31 @@ fn test_addi_1()
     //-- ciclos
     assert_eq!(cpu.cycle, 31);
 
+}
+
+#[test]
+fn test_addi()
+//────────────────────────────────────────────────
+//  INSTRUCCION ADDI: TEST 2
+//────────────────────────────────────────────────
+{
+    let code = [
+
+        0x00200193,  // li x3, 2
+        0x00000693,  // li x13, 0x00000000
+        0x00068713,  // addi x14, x13, 0x00
+        0x00000393,  // li x7, 0x00000000
+        0x00771663,  // bne x14, x7, fail;
+
+        //-- Pass:
+        0x00100093,  // li x1, 1
+        0x0000006F,  // j .
+
+        //-- Fail:
+        0x00000093,  //li x1, 0
+        0x0000006F,  //j .
+    ];
+
+    let cpu = run_mcode(&code, 10);
+    assert_eq!(cpu.x1, 1);
 }
