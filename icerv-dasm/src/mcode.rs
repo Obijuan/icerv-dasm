@@ -391,7 +391,24 @@ impl MCode {
             (opcode << OPCODE_POS); 
 
         MCode { value }
-    } 
+    }
+
+    //────────────────────────────────────────────────
+    //  Construir una nueva instruccion en codigo maquina
+    //  Instruccion jalr
+    //────────────────────────────────────────────────    
+    pub fn new_typej_jalr(rd: u32, rs1: u32, offs: i32) -> Self {
+        let opcode: u32 = OpcodeRV::TipoJJalr as u32;
+
+        //-- Crear el codigo maquina a partir de los campos
+        let value: u32 = 
+            ((offs as u32) << IMM12_POS)  |
+            (rs1 << RS1_POS)              |
+            (rd << RD_POS)                |
+            (opcode << OPCODE_POS); 
+
+        MCode { value }
+    }  
 
     //────────────────────────────────────────────────
     //  Obtener el opcode de la instruccion

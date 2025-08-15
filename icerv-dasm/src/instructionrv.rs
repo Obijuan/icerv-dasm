@@ -885,6 +885,14 @@ impl InstructionRV {
                 //-- Devolver el codigo maquina como numero
                 mcode.value
             }
+            Self::Jalr {rd, offs, rs1} => {
+                //-- Construir el código máquina
+                let mcode = MCode::new_typej_jalr(
+                    *rd as u32, *rs1 as u32, *offs);
+
+                //-- Devolver el codigo maquina como numero
+                mcode.value
+            }
             _ => 0
         }
     }
@@ -4955,4 +4963,38 @@ fn test_mcode2_jal() {
     assert_eq!(
         InstructionRV::Jal { rd: Reg::X9, offs: 4 }.to_mcode(),
         0x004004ef);
+}
+
+#[test]
+fn test_mcode2_jalr() {
+    assert_eq!(
+        InstructionRV::Jalr{rd: Reg::X0, offs: 0, rs1: Reg::X0}.to_mcode(), 
+        0x00000067);
+    assert_eq!(
+        InstructionRV::Jalr{rd: Reg::X1, offs: -1, rs1: Reg::X10}.to_mcode(), 
+        0xfff500e7);
+    assert_eq!(
+        InstructionRV::Jalr{rd: Reg::X2, offs: -2, rs1: Reg::X11}.to_mcode(), 
+        0xffe58167);
+    assert_eq!(
+        InstructionRV::Jalr{rd: Reg::X3, offs: -4, rs1: Reg::X12}.to_mcode(), 
+        0xffc601e7);
+    assert_eq!(
+        InstructionRV::Jalr{rd: Reg::X4, offs: -8, rs1: Reg::X13}.to_mcode(), 
+        0xff868267);
+    assert_eq!(
+        InstructionRV::Jalr{rd: Reg::X5, offs: -2048, rs1: Reg::X14}.to_mcode(), 
+        0x800702e7);
+    assert_eq!(
+        InstructionRV::Jalr{rd: Reg::X6, offs: 2047, rs1: Reg::X15}.to_mcode(), 
+        0x7ff78367);
+    assert_eq!(
+        InstructionRV::Jalr{rd: Reg::X7, offs: 16, rs1: Reg::X16}.to_mcode(), 
+        0x010803e7);
+    assert_eq!(
+        InstructionRV::Jalr{rd: Reg::X8, offs: 8, rs1: Reg::X17}.to_mcode(), 
+        0x00888467);
+    assert_eq!(
+        InstructionRV::Jalr{rd: Reg::X9, offs: 4, rs1: Reg::X18}.to_mcode(), 
+        0x004904e7);
 }
