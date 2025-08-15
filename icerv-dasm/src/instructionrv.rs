@@ -15,7 +15,7 @@ pub enum InstructionRV {
     //──────────────────────────────────
     //  Instrucciones aritméticas tipo I
     //──────────────────────────────────
-    Addi {rd: Reg, rs1: Reg, imm: i32},  //-- addi rd, rs1, imm12
+    Addi {rd: Reg, rs1: Reg, imm: i32},  //-- ✅addi rd, rs1, imm12
     Slli {rd: Reg, rs1: Reg, imm: i32},  //-- slli x1, x2, 1
     Slti {rd: Reg, rs1: Reg, imm: i32},  //-- slti rd, rs1, imm12
     Sltiu {rd: Reg, rs1: Reg, imm: i32}, //-- sltiu rd, rs1, imm12

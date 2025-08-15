@@ -435,11 +435,12 @@ fn sim(fich: String)
 
     println!("Tamaño: {} Instrucciones", buffer_insts.len());
 
-    let cpu = run_mcode(&buffer_insts, 250);
+    let cpu = run_mcode(&buffer_insts, 210);
     assert_eq!(cpu.x1, 1);
     cpu.show();
     
 }
+
 
 fn main() 
 {
@@ -448,25 +449,34 @@ fn main()
     print!("{}", ansi::CLS);
 
     //-- Leer primer argumento
-    let arg = std::env::args().nth(1);
-    let fich = match arg {
-        Some(value) => {
-            value
-        }
-        None => {
-            print!("{}", ansi::RED);
-            println!("Error: Fichero ejecutable NO especificado");
-            print!("{}", ansi::RESET);
-            println!("  Uso: sim fichero");
-            return;
-        }
-    };
+    // let arg = std::env::args().nth(1);
+    // let _fich = match arg {
+    //     Some(value) => {
+    //         value
+    //     }
+    //     None => {
+    //         print!("{}", ansi::RED);
+    //         println!("Error: Fichero ejecutable NO especificado");
+    //         print!("{}", ansi::RESET);
+    //         println!("  Uso: sim fichero");
+    //         return;
+    //     }
+    // };
+
+    //-- Leer programa de prueba desde un fichero
+    let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
     sim(fich);
 
 }
 
+#[test]
+fn test_addi() 
+{
+    let fich = String::from("asm/addi.bin");
+    sim(fich);
+}
 
 
 #[test]
@@ -586,7 +596,7 @@ fn test_addi_1()
 }
 
 #[test]
-fn test_addi()
+fn test_addi1()
 //────────────────────────────────────────────────
 //  INSTRUCCION ADDI: TEST 2
 //────────────────────────────────────────────────
