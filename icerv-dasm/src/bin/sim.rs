@@ -2,8 +2,11 @@
 //  SIMULADOR DE RV32I
 //────────────────────────────────────────────────
 
+use std::{fs::File, io::Read};
+
 use icerv_dasm::instructionrv::InstructionRV;
 use icerv_dasm::regs::Reg;
+use icerv_dasm::ansi;
 
 //-- Estado de la cpu
 #[derive(PartialEq)]
@@ -312,6 +315,18 @@ impl Cpurv {
                 //-- Actualizar el pc
                 self.pc = (self.pc as i32 + *offs) as u32;
             }
+            InstructionRV::Lui {rd, imm} => {
+
+                //-- Calcular resultado
+                let res = imm << 12;
+
+                //-- Escribir resultado en registro destino
+                self.write_reg(*rd, res as u32);
+
+                //-- Incrementar pc para apuntar a la siguiente instruccion
+                self.pc += 4;
+
+            },
             _ => {}
         }
 
@@ -366,7 +381,7 @@ fn run_mcode(prog: &[u32], max_cycles: u32) -> Cpurv
         cpu.exec(&inst);
 
         //-- Mostrar el estado actual
-        cpu.show();
+        //cpu.show();
 
         //-- Terminar cuando han transcurrido el máximo de ciclos
         if cpu.state == CpuState::HALT {
@@ -379,73 +394,73 @@ fn run_mcode(prog: &[u32], max_cycles: u32) -> Cpurv
 }
 
 
-fn main1() {
+fn sim(fich: String)
+{
+    println!("{}{}{}",ansi::BLUE, fich, ansi::RESET);
 
-    let code = [
-        //-- li x3, 2
-        InstructionRV::Addi { rd: Reg::X3, rs1: Reg::X0, imm: 2 }.to_mcode(),
+    //-- Abrir fichero
+    let ofile = File::open(fich);
+    let mut file = match ofile {
+        Ok(value) => {
+            value
+        }
+        Err(error) => {
+            println!("{}Error: {}{}", ansi::RED, error, ansi::RESET);
+            println!();
+            return
+        }
+    };
 
-        //-- li x13, 0x00000000
-        InstructionRV::Addi { rd: Reg::X13, rs1: Reg::X0, imm: 0x0000_0000 }
-            .to_mcode(),
+    //-- Crear un buffer para almacenar los 4 bytes de la instruccion
+    let mut buffer = [0; 4];
 
-        //-- addi x14, x13, 0x00
-        InstructionRV::Addi { rd: Reg::X14, rs1: Reg::X13, imm: 0x000 }
-            .to_mcode(),
-
-        //-- li x7, 0x00000000
-        InstructionRV::Addi { rd: Reg::X7, rs1: Reg::X0, imm: 0x0000_0000 }
-            .to_mcode(),
-
-        //-- bne x14, x7, fail;
-        InstructionRV::Bne { rs1: Reg::X14, rs2: Reg::X7, offs: 0x0C }
-            .to_mcode(),
+    //-- Buffer donde colocar las instrucciones
+    let mut buffer_insts: Vec<u32> = Vec::new();
     
-        //-- pass:
-        //-- li x1, 1
-        InstructionRV::Addi { rd: Reg::X1, rs1: Reg::X0, imm: 1 }
-            .to_mcode(),
-        //-- j .
-        InstructionRV::Jal {rd: Reg::X0, offs: 0}.to_mcode(),
+    //-- Leer fichero de 4 en 4 bytes
+    while file.read_exact(&mut buffer).is_ok() {
 
-        //-- fail:
-        //-- li x1, 0
-        InstructionRV::Addi { rd: Reg::X1, rs1: Reg::X0, imm: 0 }.to_mcode(), 
-        //-- j .
-        InstructionRV::Jal {rd: Reg::X0, offs: 0}.to_mcode(),
-    ];
+        // Convierte los 4 bytes a un entero de 32 bits sin signo (u32)
+        let instr = u32::from_le_bytes(buffer);
 
-    run_mcode(&code, 10);
-}
+        // Meter la instruccion en el buffer de instrucciones
+        buffer_insts.push(instr);
+    }
 
+    println!("Tamaño: {} Instrucciones", buffer_insts.len());
 
-fn main2() {
-
-    let code = [
-
-        0x00200193,  // li x3, 2
-        0x00000693,  // li x13, 0x00000000
-        0x00068713,  // addi x14, x13, 0x00
-        0x00000393,  // li x7, 0x00000000
-        0x00771663,  // bne x14, x7, fail;
-
-        //-- Pass:
-        0x00100093,  // li x1, 1
-        0x0000006F,  // j .
-
-        //-- Fail:
-        0x00000093,  //li x1, 0
-        0x0000006F,  //j .
-    ];
-
-    let cpu = run_mcode(&code, 10);
+    let cpu = run_mcode(&buffer_insts, 50);
     assert_eq!(cpu.x1, 1);
+    cpu.show();
+    
 }
 
 fn main() 
 {
-    main2();
+
+    //-- Borrar la pantalla
+    print!("{}", ansi::CLS);
+
+    //-- Leer primer argumento
+    let arg = std::env::args().nth(1);
+    let fich = match arg {
+        Some(value) => {
+            value
+        }
+        None => {
+            print!("{}", ansi::RED);
+            println!("Error: Fichero ejecutable NO especificado");
+            print!("{}", ansi::RESET);
+            println!("  Uso: sim fichero");
+            return;
+        }
+    };
+
+    //-- Ejecutar programa
+    sim(fich);
+
 }
+
 
 
 #[test]
@@ -590,3 +605,45 @@ fn test_addi()
     let cpu = run_mcode(&code, 10);
     assert_eq!(cpu.x1, 1);
 }
+
+#[test]
+fn test_addi2()
+{
+    let code = [
+        //-- li x3, 2
+        InstructionRV::Addi { rd: Reg::X3, rs1: Reg::X0, imm: 2 }.to_mcode(),
+
+        //-- li x13, 0x00000000
+        InstructionRV::Addi { rd: Reg::X13, rs1: Reg::X0, imm: 0x0000_0000 }
+            .to_mcode(),
+
+        //-- addi x14, x13, 0x00
+        InstructionRV::Addi { rd: Reg::X14, rs1: Reg::X13, imm: 0x000 }
+            .to_mcode(),
+
+        //-- li x7, 0x00000000
+        InstructionRV::Addi { rd: Reg::X7, rs1: Reg::X0, imm: 0x0000_0000 }
+            .to_mcode(),
+
+        //-- bne x14, x7, fail;
+        InstructionRV::Bne { rs1: Reg::X14, rs2: Reg::X7, offs: 0x0C }
+            .to_mcode(),
+    
+        //-- pass:
+        //-- li x1, 1
+        InstructionRV::Addi { rd: Reg::X1, rs1: Reg::X0, imm: 1 }
+            .to_mcode(),
+        //-- j .
+        InstructionRV::Jal {rd: Reg::X0, offs: 0}.to_mcode(),
+
+        //-- fail:
+        //-- li x1, 0
+        InstructionRV::Addi { rd: Reg::X1, rs1: Reg::X0, imm: 0 }.to_mcode(), 
+        //-- j .
+        InstructionRV::Jal {rd: Reg::X0, offs: 0}.to_mcode(),
+    ];
+
+    run_mcode(&code, 10);
+}
+
+
