@@ -280,7 +280,13 @@ impl Cpurv {
                 let rs1 = self.read_reg(*rs1);
 
                 //-- Calcular resultado
-                let res = ((rs1 as i32) + imm) as u32;
+                //-- Se calcula para 64 bits
+                let t_rs1 = rs1 as i64;
+                let t_imm: i64 = *imm as i64;
+                let t_res: i64 = t_rs1 + t_imm;
+
+                //-- Truncar resultado a 32 bits
+                let res:u32 = (t_res & 0xFFFF_FFFF) as u32;
 
                 //-- Escribir resultado en registro destino
                 self.write_reg(*rd, res);
