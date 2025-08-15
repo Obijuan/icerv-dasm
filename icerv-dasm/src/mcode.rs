@@ -370,6 +370,30 @@ impl MCode {
     }    
 
     //────────────────────────────────────────────────
+    //  Construir una nueva instruccion en codigo maquina
+    //  Instruccion jal
+    //────────────────────────────────────────────────    
+    pub fn new_typej_jal(rd: u32, imm: u32) -> Self {
+        let opcode: u32 = OpcodeRV::TipoJJal as u32;
+
+        let imm_20: u32    = (imm & 0x8000_0000) >> 31;
+        let imm_19_12: u32 = (imm & 0x000FF_000) >> 12;
+        let imm_11: u32    = (imm & 0x00000_800) >> 11; 
+        let imm_10_1:  u32 = (imm & 0x00000_7FE) >> 1;
+
+        //-- Crear el codigo maquina a partir de los campos
+        let value: u32 = 
+            (imm_20 << 31)     |
+            (imm_19_12) << 12         |
+            (imm_11) << 20            |
+            (imm_10_1) << 21          |
+            (rd << RD_POS)         |
+            (opcode << OPCODE_POS); 
+
+        MCode { value }
+    } 
+
+    //────────────────────────────────────────────────
     //  Obtener el opcode de la instruccion
     //────────────────────────────────────────────────    
     pub fn opcode(&self) -> OpcodeRV {
