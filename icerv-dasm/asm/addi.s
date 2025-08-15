@@ -343,11 +343,40 @@
     #-- Comprobar el resultado obtenido (x14) con el esperado (x7)
     bne x11, x7, fail;
 
+
+#───────────────────────────────────────────────────────────────────────────
+#  INSTRUCCION ADDI: TEST 18
+#          testnum, nop_cycles, inst, result, val1, imm 
+#  TEST_IMM_DEST_BYPASS( 18, 0, addi, 24, 13, 11 );
+#───────────────────────────────────────────────────────────────────────────
+
+    #-- Numero de test
+    li x3, 18
+
+    li x4, 0
+
+    #-- Valor 1
+1:  li x1, 13
+
+      #-- Valor inmediato
+      addi x14, x1, 11
+
+      #TEST_INSERT_NOPS_ nop_cycles 
+      addi  x6, x14, 0
+      addi  x4, x4, 1
+      li  x5, 2
+      bne x4, x5, 1b
+
+    #-- Resultado esperado 
+    li  x7, 24
+    bne x6, x7, fail
+
+
   #-------------------------------------------------------------
   # Bypassing tests
   #-------------------------------------------------------------
 
-#  TEST_IMM_DEST_BYPASS( 18, 0, addi, 24, 13, 11 );
+#  
 #  TEST_IMM_DEST_BYPASS( 19, 1, addi, 23, 13, 10 );
 #  TEST_IMM_DEST_BYPASS( 20, 2, addi, 22, 13,  9 );
 #
@@ -377,22 +406,29 @@ fail:
     j .
 
 
-
-#-- Pruebas para addi
-#           testnum,  inst,  result,       val1,     imm
-#    TEST_IMM_OP( 2,  addi, 0x00000000, 0x00000000, 0x000 );
-#   x14 = val1 + imm --> x14 = result?
-
-# TEST_IMM_SRC1_EQ_DEST( 17, addi, 24, 13, 11 );
-# #define TEST_IMM_SRC1_EQ_DEST( testnum, inst, result, val1, imm ) \
-#     TEST_CASE( testnum, x11, result, \
-      
+# #define TEST_IMM_DEST_BYPASS( testnum, nop_cycles, inst, result, val1, imm ) \
+#     TEST_CASE( testnum, x6, result, \
+#       li  x4, 0; \
+# 1:    li  x1, MASK_XLEN(val1); \
+#       addi x14, x1, SEXT_IMM(imm); \
+#       TEST_INSERT_NOPS_ ## nop_cycles \
+#       addi  x6, x14, 0; \
+#       addi  x4, x4, 1; \
+#       li  x5, 2; \
+#       bne x4, x5, 1b \
 #     )
 
-# #define TEST_CASE( testnum, correctval, code... ) \
+# #define TEST_CASE( testnum, testreg, correctval, code... ) \
 # test_ ## testnum: \
-#     li  x3, 17
-#     li  x11, val1
-#     addi x11, x11, imm; \
-#     li  x7, 24; \
-#     bne x11, x7, fail;
+#     li x3, testnum
+#     li x4, 0
+# 1:  li x1, val1
+#       addi x14, x1, imm
+#       TEST_INSERT_NOPS_ nop_cycles 
+#       addi  x6, x14, 0
+#       addi  x4, x4, 1
+#       li  x5, 2
+#       bne x4, x5, 1b 
+#     li  x7, result
+#     bne x6, x7, fail
+

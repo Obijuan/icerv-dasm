@@ -435,7 +435,7 @@ fn sim(fich: String)
 
     println!("Tamaño: {} Instrucciones", buffer_insts.len());
 
-    let cpu = run_mcode(&buffer_insts, 100);
+    let cpu = run_mcode(&buffer_insts, 120);
     assert_eq!(cpu.x1, 1);
     cpu.show();
     
