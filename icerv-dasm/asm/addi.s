@@ -322,12 +322,26 @@
     bne x14, x7, fail;
 
   
-
-  #-------------------------------------------------------------
-  # Source/Destination tests
-  #-------------------------------------------------------------
-
+#───────────────────────────────────────────────────────────────────────────
+#  INSTRUCCION ADDI: TEST 17
+#                  testnum,  inst,  result, val1, imm
 #  TEST_IMM_SRC1_EQ_DEST( 17, addi, 24, 13, 11 );
+#───────────────────────────────────────────────────────────────────────────
+
+    #-- Numero de test
+    li x3, 17
+
+    #-- Valor 1
+    li x11, 13
+
+    #-- Resultado obtenido: Sumar valor 1  y valor inmediato
+    addi x11, x11, 11
+
+    #-- x7: Valor del resultado esperado
+    li x7, 24
+
+    #-- Comprobar el resultado obtenido (x14) con el esperado (x7)
+    bne x11, x7, fail;
 
   #-------------------------------------------------------------
   # Bypassing tests
@@ -369,4 +383,16 @@ fail:
 #    TEST_IMM_OP( 2,  addi, 0x00000000, 0x00000000, 0x000 );
 #   x14 = val1 + imm --> x14 = result?
 
+# TEST_IMM_SRC1_EQ_DEST( 17, addi, 24, 13, 11 );
+# #define TEST_IMM_SRC1_EQ_DEST( testnum, inst, result, val1, imm ) \
+#     TEST_CASE( testnum, x11, result, \
+      
+#     )
 
+# #define TEST_CASE( testnum, correctval, code... ) \
+# test_ ## testnum: \
+#     li  x3, 17
+#     li  x11, val1
+#     addi x11, x11, imm; \
+#     li  x7, 24; \
+#     bne x11, x7, fail;
