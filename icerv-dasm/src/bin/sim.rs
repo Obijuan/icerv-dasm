@@ -295,6 +295,22 @@ impl Cpurv {
                 self.pc += 4;
 
             }
+            InstructionRV::Slli {rd, rs1, imm} => {
+                //-- Leer valor del registro fuente
+                let rs1 = self.read_reg(*rs1);
+
+                //-- Restringir el valor del desplazamiento a 5 bits
+                let desp: u32 = (*imm as u32) & 0x1F;
+
+                //-- Calcular el resultado
+                let res: u32 = rs1 << desp;
+
+                //-- Escribir resultado en registro destino
+                self.write_reg(*rd, res);
+
+                //-- Incrementar pc para apuntar a la siguiente instruccion
+                self.pc += 4;
+            }
             InstructionRV::Bne { rs1, rs2, offs } => {
                 //-- Leer registro rs1
                 let rs1 = self.read_reg(*rs1);
@@ -399,11 +415,12 @@ fn run_mcode(prog: &[u32], max_cycles: u32) -> Cpurv
     cpu
 }
 
-
-fn sim(fich: String)
+//────────────────────────────────────────────────
+//  Cargar un programa desde un fichero binario
+//  Se devuelve como una lista de instrucciones
+//──────────────────────────────────────────────── 
+fn load_prog(fich: &str) -> Vec<u32> 
 {
-    println!("{}{}{}",ansi::BLUE, fich, ansi::RESET);
-
     //-- Abrir fichero
     let ofile = File::open(fich);
     let mut file = match ofile {
@@ -413,7 +430,7 @@ fn sim(fich: String)
         Err(error) => {
             println!("{}Error: {}{}", ansi::RED, error, ansi::RESET);
             println!();
-            return
+            return vec![];
         }
     };
 
@@ -432,10 +449,19 @@ fn sim(fich: String)
         // Meter la instruccion en el buffer de instrucciones
         buffer_insts.push(instr);
     }
+    buffer_insts
+}
 
-    println!("Tamaño: {} Instrucciones", buffer_insts.len());
 
-    let cpu = run_mcode(&buffer_insts, 210);
+fn sim(fich: &str, max_cycles: u32)
+{
+    println!("{}{}{}",ansi::BLUE, fich, ansi::RESET);
+
+    let insts = load_prog(fich);
+
+    println!("Tamaño: {} Instrucciones", insts.len());
+
+    let cpu = run_mcode(&insts, max_cycles);
     assert_eq!(cpu.x1, 1);
     cpu.show();
     
@@ -450,7 +476,7 @@ fn main()
 
     //-- Leer primer argumento
     // let arg = std::env::args().nth(1);
-    // let _fich = match arg {
+    // let fich = match arg {
     //     Some(value) => {
     //         value
     //     }
@@ -464,18 +490,18 @@ fn main()
     // };
 
     //-- Leer programa de prueba desde un fichero
-    let fich = String::from("asm/addi.bin");
+    //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim(fich);
+    sim("asm/slli.bin", 210);
+    //sim(&fich);
 
 }
 
 #[test]
 fn test_addi() 
 {
-    let fich = String::from("asm/addi.bin");
-    sim(fich);
+    sim("asm/addi.bin", 210);
 }
 
 

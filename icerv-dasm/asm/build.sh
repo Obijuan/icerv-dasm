@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -- Fichero a ensamblar
-FICH="addi"
+FICH="slli"
 
 
 # -- Ensamblador
