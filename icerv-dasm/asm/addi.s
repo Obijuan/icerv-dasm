@@ -194,10 +194,29 @@
     #-- Comprobar el resultado obtenido (x14) con el esperado (x7)
     bne x14, x7, fail;
 
-#  
-#  
-#
+#───────────────────────────────────────────────────────────────────────────
+#  INSTRUCCION ADDI: TEST 11
+#         testnum,  inst,  result,            val1,               imm
 #  TEST_IMM_OP( 11, addi, 0xffffffff800007ff, 0xffffffff80000000, 0x7ff );
+#───────────────────────────────────────────────────────────────────────────
+
+    #-- Numero de test
+    li x3, 11
+
+    #-- Valor 1
+    li x13, 0x80000000
+
+    #-- Resultado obtenido: Sumar valor 1  y valor inmediato
+    addi x14, x13, 0x7ff
+
+    #-- x7: Valor del resultado esperado
+    li x7, 0x800007ff
+
+    #-- Comprobar el resultado obtenido (x14) con el esperado (x7)
+    bne x14, x7, fail;
+
+
+#  
 #  TEST_IMM_OP( 12, addi, 0x000000007ffff7ff, 0x000000007fffffff, 0x800 );
 #
 #  TEST_IMM_OP( 13, addi, 0xffffffffffffffff, 0x0000000000000000, 0xfff );
