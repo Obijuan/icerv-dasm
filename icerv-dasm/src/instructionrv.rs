@@ -893,6 +893,8 @@ impl InstructionRV {
                 //-- Devolver el codigo maquina como numero
                 mcode.value
             }
+            Self::Ecall =>  { 0x0000_0073 }
+            Self::Ebreak => { 0x0010_0073 }
             _ => 0
         }
     }
@@ -3634,7 +3636,7 @@ fn test_mcode_jalr() {
 }
 
 #[test]
-fn test_disassemble_ecall_ebreak() {
+fn test_mcode_ecall_ebreak() {
     assert_eq!(InstructionRV::from_mcode(0x00000073).to_string(), "ecall");
     assert_eq!(InstructionRV::from_mcode(0x00100073).to_string(), "ebreak");
 }
@@ -4998,3 +5000,13 @@ fn test_mcode2_jalr() {
         InstructionRV::Jalr{rd: Reg::X9, offs: 4, rs1: Reg::X18}.to_mcode(), 
         0x004904e7);
 }
+
+#[test]
+fn test_mcode2_ecall_ebreak() {
+    assert_eq!(
+        InstructionRV::Ecall.to_mcode(), 0x00000073);
+    assert_eq!(
+        InstructionRV::Ebreak.to_mcode(), 0x00100073);
+}
+
+
