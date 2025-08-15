@@ -428,16 +428,37 @@
     #-- Resultado esperado 
     li  x7, 22
     bne x6, x7, fail
-
-  #-------------------------------------------------------------
-  # Bypassing tests
-  #-------------------------------------------------------------
-
-#  
-#  
-#  
-#
+ 
+#───────────────────────────────────────────────────────────────────────────
+#  INSTRUCCION ADDI: TEST 21
+#          testnum, nop_cycles, inst, result, val1, imm 
 #  TEST_IMM_SRC1_BYPASS( 21, 0, addi, 24, 13, 11 );
+#───────────────────────────────────────────────────────────────────────────
+
+    #-- Numero de test
+    li x3, 21
+
+    li x4, 0
+
+    #-- Valor 1
+1:  li x1, 13
+
+      #-- Valor inmediato
+      addi x14, x1, 11
+
+      #TEST_INSERT_NOPS_ nop_cycles 
+      
+      addi  x6, x14, 0
+      addi  x4, x4, 1
+      li  x5, 2
+      bne x4, x5, 1b
+
+    #-- Resultado esperado 
+    li  x7, 24
+    bne x6, x7, fail
+
+#
+#  
 #  TEST_IMM_SRC1_BYPASS( 22, 1, addi, 23, 13, 10 );
 #  TEST_IMM_SRC1_BYPASS( 23, 2, addi, 22, 13,  9 );
 #
