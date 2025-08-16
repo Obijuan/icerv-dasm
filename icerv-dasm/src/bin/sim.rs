@@ -337,6 +337,19 @@ impl Cpurv {
                 //-- Incrementar pc para apuntar a la siguiente instruccion
                 self.pc += 4;
             },
+            InstructionRV::Xori {rd, rs1, imm} => {
+                //-- Leer valor del registro fuente
+                let rs1 = self.read_reg(*rs1);
+
+                //-- Calcular el resultado
+                let res: u32 = (rs1 as u32) ^ (*imm as u32);
+
+                //-- Escribir resultado en registro destino
+                self.write_reg(*rd, res);
+
+                //-- Incrementar pc para apuntar a la siguiente instruccion
+                self.pc += 4;
+            }, 
             InstructionRV::Bne { rs1, rs2, offs } => {
                 //-- Leer registro rs1
                 let rs1 = self.read_reg(*rs1);
@@ -519,7 +532,7 @@ fn main()
     //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim("asm/sltiu.bin", 210);
+    sim("asm/xori.bin", 210);
     //sim(&fich);
 
 }
@@ -540,6 +553,12 @@ fn test_slli()
 fn test_slti() 
 {
     sim("asm/slti.bin", 210);
+}
+
+#[test]
+fn test_sltiu() 
+{
+    sim("asm/sltiu.bin", 210);
 }
 
 
