@@ -504,6 +504,12 @@ fn test_addi()
     sim("asm/addi.bin", 210);
 }
 
+#[test]
+fn test_slli() 
+{
+    sim("asm/slli.bin", 210);
+}
+
 
 #[test]
 fn test_addi_1()
