@@ -134,7 +134,7 @@
 
 #───────────────────────────────────────────────────────────────────────────
 #          testnum, nop_cycles, inst, result,       val1,    imm 
-# TEST_IMM_DEST_BYPASS( 8,  1, xori, 0x0000000000ff0ff0, 0x0000000000ff08ff, 0x70f );
+# TEST_IMM_DEST_BYPASS( 8,  1, xori, 0x00ff0ff0, 0x00ff08ff, 0x70f );
 #───────────────────────────────────────────────────────────────────────────
 
     #-- Numero de test
@@ -143,10 +143,10 @@
     li x4, 0
 
     #-- Valor 1
-1:  li x1, 10
+1:  li x1, 0x00ff08ff
 
       #-- Valor inmediato
-      xori x14, x1, 16
+      xori x14, x1, 0x70f
 
       #TEST_INSERT_NOPS_ nop_cycles 
       nop
@@ -156,12 +156,12 @@
       bne x4, x5, 1b
 
     #-- Resultado esperado 
-    li  x7, 1
+    li  x7, 0x00ff0ff0
     bne x6, x7, fail
 
 #───────────────────────────────────────────────────────────────────────────
 #          testnum, nop_cycles, inst, result,  val1, imm 
-#  TEST_IMM_DEST_BYPASS( 9,  2, xori, 0xfffffffff00ff0ff, 0xfffffffff00ff00f, 0x0f0 );
+#  TEST_IMM_DEST_BYPASS( 9,  2, xori, 0xf00ff0ff, 0xf00ff00f, 0x0f0 );
 #───────────────────────────────────────────────────────────────────────────
 
     #-- Numero de test
@@ -170,10 +170,10 @@
     li x4, 0
 
     #-- Valor 1
-1:  li x1, 16
+1:  li x1, 0xf00ff00f
 
       #-- Valor inmediato
-      xori x14, x1, 9
+      xori x14, x1, 0x0f0
 
       #TEST_INSERT_NOPS_ nop_cycles 
       nop
@@ -184,12 +184,12 @@
       bne x4, x5, 1b
 
     #-- Resultado esperado 
-    li  x7, 0
+    li  x7, 0xf00ff0ff
     bne x6, x7, fail
 
 #───────────────────────────────────────────────────────────────────────────
-#          testnum, nop_cycles, inst, result,      val1, imm 
-# TEST_IMM_SRC1_BYPASS( 10, 0, xori, 0x000000000ff00f00, 0x000000000ff00ff0, 0x0f0 );
+#          testnum, nop_cycles, inst, result,      val1,      imm 
+# TEST_IMM_SRC1_BYPASS( 10, 0, xori, 0x0ff00f00, 0x0ff00ff0, 0x0f0 );
 #───────────────────────────────────────────────────────────────────────────
 
     #-- Numero de test
@@ -198,10 +198,10 @@
     li x4, 0
 
     #-- Valor 1
-1:  li x1, 11
+1:  li x1, 0x0ff00ff0
 
       #-- Valor inmediato
-      xori x14, x1, 15
+      xori x14, x1, 0x0f0
 
       #TEST_INSERT_NOPS_ nop_cycles 
       
@@ -211,12 +211,12 @@
       bne x4, x5, 1b
 
     #-- Resultado esperado 
-    li  x7, 1
+    li  x7, 0x0ff00f00
     bne x6, x7, fail
 
 #───────────────────────────────────────────────────────────────────────────
-#          testnum, nop_cycles, inst, result, val1, imm 
-#  TEST_IMM_SRC1_BYPASS( 11, 1, xori, 0x0000000000ff0ff0, 0x0000000000ff0fff, 0x00f );
+#          testnum, nop_cycles, inst, result,      val1,       imm 
+#  TEST_IMM_SRC1_BYPASS( 11, 1, xori, 0x00ff0ff0, 0x00ff0fff, 0x00f );
 #───────────────────────────────────────────────────────────────────────────
 
     #-- Numero de test
@@ -225,10 +225,10 @@
     li x4, 0
 
     #-- Valor 1
-1:  li x1, 17
+1:  li x1, 0x00ff0fff
 
       #-- Valor inmediato
-      xori x14, x1, 8
+      xori x14, x1, 0x00f
 
       #TEST_INSERT_NOPS_ nop_cycles 
       nop
@@ -239,7 +239,7 @@
       bne x4, x5, 1b
 
     #-- Resultado esperado 
-    li  x7, 0
+    li  x7, 0x00ff0ff0
     bne x6, x7, fail
 
 #───────────────────────────────────────────────────────────────────────────
