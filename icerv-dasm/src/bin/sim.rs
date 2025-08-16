@@ -366,6 +366,23 @@ impl Cpurv {
                 //-- Incrementar pc para apuntar a la siguiente instruccion
                 self.pc += 4;
             },
+            InstructionRV::Srai {rd, rs1, imm} => {
+                //-- Leer valor del registro fuente
+                let rs1 = self.read_reg(*rs1);
+
+                //-- Restringir el valor del desplazamiento a 5 bits
+                let desp: u32 = (*imm as u32) & 0x1F;
+
+                //-- Calcular el resultado
+                let res = (rs1 as i32) >> desp;
+
+                //-- Escribir resultado en registro destino
+                self.write_reg(*rd, res as u32);
+
+                //-- Incrementar pc para apuntar a la siguiente instruccion
+                self.pc += 4;   
+            }
+            //-- 🚧 TODO 🚧
             InstructionRV::Bne { rs1, rs2, offs } => {
                 //-- Leer registro rs1
                 let rs1 = self.read_reg(*rs1);
@@ -548,7 +565,7 @@ fn main()
     //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim("asm/srli.bin", 220);
+    sim("asm/srai.bin", 230);
     //sim(&fich);
 
 }
