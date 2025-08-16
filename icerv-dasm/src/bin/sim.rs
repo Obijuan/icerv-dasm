@@ -607,6 +607,12 @@ fn test_srli()
 }
 
 #[test]
+fn test_srai() 
+{
+    sim("asm/srai.bin", 230);
+}
+
+#[test]
 fn test_addi_1()
 {
     //-- Programa de test a ejecutar
