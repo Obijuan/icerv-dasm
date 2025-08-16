@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -- Fichero a ensamblar
-FICH="xori"
+FICH="srli"
 
 
 # -- Ensamblador
