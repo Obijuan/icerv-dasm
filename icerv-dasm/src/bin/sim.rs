@@ -532,7 +532,7 @@ fn main()
     //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim("asm/xori.bin", 210);
+    sim("asm/xori.bin", 170);
     //sim(&fich);
 
 }
@@ -561,6 +561,11 @@ fn test_sltiu()
     sim("asm/sltiu.bin", 210);
 }
 
+#[test]
+fn test_xori() 
+{
+    sim("asm/xori.bin", 170);
+}
 
 #[test]
 fn test_addi_1()
