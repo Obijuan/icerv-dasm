@@ -516,7 +516,7 @@
     li  x1, 33
 
     #-- imm
-    addi x0, x1, 20
+    slli x0, x1, 20
 
     li  x7, 0
     bne x0, x7, fail;
