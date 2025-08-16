@@ -365,7 +365,7 @@ impl Cpurv {
 
                 //-- Incrementar pc para apuntar a la siguiente instruccion
                 self.pc += 4;
-            },
+            }
             InstructionRV::Srai {rd, rs1, imm} => {
                 //-- Leer valor del registro fuente
                 let rs1 = self.read_reg(*rs1);
@@ -381,6 +381,19 @@ impl Cpurv {
 
                 //-- Incrementar pc para apuntar a la siguiente instruccion
                 self.pc += 4;   
+            }
+            InstructionRV::Ori {rd, rs1, imm} => {
+                //-- Leer valor del registro fuente
+                let rs1 = self.read_reg(*rs1);
+
+                //-- Calcular el resultado
+                let res: u32 = (rs1 as u32) | (*imm as u32);
+
+                //-- Escribir resultado en registro destino
+                self.write_reg(*rd, res);
+
+                //-- Incrementar pc para apuntar a la siguiente instruccion
+                self.pc += 4;
             }
             //-- 🚧 TODO 🚧
             InstructionRV::Bne { rs1, rs2, offs } => {
@@ -565,7 +578,7 @@ fn main()
     //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim("asm/srai.bin", 230);
+    sim("asm/ori.bin", 230);
     //sim(&fich);
 
 }
