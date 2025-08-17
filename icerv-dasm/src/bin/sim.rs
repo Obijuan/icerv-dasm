@@ -7,6 +7,7 @@ use std::{fs::File, io::Read};
 use icerv_dasm::instructionrv::InstructionRV;
 use icerv_dasm::regs::Reg;
 use icerv_dasm::ansi;
+use icerv_dasm::memory::Memory;
 
 //-- Estado de la cpu
 #[derive(PartialEq)]
@@ -39,6 +40,7 @@ struct Cpurv {
     cycle: u32,      //-- Contador de ciclos (ciclo actual)
     max_cycles: u32, //-- Numero maximo de ciclos a ejecutar
     state: CpuState, //-- Estado de la CPU
+    mem: Memory,     //-- Memoria conectada a la cpu
 
     //-- Registros RV (Salvo x0 que vale 0 siempre)
     x1: u32,    //-- ra
@@ -80,13 +82,19 @@ impl Cpurv {
     //  Constructor de CPU
     //  La CPU se lleva al estado de reset
     //  Todos los registros x se ponen a 0
+    //  La memoria asociada NO se inicializa ni se crea
     //────────────────────────────────────────────────    
     fn new() -> Self {
+
+        //-- Por defecto se usa una memoria nula
+        let data:Vec<u8> = vec![0; 0];
+
         Cpurv {
             pc: 0,
             cycle: 0,
             max_cycles: 0xFFFF_FFFF,
             state: CpuState::RESET,
+            mem: Memory::new(data),
 
             x1: 0,
             x2: 0,
@@ -269,11 +277,9 @@ impl Cpurv {
 
         //-- Ejecutar instruccion
         match inst {
-            InstructionRV::Unknown => {
-                println!("INSTRUCCION DESCONOCIDA!");
-                self.state = CpuState::HALT;
-                return
-            }
+            //──────────────────────────────────
+            //  Instrucciones aritméticas tipo I
+            //──────────────────────────────────
             InstructionRV::Addi {rd, rs1, imm} => {
 
                 //-- Leer valor del registro fuente
@@ -408,6 +414,27 @@ impl Cpurv {
                 //-- Incrementar pc para apuntar a la siguiente instruccion
                 self.pc += 4;
             }
+            //──────────────────────────────────
+            //  Instrucciones tipo I: LOAD
+            //──────────────────────────────────
+            InstructionRV::Lb {rd, offs, rs1} => {
+
+                //-- Leer valor del registro fuente
+                let rs1 = self.read_reg(*rs1);
+
+                //-- Calcular la direccion de memoria
+                let addr:u32 = ((rs1 as i32) + offs) as u32;
+
+                //-- Leer el byte de memoria como byte con signo
+                let res:i8 = self.mem.read8(addr) as i8; 
+
+                //-- Guardar resultado en el registro destino
+                //-- Al pasar a u32 se extiende el signo
+                self.write_reg(*rd, res as u32);
+
+                //-- Incrementar pc para apuntar a la siguiente instruccion
+                self.pc += 4;
+            }
             //-- 🚧 TODO 🚧
             InstructionRV::Bne { rs1, rs2, offs } => {
                 //-- Leer registro rs1
@@ -435,6 +462,9 @@ impl Cpurv {
                 //-- Actualizar el pc
                 self.pc = (self.pc as i32 + *offs) as u32;
             }
+            //──────────────────────────────────
+            //  Instrucciones tipo U: LUI
+            //──────────────────────────────────
             InstructionRV::Lui {rd, imm} => {
 
                 //-- Calcular resultado
@@ -446,7 +476,26 @@ impl Cpurv {
                 //-- Incrementar pc para apuntar a la siguiente instruccion
                 self.pc += 4;
 
-            },
+            }
+            InstructionRV::Auipc {rd, imm} => {
+                //-- Calcular resultado: Direccion destino
+                let addr: u32 = ((self.pc as i32) + imm) as u32;
+
+                //-- Escribir resultado en registro destino
+                self.write_reg(*rd, addr);
+
+                //-- Incrementar pc para apuntar a la siguiente instruccion
+                self.pc += 4;
+            } 
+            //──────────────────────────────────
+            //  Instrucciones DESCONOCIDA
+            //  (o NO IMPLEMENTADA)
+            //──────────────────────────────────
+            InstructionRV::Unknown => {
+                println!("INSTRUCCION DESCONOCIDA!");
+                self.state = CpuState::HALT;
+                return
+            }
             _ => {}
         }
 
@@ -466,7 +515,6 @@ impl Cpurv {
 
 
 }
-
 
 //────────────────────────────────────────────────
 //  Ejecutar un programa dado en código máquina
@@ -590,8 +638,73 @@ fn main()
     //-- Leer programa de prueba desde un fichero
     //let fich = String::from("asm/addi.bin");
 
+    //-- Nombre del fichero con el programa
+    const FICH:&str = "asm/lb.bin";
+    const MAX_CYCLES:u32 = 20;
+
+    //-- Crear memoria e inicializarla desde un fichero
+    let mem = Memory::from_file(FICH);
+
+    println!();
+    println!("{}{}{}",ansi::BLUE, FICH, ansi::RESET);
+    println!("Tamaño: {} Instrucciones", mem.size()>>2);
+
+    //-- Crear CPU
+    let mut cpu = Cpurv::new();
+
+    //-- Conectar la memoria con la cpu
+    cpu.mem = mem;
+
+    //-- Configurar los ciclos máximos
+    cpu.max_cycles = MAX_CYCLES;
+
+    //-- Mostrar estado inicial de la cpu
+    cpu.show();
+
+    //-- Bucle principal de Ejecucion!!
+    loop {
+        //-- Obtener la direccion actual
+        let addr = cpu.pc;
+
+        //-- Comprobar si la direccion está dentro del rango
+        if addr >= cpu.mem.size() as u32 {
+            break;
+        }
+
+        //-- Leer instruccion de memoria
+        let mcode = cpu.mem.read32(addr);
+
+        //-- Convertir codigo maquina a tipo instruccion
+        let inst = InstructionRV::from_mcode(mcode as u32);
+
+        //-- Ejecutar instruccion!
+        cpu.exec(&inst);
+
+        //-- Mostrar el estado actual
+        //cpu.show();
+
+        //-- Terminar cuando han transcurrido el máximo de ciclos
+        if cpu.state == CpuState::HALT {
+            break;
+        }
+    }
+
+    println!("PROGRAMA TERMINADO");
+
+    assert_eq!(cpu.x1, 1);
+    cpu.show();
+
+    // while addr < mem.size() as u32 {
+
+    //     //-- Imprimir instruccion actual
+    //     println!("* [{:#010X}]: {:#010X}", addr, mem.read32(addr));
+
+    //     //-- Apuntar a la siguiente instruccion
+    //     addr += 4;
+    // }
+
     //-- Ejecutar programa
-    sim("asm/andi.bin", 230);
+    //sim("asm/lb.bin", 10);
     //sim(&fich);
 
 }

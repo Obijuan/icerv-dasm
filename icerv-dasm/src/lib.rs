@@ -19,3 +19,7 @@ pub mod ansi;
 
 //──────── Dibujos en modo texto
 pub mod graphics;
+
+//──────── Memoria
+pub mod memory;
+
