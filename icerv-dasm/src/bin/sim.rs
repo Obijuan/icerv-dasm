@@ -613,40 +613,13 @@ fn sim(fich: &str, max_cycles: u32)
     
 }
 
-
-fn main() 
+fn sim2(fich: &str, max_cycles: u32)
 {
-
-    //-- Borrar la pantalla
-    print!("{}", ansi::CLS);
-
-    //-- Leer primer argumento
-    // let arg = std::env::args().nth(1);
-    // let fich = match arg {
-    //     Some(value) => {
-    //         value
-    //     }
-    //     None => {
-    //         print!("{}", ansi::RED);
-    //         println!("Error: Fichero ejecutable NO especificado");
-    //         print!("{}", ansi::RESET);
-    //         println!("  Uso: sim fichero");
-    //         return;
-    //     }
-    // };
-
-    //-- Leer programa de prueba desde un fichero
-    //let fich = String::from("asm/addi.bin");
-
-    //-- Nombre del fichero con el programa
-    const FICH:&str = "asm/lb.bin";
-    const MAX_CYCLES:u32 = 200;
-
     //-- Crear memoria e inicializarla desde un fichero
-    let mem = Memory::from_file(FICH);
+    let mem = Memory::from_file(fich);
 
     println!();
-    println!("{}{}{}",ansi::BLUE, FICH, ansi::RESET);
+    println!("{}{}{}",ansi::BLUE, fich, ansi::RESET);
     println!("Tamaño: {} Instrucciones", mem.size()>>2);
 
     //-- Crear CPU
@@ -656,7 +629,7 @@ fn main()
     cpu.mem = mem;
 
     //-- Configurar los ciclos máximos
-    cpu.max_cycles = MAX_CYCLES;
+    cpu.max_cycles = max_cycles;
 
     //-- Mostrar estado inicial de la cpu
     cpu.show();
@@ -694,73 +667,99 @@ fn main()
     assert_eq!(cpu.x1, 1);
     cpu.show();
 
-    // while addr < mem.size() as u32 {
-
-    //     //-- Imprimir instruccion actual
-    //     println!("* [{:#010X}]: {:#010X}", addr, mem.read32(addr));
-
-    //     //-- Apuntar a la siguiente instruccion
-    //     addr += 4;
-    // }
 
     //-- Ejecutar programa
     //sim("asm/lb.bin", 10);
     //sim(&fich);
+}
+
+fn main() 
+{
+
+    //-- Borrar la pantalla
+    print!("{}", ansi::CLS);
+
+    //-- Leer primer argumento
+    // let arg = std::env::args().nth(1);
+    // let fich = match arg {
+    //     Some(value) => {
+    //         value
+    //     }
+    //     None => {
+    //         print!("{}", ansi::RED);
+    //         println!("Error: Fichero ejecutable NO especificado");
+    //         print!("{}", ansi::RESET);
+    //         println!("  Uso: sim fichero");
+    //         return;
+    //     }
+    // };
+
+    //-- Leer programa de prueba desde un fichero
+    //let fich = String::from("asm/addi.bin");
+
+    //-- Ejecutar programa
+    sim2("asm/lb.bin", 170);
 
 }
 
 #[test]
 fn test_addi() 
 {
-    sim("asm/addi.bin", 210);
+    sim2("asm/addi.bin", 210);
 }
 
 #[test]
 fn test_slli() 
 {
-    sim("asm/slli.bin", 210);
+    sim2("asm/slli.bin", 210);
 }
 
 #[test]
 fn test_slti() 
 {
-    sim("asm/slti.bin", 210);
+    sim2("asm/slti.bin", 210);
 }
 
 #[test]
 fn test_sltiu() 
 {
-    sim("asm/sltiu.bin", 210);
+    sim2("asm/sltiu.bin", 210);
 }
 
 #[test]
 fn test_srli() 
 {
-    sim("asm/srli.bin", 220);
+    sim2("asm/srli.bin", 220);
 }
 
 #[test]
 fn test_srai() 
 {
-    sim("asm/srai.bin", 230);
+    sim2("asm/srai.bin", 230);
 }
 
 #[test]
 fn test_xori() 
 {
-    sim("asm/xori.bin", 170);
+    sim2("asm/xori.bin", 170);
 }
 
 #[test]
 fn test_ori() 
 {
-    sim("asm/ori.bin", 230);
+    sim2("asm/ori.bin", 230);
 }
 
 #[test]
 fn test_andi() 
 {
-    sim("asm/andi.bin", 230);
+    sim2("asm/andi.bin", 230);
+}
+
+#[test]
+fn test_lb() 
+{
+    sim2("asm/lb.bin", 170);
 }
 
 #[test]
