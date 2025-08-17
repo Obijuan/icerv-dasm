@@ -15,54 +15,206 @@
     li  x7, 0xffffffff #-- Resultado
     bne x14, x7, fail;
 
-
-#   #-------------------------------------------------------------
-#   # Basic tests
-#   #-------------------------------------------------------------
-
-#   
+#───────────────────────────────────────────────────────────────────────
+#         testnum, inst, result,       offset, base
 #   TEST_LD_OP( 3, lb, 0x0000000000000000, 1,  tdat );
-#   TEST_LD_OP( 4, lb, 0xfffffffffffffff0, 2,  tdat );
-#   TEST_LD_OP( 5, lb, 0x000000000000000f, 3, tdat );
+#───────────────────────────────────────────────────────────────────────
+    li  x3, 3  #-- Numero de test
+    la  x2, tdat  #-- base
+    lb x14, 1(x2); #-- offset 
+    li  x7, 0x00000000 #-- Resultado
+    bne x14, x7, fail;
 
-#   # Test with negative offset
+#───────────────────────────────────────────────────────────────────────
+#         testnum, inst, result,       offset, base
+#   TEST_LD_OP( 4, lb, 0xfffffff0, 2,  tdat );
+#───────────────────────────────────────────────────────────────────────
+    li  x3, 4  #-- Numero de test
+    la  x2, tdat  #-- base
+    lb x14, 2(x2); #-- offset 
+    li  x7, 0xfffffff0 #-- Resultado
+    bne x14, x7, fail;    
 
-#   TEST_LD_OP( 6, lb, 0xffffffffffffffff, -3, tdat4 );
-#   TEST_LD_OP( 7, lb, 0x0000000000000000, -2,  tdat4 );
-#   TEST_LD_OP( 8, lb, 0xfffffffffffffff0, -1,  tdat4 );
-#   TEST_LD_OP( 9, lb, 0x000000000000000f, 0,   tdat4 );
+#───────────────────────────────────────────────────────────────────────
+#         testnum, inst, result,       offset, base
+#   TEST_LD_OP( 5, lb, 0x0000000f, 3, tdat );
+#───────────────────────────────────────────────────────────────────────
+    li  x3, 5  #-- Numero de test
+    la  x2, tdat  #-- base
+    lb x14, 3(x2); #-- offset 
+    li  x7, 0x0000000f #-- Resultado
+    bne x14, x7, fail;  
 
-#   # Test with a negative base
+#───────────────────────────────────────────────────────────────────────
+#         testnum, inst, result,       offset, base
+#   TEST_LD_OP( 6, lb, 0xffffffff, -3, tdat4 );
+#───────────────────────────────────────────────────────────────────────
+    li  x3, 6  #-- Numero de test
+    la  x2, tdat4  #-- base
+    lb x14, -3(x2); #-- offset 
+    li  x7, 0xffffffff #-- Resultado
+    bne x14, x7, fail;  
 
-#   TEST_CASE( 10, x5, 0xffffffffffffffff, \
-#     la  x1, tdat; \
-#     addi x1, x1, -32; \
-#     lb x5, 32(x1); \
+#───────────────────────────────────────────────────────────────────────
+#         testnum, inst, result,       offset, base
+#   TEST_LD_OP( 7, lb, 0x00000000, -2,  tdat4 );
+#───────────────────────────────────────────────────────────────────────
+    li  x3, 7  #-- Numero de test
+    la  x2, tdat4  #-- base
+    lb x14, -2(x2); #-- offset 
+    li  x7, 0x00000000 #-- Resultado
+    bne x14, x7, fail;  
+
+#───────────────────────────────────────────────────────────────────────
+#         testnum, inst, result,       offset, base
+#   TEST_LD_OP( 8, lb, 0xfffffff0, -1,  tdat4 );
+#───────────────────────────────────────────────────────────────────────
+    li  x3, 8  #-- Numero de test
+    la  x2, tdat4  #-- base
+    lb x14, -1(x2); #-- offset 
+    li  x7, 0xfffffff0 #-- Resultado
+    bne x14, x7, fail;  
+
+#───────────────────────────────────────────────────────────────────────
+#         testnum, inst, result,       offset, base
+#   TEST_LD_OP( 9, lb, 0x0000000f, 0,   tdat4 );
+#───────────────────────────────────────────────────────────────────────
+    li  x3, 9  #-- Numero de test
+    la  x2, tdat4  #-- base
+    lb x14, 0(x2); #-- offset 
+    li  x7, 0x0000000f #-- Resultado
+    bne x14, x7, fail; 
+
+#───────────────────────────────────────────────────────────────────────
+#         testnum  testreg,  result, code 
+#   TEST_CASE( 10, x5, 0xffffffff, 
+#     la  x1, tdat; 
+#     addi x1, x1, -32; 
+#     lb x5, 32(x1); 
 #   )
+#───────────────────────────────────────────────────────────────────────
+    li x3, 10  #-- testnum
 
-#   # Test with unaligned base
+    la x1, tdat; #-- code
+    addi x1, x1, -32; 
+    lb x5, 32(x1); 
 
-#   TEST_CASE( 11, x5, 0x0000000000000000, \
-#     la  x1, tdat; \
-#     addi x1, x1, -6; \
-#     lb x5, 7(x1); \
+    li  x7, 0xffffffff  #-- result
+    bne x5, x7, fail    #-- testreg
+
+#───────────────────────────────────────────────────────────────────────
+#         testnum  testreg,  result, code 
+#   TEST_CASE( 11, x5, 0x00000000, 
+#     la  x1, tdat; 
+#     addi x1, x1, -6; 
+#     lb x5, 7(x1); 
 #   )
+#───────────────────────────────────────────────────────────────────────
+    li x3, 11  #-- testnum
 
-#   #-------------------------------------------------------------
-#   # Bypassing tests
-#   #-------------------------------------------------------------
+    la  x1, tdat;   #-- code
+    addi x1, x1, -6; 
+    lb x5, 7(x1); 
 
-#   TEST_LD_DEST_BYPASS( 12, 0, lb, 0xfffffffffffffff0, 1, tdat2 );
-#   TEST_LD_DEST_BYPASS( 13, 1, lb, 0x000000000000000f, 1, tdat3 );
-#   TEST_LD_DEST_BYPASS( 14, 2, lb, 0x0000000000000000, 1, tdat1 );
+    li  x7, 0x00000000  #-- result
+    bne x5, x7, fail    #-- testreg
 
-#   TEST_LD_SRC1_BYPASS( 15, 0, lb, 0xfffffffffffffff0, 1, tdat2 );
-#   TEST_LD_SRC1_BYPASS( 16, 1, lb, 0x000000000000000f, 1, tdat3 );
-#   TEST_LD_SRC1_BYPASS( 17, 2, lb, 0x0000000000000000, 1, tdat1 );
+#───────────────────────────────────────────────────────────────────────
+#          testnum  nop_cyles, inst,  result, offset, base 
+#   TEST_LD_DEST_BYPASS( 12, 0, lb, 0xfffffff0, 1, tdat2 );
+#───────────────────────────────────────────────────────────────────────
+    li  x3, 12  #-- testnum
+    li  x4, 0 
+1:  la  x13, tdat2  #-- base
+    lb x14, 1(x13) #-- inst / offset
+          ## nop_cycles 
+    addi  x6, x14, 0
+    li  x7, 0xfffffff0  #-- results 
+    bne x6, x7, fail
+    addi  x4, x4, 1
+    li  x5, 2
+    bne x4, x5, 1b
 
-#   #-------------------------------------------------------------
-#   # Test write-after-write hazard
-#   #-------------------------------------------------------------
+#───────────────────────────────────────────────────────────────────────
+#          testnum  nop_cyles, inst,  result, offset, base 
+#   TEST_LD_DEST_BYPASS( 13, 1, lb, 0x0000000f, 1,   tdat3 );
+#───────────────────────────────────────────────────────────────────────
+    li  x3, 13  #-- testnum
+    li  x4, 0 
+1:  la  x13, tdat3  #-- base
+    lb x14, 1(x13) #-- inst / offset
+    nop      ## nop_cycles 
+    addi  x6, x14, 0
+    li  x7, 0x0000000f  #-- results 
+    bne x6, x7, fail
+    addi  x4, x4, 1
+    li x5, 2
+    bne x4, x5, 1b
+
+#───────────────────────────────────────────────────────────────────────
+#          testnum  nop_cyles, inst,  result, offset, base 
+#   TEST_LD_DEST_BYPASS( 14, 2, lb, 0x00000000, 1, tdat1 );
+#───────────────────────────────────────────────────────────────────────
+    li  x3, 14  #-- testnum
+    li  x4, 0 
+1:  la  x13, tdat1  #-- base
+    lb x14, 1(x13) #-- inst / offset
+    nop      ## nop_cycles
+    nop 
+    addi  x6, x14, 0
+    li  x7, 0x00000000  #-- results 
+    bne x6, x7, fail
+    addi  x4, x4, 1
+    li x5, 2
+    bne x4, x5, 1b
+
+#───────────────────────────────────────────────────────────────────────
+#          testnum  nop_cyles, inst,  result, offset, base 
+#   TEST_LD_SRC1_BYPASS( 15, 0, lb, 0xfffffff0, 1, tdat2 );
+#───────────────────────────────────────────────────────────────────────
+    li  x3, 15  #-- testnum
+    li  x4, 0 
+1:  la  x13, tdat2  #-- base
+    lb x14, 1(x13) #-- inst / offset
+         ## nop_cycles
+    
+    addi  x6, x14, 0
+    li  x7, 0xfffffff0  #-- results 
+    bne x6, x7, fail
+    addi  x4, x4, 1
+    li x5, 2
+    bne x4, x5, 1b
+
+#───────────────────────────────────────────────────────────────────────
+#          testnum  nop_cyles, inst,  result, offset, base 
+#   TEST_LD_SRC1_BYPASS( 16, 1, lb, 0x0000000f, 1,   tdat3 );
+#───────────────────────────────────────────────────────────────────────
+    li  x3, 16   #-- testnum
+    li  x4, 0
+1:  la  x13, tdat3  #-- base
+    nop   ## nop_cycles 
+    lb x14, 1(x13);  #-- inst / offset
+    li  x7, 0x0000000f  #-- result
+    bne x14, x7, fail
+    addi  x4, x4, 1
+    li  x5, 2
+    bne x4, x5, 1b 
+
+#───────────────────────────────────────────────────────────────────────
+#          testnum  nop_cyles, inst,  result, offset, base 
+#   TEST_LD_SRC1_BYPASS( 17, 2, lb, 0x00000000, 1, tdat1 );
+#───────────────────────────────────────────────────────────────────────
+    li  x3, 17   #-- testnum
+    li  x4, 0
+1:  la  x13, tdat1  #-- base
+    nop   ## nop_cycles
+    nop 
+    lb x14, 1(x13);  #-- inst / offset
+    li  x7, 0x00000000  #-- result
+    bne x14, x7, fail
+    addi  x4, x4, 1
+    li  x5, 2
+    bne x4, x5, 1b 
 
 
     #-- Test OK

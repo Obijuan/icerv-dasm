@@ -640,7 +640,7 @@ fn main()
 
     //-- Nombre del fichero con el programa
     const FICH:&str = "asm/lb.bin";
-    const MAX_CYCLES:u32 = 20;
+    const MAX_CYCLES:u32 = 200;
 
     //-- Crear memoria e inicializarla desde un fichero
     let mem = Memory::from_file(FICH);
