@@ -797,7 +797,7 @@ fn main()
     //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim2("asm/add.bin", 700);
+    sim2("asm/add.bin", 425);
 
 }
 
@@ -882,7 +882,13 @@ fn test_lhu()
 #[test]
 fn test_lw() 
 {
-        sim2("asm/lw.bin", 205);
+    sim2("asm/lw.bin", 205);
+}
+
+#[test]
+fn test_add() 
+{
+    sim2("asm/add.bin", 425);
 }
 
 #[test]
