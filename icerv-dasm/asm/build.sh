@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -- Fichero a ensamblar
-FICH="lw"
+FICH="lbu"
 
 # -- Ensamblador
 AS=riscv64-unknown-elf-as
