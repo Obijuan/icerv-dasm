@@ -806,6 +806,13 @@ fn test_lh()
 }
 
 #[test]
+fn test_lw() 
+{
+        sim2("asm/lw.bin", 205);
+
+}
+
+#[test]
 fn test_addi_1()
 {
     //-- Programa de test a ejecutar
