@@ -489,6 +489,24 @@ impl Cpurv {
                 //-- Incrementar pc para apuntar a la siguiente instruccion
                 self.pc += 4;
             }
+            InstructionRV::Lhu { rd, offs, rs1} => {
+
+                //-- Leer valor del registro fuente
+                let rs1 = self.read_reg(*rs1);
+
+                //-- Calcular la direccion de memoria
+                let addr:u32 = ((rs1 as i32) + offs) as u32;
+
+                //-- Leer la media palabra de memoria, con signo
+                let res:u16 = self.mem.read16(addr) as u16; 
+
+                //-- Guardar resultado en el registro destino
+                //-- Al pasar a u32 se extiende el signo
+                self.write_reg(*rd, res as u32);
+
+                //-- Incrementar pc para apuntar a la siguiente instruccion
+                self.pc += 4;
+            }
             //-- 🚧 TODO 🚧
             InstructionRV::Bne { rs1, rs2, offs } => {
                 //-- Leer registro rs1
@@ -752,7 +770,7 @@ fn main()
     //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim2("asm/lbu.bin", 185);
+    sim2("asm/lhu.bin", 205);
 
 }
 
@@ -820,14 +838,18 @@ fn test_lb()
 fn test_lbu() 
 {
     sim2("asm/lbu.bin", 185);
-
 }
 
 #[test]
 fn test_lh() 
 {
-        sim2("asm/lh.bin", 195);
+    sim2("asm/lh.bin", 195);
+}
 
+#[test]
+fn test_lhu() 
+{
+    sim2("asm/lhu.bin", 205);
 }
 
 #[test]
