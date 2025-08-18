@@ -507,6 +507,33 @@ impl Cpurv {
                 //-- Incrementar pc para apuntar a la siguiente instruccion
                 self.pc += 4;
             }
+            //──────────────────────────────────
+            //  Instrucciones tipo R
+            //──────────────────────────────────
+            InstructionRV::Add {rd, rs1, rs2} => {
+                
+                //-- Leer valor del registro fuente 1
+                let rs1 = self.read_reg(*rs1);
+
+                //-- Leer valor del registro fuente 2
+                let rs2 = self.read_reg(*rs2);
+
+                //-- Calcular resultado
+                //-- Se calcula para 64 bits
+                let t_rs1 = rs1 as i64;
+                let t_rs2: i64 = rs2 as i64;
+                let t_res: i64 = t_rs1 + t_rs2;
+
+                //-- Truncar resultado a 32 bits
+                let res:u32 = (t_res & 0xFFFF_FFFF) as u32;
+
+                //-- Escribir resultado en registro destino
+                self.write_reg(*rd, res);
+
+                //-- Incrementar pc para apuntar a la siguiente instruccion
+                self.pc += 4;
+
+            }
             //-- 🚧 TODO 🚧
             InstructionRV::Bne { rs1, rs2, offs } => {
                 //-- Leer registro rs1
@@ -770,7 +797,7 @@ fn main()
     //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim2("asm/lhu.bin", 205);
+    sim2("asm/add.bin", 700);
 
 }
 
@@ -856,7 +883,6 @@ fn test_lhu()
 fn test_lw() 
 {
         sim2("asm/lw.bin", 205);
-
 }
 
 #[test]
