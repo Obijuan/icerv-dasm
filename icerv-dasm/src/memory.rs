@@ -69,7 +69,7 @@ impl Memory {
     pub fn read16(&self, addr: u32) -> u16 {
 
         // Asegura que la dirección esté alineada a 2 bytes
-        assert!(addr % 2 == 0, "Dirección no alineada para media palabra.");
+        assert!(addr % 2 == 0, "Dirección NO ALINEADA para media palabra.");
 
         //-- Buffer para almacenar los bytes de la memoria palabra
         let mut bytes = [0; 2];
