@@ -275,18 +275,121 @@
     li x5, 2
     bne x4, x5, 1b 
 
+#───────────────────────────────────────────────────────────────────────
+#     testnum, src1_nops, src2_nops, load_inst, store_inst, result, offset, base ) 
+#   TEST_ST_SRC21_BYPASS( 18, 0, 0, lb, sb,                    0x33, 0, tdat );
+#───────────────────────────────────────────────────────────────────────
+    li x3, 18  #-- testnum
+    li  x4, 0
+1:  li  x13, 0x33  #-- result
+               ## src1_nops
+     
+    la  x12, tdat  #-- base
+               ## src2_nops
+     
+    sb x13, 0(x12)  #-- offset
+    lb x14, 0(x12)  #-- offset
+    li x7, 0x33
+    bne x14, x7, fail
+    addi x4, x4, 1
+    li x5, 2
+    bne x4, x5, 1b 
 
 
-#   TEST_ST_SRC21_BYPASS( 18, 0, 0, lb, sb, 0x33, 0, tdat );
-#   TEST_ST_SRC21_BYPASS( 19, 0, 1, lb, sb, 0x23, 1, tdat );
-#   TEST_ST_SRC21_BYPASS( 20, 0, 2, lb, sb, 0x22, 2, tdat );
-#   TEST_ST_SRC21_BYPASS( 21, 1, 0, lb, sb, 0x12, 3, tdat );
-#   TEST_ST_SRC21_BYPASS( 22, 1, 1, lb, sb, 0x11, 4, tdat );
-#   TEST_ST_SRC21_BYPASS( 23, 2, 0, lb, sb, 0x01, 5, tdat );
+#───────────────────────────────────────────────────────────────────────
+#     testnum, src1_nops, src2_nops, load_inst, store_inst, result, offset, base ) 
+#   TEST_ST_SRC21_BYPASS( 19, 0, 1, lb, sb,                    0x23, 1, tdat );
+#───────────────────────────────────────────────────────────────────────
+    li x3, 19  #-- testnum
+    li  x4, 0
+1:  li  x13, 0x23  #-- result
+                   ## src1_nops
+    la  x12, tdat  #-- base
+    nop            ## src2_nops
+     
+    sb x13, 1(x12)  #-- offset
+    lb x14, 1(x12)  #-- offset
+    li x7, 0x23
+    bne x14, x7, fail
+    addi x4, x4, 1
+    li x5, 2
+    bne x4, x5, 1b 
 
-#   li a0, 0xef
-#   la a1, tdat
-#   sb a0, 3(a1)
+#───────────────────────────────────────────────────────────────────────
+#     testnum, src1_nops, src2_nops, load_inst, store_inst, result, offset, base ) 
+#   TEST_ST_SRC21_BYPASS( 20, 0, 2, lb, sb,                     0x22, 2, tdat );
+#───────────────────────────────────────────────────────────────────────
+    li x3, 20  #-- testnum
+    li  x4, 0
+1:  li  x13, 0x22  #-- result
+                   ## src1_nops
+    la  x12, tdat  #-- base
+    nop            ## src2_nops
+     
+    sb x13, 2(x12)  #-- offset
+    lb x14, 2(x12)  #-- offset
+    li x7, 0x22
+    bne x14, x7, fail
+    addi x4, x4, 1
+    li x5, 2
+    bne x4, x5, 1b 
+
+#───────────────────────────────────────────────────────────────────────
+#     testnum, src1_nops, src2_nops, load_inst, store_inst, result, offset, base ) 
+#   TEST_ST_SRC21_BYPASS( 21, 1, 0, lb, sb,                      0x12, 3, tdat );
+#───────────────────────────────────────────────────────────────────────
+    li x3, 21  #-- testnum
+    li  x4, 0
+1:  li  x13, 0x12  #-- result
+                   ## src1_nops
+    la  x12, tdat  #-- base
+    nop            ## src2_nops
+     
+    sb x13, 3(x12)  #-- offset
+    lb x14, 3(x12)  #-- offset
+    li x7, 0x12
+    bne x14, x7, fail
+    addi x4, x4, 1
+    li x5, 2
+    bne x4, x5, 1b 
+
+#───────────────────────────────────────────────────────────────────────
+#     testnum, src1_nops, src2_nops, load_inst, store_inst, result, offset, base ) 
+#   TEST_ST_SRC21_BYPASS( 22, 1, 1, lb, sb,                    0x11, 4, tdat );
+#───────────────────────────────────────────────────────────────────────
+    li x3, 22  #-- testnum
+    li  x4, 0
+1:  li  x13, 0x11  #-- result
+                   ## src1_nops
+    la  x12, tdat  #-- base
+    nop            ## src2_nops
+     
+    sb x13, 4(x12)  #-- offset
+    lb x14, 4(x12)  #-- offset
+    li x7, 0x11
+    bne x14, x7, fail
+    addi x4, x4, 1
+    li x5, 2
+    bne x4, x5, 1b 
+
+#───────────────────────────────────────────────────────────────────────
+#     testnum, src1_nops, src2_nops, load_inst, store_inst, result, offset, base ) 
+#   TEST_ST_SRC21_BYPASS( 23, 2, 0, lb, sb,                     0x01, 5, tdat );
+#───────────────────────────────────────────────────────────────────────
+    li x3, 23  #-- testnum
+    li  x4, 0
+1:  li  x13, 0x01  #-- result
+                   ## src1_nops
+    la  x12, tdat  #-- base
+    nop            ## src2_nops
+     
+    sb x13, 5(x12)  #-- offset
+    lb x14, 5(x12)  #-- offset
+    li x7, 0x01
+    bne x14, x7, fail
+    addi x4, x4, 1
+    li x5, 2
+    bne x4, x5, 1b 
 
     #-- Test OK
     #-- x1=1

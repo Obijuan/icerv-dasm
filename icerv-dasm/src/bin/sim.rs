@@ -982,7 +982,7 @@ fn main()
     //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim2("asm/sb.bin", 300);
+    sim2("asm/sb.bin", 345);
 
 }
 
