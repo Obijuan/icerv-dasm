@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -- Fichero a ensamblar
-FICH="sltu"
+FICH="xor"
 
 # -- Ensamblador
 AS=riscv64-unknown-elf-as
