@@ -702,6 +702,23 @@ impl Cpurv {
             //──────────────────────────────────
             //  Instrucciones tipo S
             //──────────────────────────────────
+            InstructionRV::Sb { rs2, offs, rs1 } => {
+
+                //-- Leer valor del registro fuente 2
+                let rs2 = self.read_reg(*rs2);
+
+                //-- Leer valor del registro fuente 1
+                let rs1 = self.read_reg(*rs1);
+
+                //-- Calcular la direccion de memoria
+                let addr:u32 = ((rs1 as i32) + offs) as u32;
+
+                //-- Escribir el byte en memoria
+                self.mem.write8(addr, rs2 as u8);
+
+                //-- Incrementar pc para apuntar a la siguiente instruccion
+                self.pc += 4;
+            }
             //-- 🚧 TODO 🚧
             InstructionRV::Bne { rs1, rs2, offs } => {
                 //-- Leer registro rs1
@@ -965,7 +982,7 @@ fn main()
     //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim2("asm/srl.bin", 465);
+    sim2("asm/sb.bin", 300);
 
 }
 
