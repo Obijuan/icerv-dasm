@@ -1132,6 +1132,12 @@ fn test_sra()
 }
 
 #[test]
+fn test_sb() 
+{
+    sim2("asm/sb.bin", 345);
+}
+
+#[test]
 fn test_addi_1()
 {
     //-- Programa de test a ejecutar
