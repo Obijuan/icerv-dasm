@@ -699,6 +699,9 @@ impl Cpurv {
                 //-- Incrementar pc para apuntar a la siguiente instruccion
                 self.pc += 4;
             }
+            //──────────────────────────────────
+            //  Instrucciones tipo S
+            //──────────────────────────────────
             //-- 🚧 TODO 🚧
             InstructionRV::Bne { rs1, rs2, offs } => {
                 //-- Leer registro rs1
