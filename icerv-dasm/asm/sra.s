@@ -13,7 +13,7 @@
 
     li  x11, 0x80000000  #-- val1
     li  x12, 0x00000000  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0x80000000   #--result
     bne x14, x7, fail
@@ -27,7 +27,7 @@
 
     li  x11, 0x80000000  #-- val1
     li  x12, 1  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0xc0000000   #--result
     bne x14, x7, fail
@@ -41,7 +41,7 @@
 
     li  x11, 0x80000000  #-- val1
     li  x12, 7  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0xff000000  #--result
     bne x14, x7, fail
@@ -54,7 +54,7 @@
 
     li  x11, 0x80000000  #-- val1
     li  x12, 14  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0xfffe0000   #--result
     bne x14, x7, fail
@@ -67,7 +67,7 @@
 
     li  x11, 0x80000001  #-- val1
     li  x12, 31  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0xffffffff   #--result
     bne x14, x7, fail
@@ -80,7 +80,7 @@
 
     li  x11, 0x7fffffff  #-- val1
     li  x12, 0  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0x7fffffff   #--result
     bne x14, x7, fail
@@ -93,7 +93,7 @@
 
     li  x11, 0x7fffffff  #-- val1
     li  x12, 1  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0x3fffffff   #--result
     bne x14, x7, fail
@@ -106,7 +106,7 @@
 
     li  x11, 0x7fffffff  #-- val1
     li  x12, 7  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0x00ffffff   #--result
     bne x14, x7, fail
@@ -119,7 +119,7 @@
 
     li  x11, 0x7fffffff  #-- val1
     li  x12, 14  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0x0001ffff   #--result
     bne x14, x7, fail
@@ -132,7 +132,7 @@
 
     li  x11, 0x7fffffff  #-- val1
     li  x12, 31  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0x00000000   #--result
     bne x14, x7, fail
@@ -145,7 +145,7 @@
 
     li  x11, 0x81818181  #-- val1
     li  x12, 0  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0x81818181   #--result
     bne x14, x7, fail
@@ -158,7 +158,7 @@
 
     li  x11, 0x81818181  #-- val1
     li  x12, 1  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0xc0c0c0c0   #--result
     bne x14, x7, fail
@@ -171,7 +171,7 @@
 
     li  x11, 0x81818181  #-- val1
     li  x12, 7  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0xff030303   #--result
     bne x14, x7, fail
@@ -184,7 +184,7 @@
 
     li  x11, 0x81818181  #-- val1
     li  x12, 14  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0xfffe0606   #--result
     bne x14, x7, fail
@@ -197,7 +197,7 @@
 
     li  x11, 0x81818181  #-- val1
     li  x12, 31  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0xffffffff   #--result
     bne x14, x7, fail
@@ -211,7 +211,7 @@
 
     li  x11, 0x81818181  #-- val1
     li  x12, 0xffffffc0  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0x81818181   #--result
     bne x14, x7, fail
@@ -225,7 +225,7 @@
 
     li  x11, 0x81818181  #-- val1
     li  x12, 0xffffffc1  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0xc0c0c0c0   #--result
     bne x14, x7, fail
@@ -238,7 +238,7 @@
 
     li  x11, 0x81818181  #-- val1
     li  x12, 0xffffffc7  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0xff030303   #--result
     bne x14, x7, fail
@@ -251,7 +251,7 @@
 
     li  x11, 0x81818181  #-- val1
     li  x12, 0xffffffce  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0xfffe0606   #--result
     bne x14, x7, fail
@@ -264,7 +264,7 @@
 
     li  x11, 0xffffffff  #-- val1
     li  x12, 0xffffffff  #-- val2
-    srl x14, x11, x12
+    sra x14, x11, x12
 
     li  x7, 0xffffffff   #--result
     bne x14, x7, fail
@@ -279,7 +279,7 @@
 
     li  x11, 0x80000000  #-- val1
     li  x12, 7  #-- val2
-    srl x11, x11, x12
+    sra x11, x11, x12
 
     li  x7, 0xff000000   #--result
     bne x11, x7, fail
@@ -292,7 +292,7 @@
 
     li  x11, 0x80000000  #-- val1
     li  x12, 14  #-- val2
-    srl x11, x11, x12
+    sra x11, x11, x12
 
     li  x7, 0xfffe0000   #--result
     bne x11, x7, fail
@@ -304,7 +304,7 @@
     li  x3, 24  #-- testnum
 
     li  x11, 7 #-- val1 
-    srl x11, x11, x11; 
+    sra x11, x11, x11; 
 
     li  x7, 0   #--result
     bne x11, x7, fail
@@ -319,7 +319,7 @@
     li  x4, 0
 1:  li  x1, 0x80000000  #-- val1
     li  x2, 7  #-- val2
-    srl x14, x1, x2
+    sra x14, x1, x2
        ## nop_cycles
     addi  x6, x14, 0
     addi  x4, x4, 1
@@ -338,7 +338,7 @@
     li  x4, 0
 1:  li  x1, 0x80000000  #-- val1
     li  x2, 14  #-- val2
-    srl x14, x1, x2
+    sra x14, x1, x2
     nop   ## nop_cycles
     addi  x6, x14, 0
     addi  x4, x4, 1
@@ -357,7 +357,7 @@
     li  x4, 0
 1:  li  x1, 0x80000000  #-- val1
     li  x2, 31  #-- val2
-    srl x14, x1, x2
+    sra x14, x1, x2
     nop   ## nop_cycles
     addi  x6, x14, 0
     addi  x4, x4, 1
@@ -378,7 +378,7 @@
                ## src1_nops 
     li  x2, 7 #-- val2 
                ## src2_nops 
-    srl x14, x1, x2
+    sra x14, x1, x2
     addi  x4, x4, 1
     li  x5, 2
     bne x4, x5, 1b 
@@ -398,7 +398,7 @@
                ## src1_nops 
     li  x2, 14 #-- val2 
     nop        ## src2_nops 
-    srl x14, x1, x2
+    sra x14, x1, x2
     addi  x4, x4, 1
     li  x5, 2
     bne x4, x5, 1b 
@@ -417,7 +417,7 @@
                ## src1_nops 
     li  x2, 31 #-- val2 
     nop        ## src2_nops 
-    srl x14, x1, x2
+    sra x14, x1, x2
     addi  x4, x4, 1
     li  x5, 2
     bne x4, x5, 1b 
@@ -437,7 +437,7 @@
     li  x2, 7 #-- val2 
     nop           ## src2_nops 
     nop
-    srl x14, x1, x2
+    sra x14, x1, x2
     addi  x4, x4, 1
     li  x5, 2
     bne x4, x5, 1b 
@@ -456,7 +456,7 @@
     nop        ## src1_nops 
     li  x2, 14 #-- val2 
     nop        ## src2_nops 
-    srl x14, x1, x2
+    sra x14, x1, x2
     addi  x4, x4, 1
     li  x5, 2
     bne x4, x5, 1b 
@@ -476,7 +476,7 @@
     nop
     li  x2, 31 #-- val2 
                ## src2_nops 
-    srl x14, x1, x2
+    sra x14, x1, x2
     addi  x4, x4, 1
     li  x5, 2
     bne x4, x5, 1b 
@@ -495,7 +495,7 @@
                ## src1_nops 
     li  x2, 7 #-- val2 
                ## src2_nops 
-    srl x14, x1, x2
+    sra x14, x1, x2
     addi  x4, x4, 1
     li  x5, 2
     bne x4, x5, 1b 
@@ -515,7 +515,7 @@
      
     li x1, 0x80000000  #-- val1
     nop        ## src2_nops 
-    srl x14, x1, x2
+    sra x14, x1, x2
     addi x4, x4, 1
     li  x5, 2
     bne x4, x5, 1b 
@@ -535,7 +535,7 @@
      
     li x1, 0x80000000  #-- val1
     nop           ## src2_nops 
-    srl x14, x1, x2
+    sra x14, x1, x2
     addi x4, x4, 1
     li  x5, 2
     bne x4, x5, 1b 
@@ -555,7 +555,7 @@
     nop         ## src1_nops 
     li x1, 0x80000000  #-- val1
                ## src2_nops 
-    srl x14, x1, x2
+    sra x14, x1, x2
     addi x4, x4, 1
     li  x5, 2
     bne x4, x5, 1b 
@@ -574,7 +574,7 @@
     nop         ## src1_nops 
     li x1, 0x80000000  #-- val1
                ## src2_nops 
-    srl x14, x1, x2
+    sra x14, x1, x2
     addi x4, x4, 1
     li  x5, 2
     bne x4, x5, 1b 
@@ -593,7 +593,7 @@
     nop         ## src1_nops 
     li x1, 0x80000000  #-- val1
     nop          ## src2_nops 
-    srl x14, x1, x2
+    sra x14, x1, x2
     addi x4, x4, 1
     li  x5, 2
     bne x4, x5, 1b 
@@ -609,7 +609,7 @@
     li x3, 40  #-- testnum
 
     li x1, 15  #-- val
-    srl x2, x0, x1
+    sra x2, x0, x1
 
     li  x7, 0  #-- Result
     bne x2, x7, fail
@@ -621,7 +621,7 @@
     li x3, 41  #-- testnum
 
     li x1, 32  #-- val
-    srl x2, x1, x0
+    sra x2, x1, x0
     
     li  x7, 32  #-- Result
     bne x2, x7, fail
@@ -632,7 +632,7 @@
 #────────────────────────────────────────────────
     li x3, 42  #-- testnum
 
-    srl x1, x0, x0
+    sra x1, x0, x0
     
     li  x7, 0  #-- Result
     bne x1, x7, fail
@@ -645,7 +645,7 @@
 
     li x1, 1024  #-- val1
     li x2, 2048  #-- val2
-    srl x0, x1, x2
+    sra x0, x1, x2
     
     li  x7, 0  #-- Result
     bne x0, x7, fail
