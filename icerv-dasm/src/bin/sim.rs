@@ -638,7 +638,7 @@ impl Cpurv {
                 let rs2 = rs2 & 0x1F;
 
                 //-- Calcular resultado
-                let res = (rs1 as i32) >> (rs2 as u32);
+                let res = (rs1 as u32) >> (rs2 as u32);
 
                 //-- Escribir resultado en registro destino
                 self.write_reg(*rd, res as u32);
@@ -962,7 +962,7 @@ fn main()
     //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim2("asm/sra.bin", 470);
+    sim2("asm/srl.bin", 465);
 
 }
 
