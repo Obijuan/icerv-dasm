@@ -792,6 +792,79 @@ impl Cpurv {
                     self.pc += 4;
                 }
             }
+            InstructionRV::Blt { rs1, rs2, offs } => {
+                //-- Leer registro rs1
+                let rs1 = self.read_reg(*rs1) as i32;
+
+                //-- Leer registro rs2
+                let rs2 = self.read_reg(*rs2) as i32;
+
+                //-- Comprobar la condición
+                if rs1 < rs2 {
+                    //-- Ejecutar el salto
+                    self.pc = (self.pc as i32 + *offs) as u32;
+                }
+                else {
+                    //-- No se cumple condición. El PC apunta a la siguiente
+                    //-- instruccion
+                    self.pc += 4;
+                }
+            }
+            InstructionRV::Bge { rs1, rs2, offs } => {
+                //-- Leer registro rs1
+                let rs1 = self.read_reg(*rs1) as i32;
+
+                //-- Leer registro rs2
+                let rs2 = self.read_reg(*rs2) as i32;
+
+                //-- Comprobar la condición
+                if rs1 >= rs2 {
+                    //-- Ejecutar el salto
+                    self.pc = (self.pc as i32 + *offs) as u32;
+                }
+                else {
+                    //-- No se cumple condición. El PC apunta a la siguiente
+                    //-- instruccion
+                    self.pc += 4;
+                }
+            }
+            InstructionRV::Bltu { rs1, rs2, offs } => {
+                //-- Leer registro rs1
+                let rs1 = self.read_reg(*rs1);
+
+                //-- Leer registro rs2
+                let rs2 = self.read_reg(*rs2);
+
+                //-- Comprobar la condición
+                if rs1 < rs2 {
+                    //-- Ejecutar el salto
+                    self.pc = (self.pc as i32 + *offs) as u32;
+                }
+                else {
+                    //-- No se cumple condición. El PC apunta a la siguiente
+                    //-- instruccion
+                    self.pc += 4;
+                }
+            }
+            InstructionRV::Bgeu { rs1, rs2, offs } => {
+                //-- Leer registro rs1
+                let rs1 = self.read_reg(*rs1);
+
+                //-- Leer registro rs2
+                let rs2 = self.read_reg(*rs2);
+
+                //-- Comprobar la condición
+                if rs1 < rs2 {
+                    //-- Ejecutar el salto
+                    self.pc = (self.pc as i32 + *offs) as u32;
+                }
+                else {
+                    //-- No se cumple condición. El PC apunta a la siguiente
+                    //-- instruccion
+                    self.pc += 4;
+                }
+            }
+
             //-- 🚧 TODO 🚧
             InstructionRV::Jal {rd, offs} => {
 
@@ -1037,7 +1110,7 @@ fn main()
     //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim2("asm/bne.bin", 255);
+    sim2("asm/blt.bin", 260);
 
 }
 
@@ -1214,6 +1287,12 @@ fn test_beq()
 fn test_bne() 
 {
     sim2("asm/bne.bin", 255);
+}
+
+#[test]
+fn test_blt() 
+{
+    sim2("asm/blt.bin", 260);
 }
 
 #[test]
