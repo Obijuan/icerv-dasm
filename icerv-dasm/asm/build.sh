@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -- Fichero a ensamblar
-FICH="blt"
+FICH="bge"
 
 # -- Ensamblador
 AS=riscv64-unknown-elf-as
