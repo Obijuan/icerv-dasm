@@ -1037,7 +1037,7 @@ fn main()
     //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim2("asm/beq.bin", 255);
+    sim2("asm/bne.bin", 255);
 
 }
 
@@ -1208,6 +1208,12 @@ fn test_sw()
 fn test_beq() 
 {
     sim2("asm/beq.bin", 255);
+}
+
+#[test]
+fn test_bne() 
+{
+    sim2("asm/bne.bin", 255);
 }
 
 #[test]
