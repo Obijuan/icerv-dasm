@@ -753,7 +753,27 @@ impl Cpurv {
                 //-- Incrementar pc para apuntar a la siguiente instruccion
                 self.pc += 4;
             }
-            //-- 🚧 TODO 🚧
+            //──────────────────────────────────
+            //  Instrucciones tipo B
+            //──────────────────────────────────
+            InstructionRV::Beq { rs1, rs2, offs } => {
+                //-- Leer registro rs1
+                let rs1 = self.read_reg(*rs1);
+
+                //-- Leer registro rs2
+                let rs2 = self.read_reg(*rs2);
+
+                //-- Comprobar la condición
+                if rs1 == rs2 {
+                    //-- Ejecutar el salto
+                    self.pc = (self.pc as i32 + *offs) as u32;
+                }
+                else {
+                    //-- No se cumple condición. El PC apunta a la siguiente
+                    //-- instruccion
+                    self.pc += 4;
+                }
+            }
             InstructionRV::Bne { rs1, rs2, offs } => {
                 //-- Leer registro rs1
                 let rs1 = self.read_reg(*rs1);
@@ -772,6 +792,7 @@ impl Cpurv {
                     self.pc += 4;
                 }
             }
+            //-- 🚧 TODO 🚧
             InstructionRV::Jal {rd, offs} => {
 
                 //-- Guardar direccion de retorno
@@ -1016,7 +1037,7 @@ fn main()
     //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim2("asm/sw.bin", 415);
+    sim2("asm/beq.bin", 255);
 
 }
 
@@ -1181,6 +1202,12 @@ fn test_sh()
 fn test_sw() 
 {
     sim2("asm/sw.bin", 415);
+}
+
+#[test]
+fn test_beq() 
+{
+    sim2("asm/beq.bin", 255);
 }
 
 #[test]
