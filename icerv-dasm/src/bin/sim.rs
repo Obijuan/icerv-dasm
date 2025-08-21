@@ -867,7 +867,6 @@ impl Cpurv {
             //──────────────────────────────────
             //  Instrucciones tipo U: LUI
             //──────────────────────────────────
-            //-- 🚧 TODO 🚧
             InstructionRV::Lui {rd, imm} => {
 
                 //-- Calcular resultado
@@ -881,8 +880,9 @@ impl Cpurv {
 
             }
             InstructionRV::Auipc {rd, imm} => {
+
                 //-- Calcular resultado: Direccion destino
-                let addr: u32 = ((self.pc as i32) + imm) as u32;
+                let addr: u32 = ((self.pc as i32) + (imm<<12)) as u32;
 
                 //-- Escribir resultado en registro destino
                 self.write_reg(*rd, addr);
@@ -893,7 +893,7 @@ impl Cpurv {
             //──────────────────────────────────
             //  Instrucciones tipo J
             //──────────────────────────────────
-            
+            //-- 🚧 TODO 🚧
             InstructionRV::Jal {rd, offs} => {
 
                 //-- Guardar direccion de retorno
@@ -1115,7 +1115,7 @@ fn main()
     //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim2("asm/lui.bin", 25);
+    sim2("asm/auipc.bin", 20);
 
 }
 
@@ -1322,6 +1322,12 @@ fn test_bgeu()
 fn test_lui() 
 {
     sim2("asm/lui.bin", 25);
+}
+
+#[test]
+fn test_auipc() 
+{
+    sim2("asm/auipc.bin", 20);
 }
 
 #[test]

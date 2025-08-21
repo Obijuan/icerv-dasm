@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -- Fichero a ensamblar
-FICH="lui"
+FICH="auipc"
 
 # -- Ensamblador
 AS=riscv64-unknown-elf-as
