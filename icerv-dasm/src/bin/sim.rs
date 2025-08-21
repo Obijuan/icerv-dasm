@@ -902,8 +902,20 @@ impl Cpurv {
                 //-- Actualizar el pc
                 self.pc = (self.pc as i32 + *offs) as u32;
             }
+            InstructionRV::Jalr {rd, offs, rs1} => {
+
+                //-- Leer valor del registro fuente
+                let rs1 = self.read_reg(*rs1);
+
+                 //-- Guardar direccion de retorno
+                self.write_reg(*rd, self.pc+4);
+
+                //-- Actualizar el pc
+                self.pc = (*offs + (rs1 as i32)) as u32;
+
+               
+            }
            
-            
             //──────────────────────────────────
             //  Instrucciones DESCONOCIDA
             //  (o NO IMPLEMENTADA)
@@ -1115,7 +1127,7 @@ fn main()
     //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim2("asm/jal.bin", 15);
+    sim2("asm/jalr.bin", 80);
 
 }
 
@@ -1334,6 +1346,12 @@ fn test_auipc()
 fn test_jal() 
 {
     sim2("asm/jal.bin", 15);
+}
+
+#[test]
+fn test_jalr() 
+{
+    sim2("asm/jalr.bin", 80);
 }
 
 #[test]
