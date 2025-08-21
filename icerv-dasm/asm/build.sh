@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -- Fichero a ensamblar
-FICH="jalr"
+FICH="ecall"
 
 # -- Ensamblador
 AS=riscv64-unknown-elf-as

@@ -915,7 +915,23 @@ impl Cpurv {
 
                
             }
-           
+            //──────────────────────────────────
+            //  Instrucciones tipo ecall
+            //──────────────────────────────────
+            InstructionRV::Ecall => {
+                //-- Incrementar pc para apuntar a la siguiente instruccion
+                self.pc += 4;
+
+                //-- DEBUG!
+                println!("ECALL!!");
+            }
+            InstructionRV::Ebreak => {
+                //-- Incrementar pc para apuntar a la siguiente instruccion
+                self.pc += 4;
+
+                //-- DEBUG!
+                println!("EBREAK!!");
+            }
             //──────────────────────────────────
             //  Instrucciones DESCONOCIDA
             //  (o NO IMPLEMENTADA)
@@ -1127,7 +1143,7 @@ fn main()
     //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim2("asm/jalr.bin", 80);
+    sim2("asm/ecall.bin", 5);
 
 }
 
@@ -1352,6 +1368,12 @@ fn test_jal()
 fn test_jalr() 
 {
     sim2("asm/jalr.bin", 80);
+}
+
+#[test]
+fn test_ecall() 
+{
+    sim2("asm/ecall.bin", 5);
 }
 
 #[test]
