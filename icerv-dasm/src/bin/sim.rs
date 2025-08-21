@@ -1331,6 +1331,12 @@ fn test_auipc()
 }
 
 #[test]
+fn test_jal() 
+{
+    sim2("asm/jal.bin", 15);
+}
+
+#[test]
 fn test_addi_1()
 {
     //-- Programa de test a ejecutar
