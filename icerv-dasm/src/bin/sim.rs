@@ -864,19 +864,10 @@ impl Cpurv {
                     self.pc += 4;
                 }
             }
-
-            //-- 🚧 TODO 🚧
-            InstructionRV::Jal {rd, offs} => {
-
-                //-- Guardar direccion de retorno
-                self.write_reg(*rd, self.pc+4);
-
-                //-- Actualizar el pc
-                self.pc = (self.pc as i32 + *offs) as u32;
-            }
             //──────────────────────────────────
             //  Instrucciones tipo U: LUI
             //──────────────────────────────────
+            //-- 🚧 TODO 🚧
             InstructionRV::Lui {rd, imm} => {
 
                 //-- Calcular resultado
@@ -899,6 +890,20 @@ impl Cpurv {
                 //-- Incrementar pc para apuntar a la siguiente instruccion
                 self.pc += 4;
             } 
+            //──────────────────────────────────
+            //  Instrucciones tipo J
+            //──────────────────────────────────
+            
+            InstructionRV::Jal {rd, offs} => {
+
+                //-- Guardar direccion de retorno
+                self.write_reg(*rd, self.pc+4);
+
+                //-- Actualizar el pc
+                self.pc = (self.pc as i32 + *offs) as u32;
+            }
+           
+            
             //──────────────────────────────────
             //  Instrucciones DESCONOCIDA
             //  (o NO IMPLEMENTADA)
@@ -1110,7 +1115,7 @@ fn main()
     //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim2("asm/bgeu.bin", 330);
+    sim2("asm/lui.bin", 25);
 
 }
 
@@ -1311,6 +1316,12 @@ fn test_bltu()
 fn test_bgeu() 
 {
     sim2("asm/bgeu.bin", 330);
+}
+
+#[test]
+fn test_lui() 
+{
+    sim2("asm/lui.bin", 25);
 }
 
 #[test]
