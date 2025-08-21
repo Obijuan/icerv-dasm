@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -- Fichero a ensamblar
-FICH="auipc"
+FICH="jal"
 
 # -- Ensamblador
 AS=riscv64-unknown-elf-as

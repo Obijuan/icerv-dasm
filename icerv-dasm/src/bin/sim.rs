@@ -1115,7 +1115,7 @@ fn main()
     //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim2("asm/auipc.bin", 20);
+    sim2("asm/jal.bin", 15);
 
 }
 
