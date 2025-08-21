@@ -854,7 +854,7 @@ impl Cpurv {
                 let rs2 = self.read_reg(*rs2);
 
                 //-- Comprobar la condición
-                if rs1 < rs2 {
+                if rs1 >= rs2 {
                     //-- Ejecutar el salto
                     self.pc = (self.pc as i32 + *offs) as u32;
                 }
@@ -1110,7 +1110,7 @@ fn main()
     //let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim2("asm/bltu.bin", 280);
+    sim2("asm/bgeu.bin", 330);
 
 }
 
@@ -1305,6 +1305,12 @@ fn test_bge()
 fn test_bltu() 
 {
     sim2("asm/bltu.bin", 280);
+}
+
+#[test]
+fn test_bgeu() 
+{
+    sim2("asm/bgeu.bin", 330);
 }
 
 #[test]
