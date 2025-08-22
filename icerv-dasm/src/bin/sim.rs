@@ -134,48 +134,63 @@ impl Cpurv {
     //  Mostrars todos los registros
     //────────────────────────────────────────────────    
     fn show(&self) {
-        println!("");
-        
-        println!("🟢 x1: {:#010X}", self.x1);
-        println!("🟢 x2: {:#010X}", self.x2);
-        println!("🟢 x3: {:#010X}", self.x3);
-        println!("🟢 x4: {:#010X}", self.x4);
-        println!("🟢 x5: {:#010X}", self.x5);
-        println!("🟢 x6: {:#010X}", self.x6);
-        println!("🟢 x7: {:#010X}", self.x7);
-        println!("🟢 x8: {:#010X}", self.x8);
-        println!("🟢 x9: {:#010X}", self.x9);
-        println!("🟢 x10: {:#010X}", self.x10);
-        println!("🟢 x11: {:#010X}", self.x11);
-        println!("🟢 x12: {:#010X}", self.x12);
-        println!("🟢 x13: {:#010X}", self.x13);
-        println!("🟢 x14: {:#010X}", self.x14);
-        println!("🟢 x15: {:#010X}", self.x15);
-        println!("🟢 x16: {:#010X}", self.x16);
-        println!("🟢 x17: {:#010X}", self.x17);
-        println!("🟢 x18: {:#010X}", self.x18);
-        println!("🟢 x19: {:#010X}", self.x19);
-        println!("🟢 x20: {:#010X}", self.x20);
-        println!("🟢 x21: {:#010X}", self.x21);
-        println!("🟢 x22: {:#010X}", self.x22);
-        println!("🟢 x23: {:#010X}", self.x23);
-        println!("🟢 x24: {:#010X}", self.x24);
-        println!("🟢 x25: {:#010X}", self.x25);
-        println!("🟢 x26: {:#010X}", self.x26);
-        println!("🟢 x27: {:#010X}", self.x27);
-        println!("🟢 x28: {:#010X}", self.x28);
-        println!("🟢 x29: {:#010X}", self.x29);
-        println!("🟢 x30: {:#010X}", self.x30);
-        println!("🟢 x31: {:#010X}", self.x31);
-        println!("➡️  pc: {:#010X}", self.pc);
+        println!("┌─────────────────────────────────────────────────────────────────────┐");
 
-        if self.cycle < self.max_cycles {
-            println!("⏱️  Ciclo: {}", self.cycle);
-        } else {
-            println!("⏱️  Ciclo: {} (MAX)", self.cycle);
-        }
+        print!("│  {}x0:{} {:#010X}   {}x1:{} {:#010X}", ansi::BLUE, ansi::RESET, 0, 
+                ansi::BLUE, ansi::RESET, self.x1);
+        print!("   {}x2:{} {:#010X}   {}x3:{} {:#010X}  │\n", ansi::BLUE, ansi::RESET,
+                self.x2, ansi::BLUE, ansi::RESET, self.x3);
+
+        print!("│  {}x4:{} {:#010X}   {}x5:{} {:#010X}", ansi::BLUE, ansi::RESET, 
+                self.x4, ansi::BLUE, ansi::RESET, self.x5);
+        print!("   {}x6:{} {:#010X}   {}x7:{} {:#010X}  │\n", ansi::BLUE, ansi::RESET,
+                self.x6, ansi::BLUE, ansi::RESET, self.x7);
+
+        print!("│  {}x8:{} {:#010X}   {}x9:{} {:#010X}", ansi::BLUE, ansi::RESET, 
+                self.x8, ansi::BLUE, ansi::RESET, self.x9);
+        print!("  {}x10{}: {:#010X}  {}x11:{} {:#010X}  │\n", ansi::BLUE, ansi::RESET, 
+                self.x10, ansi::BLUE, ansi::RESET, self.x11);
+
+        print!("│ {}x12:{} {:#010X}  {}x13:{} {:#010X}", ansi::BLUE, ansi::RESET, 
+                self.x12, ansi::BLUE, ansi::RESET, self.x13);
+        print!("  {}x14:{} {:#010X}  {}x15:{} {:#010X}  │\n", ansi::BLUE, ansi::RESET,
+                self.x14, ansi::BLUE, ansi::RESET, self.x15);
+
+        print!("│ {}x16:{} {:#010X}  {}x17:{} {:#010X}", ansi::BLUE, ansi::RESET, 
+                self.x16, ansi::BLUE, ansi::RESET, self.x17);
+        print!("  {}x18:{} {:#010X}  {}x19:{} {:#010X}  │\n", ansi::BLUE, ansi::RESET,
+                self.x18, ansi::BLUE, ansi::RESET, self.x19);
+
+        print!("│ {}x20:{} {:#010X}  {}x21:{} {:#010X}", ansi::BLUE, ansi::RESET, 
+                self.x20, ansi::BLUE, ansi::RESET, self.x21);
+        print!("  {}x22:{} {:#010X}  {}x23:{} {:#010X}  │\n", ansi::BLUE, ansi::RESET,
+                self.x22, ansi::BLUE, ansi::RESET, self.x23);
+
+        print!("│ {}x24:{} {:#010X}  {}x25:{} {:#010X}", ansi::BLUE, ansi::RESET, 
+                self.x24, ansi::BLUE, ansi::RESET, self.x25);
+        print!("  {}x26:{} {:#010X}  {}x27:{} {:#010X}  │\n", ansi::BLUE, ansi::RESET,
+                self.x26, ansi::BLUE, ansi::RESET, self.x27);
+
+        print!("│ {}x28:{} {:#010X}  {}x29:{} {:#010X}", ansi::BLUE, ansi::RESET, 
+                self.x28, ansi::BLUE, ansi::RESET, self.x29);
+        print!("  {}x22:{} {:#010X}  {}x23:{} {:#010X}  │\n", ansi::BLUE, ansi::RESET,
+                self.x30, ansi::BLUE, ansi::RESET, self.x31);
         
-        println!("🚨  Estado: {}", self.state.to_str());
+        println!("├───────────────────┬──────────────────────┬──────────────────────────┤");
+
+        print!("│ ➡️  pc: {:#010X} │", self.pc);
+
+        print!(" ⏱️  Ciclo: {:4}", self.cycle);
+        if self.cycle < self.max_cycles {
+            print!("      ");
+        } else {
+            print!(" (MAX)");
+        }
+        print!(" │");
+
+        print!(" 🚨  Estado: {:5}        │\n", self.state.to_str());
+        println!("└───────────────────┴──────────────────────┴──────────────────────────┘");
+
     }
 
     //────────────────────────────────────────────────
@@ -923,14 +938,14 @@ impl Cpurv {
                 self.pc += 4;
 
                 //-- DEBUG!
-                println!("ECALL!!");
+                //println!("ECALL!!");
             }
             InstructionRV::Ebreak => {
                 //-- Incrementar pc para apuntar a la siguiente instruccion
                 self.pc += 4;
 
                 //-- DEBUG!
-                println!("EBREAK!!");
+                //println!("EBREAK!!");
             }
             //──────────────────────────────────
             //  Instrucciones DESCONOCIDA
@@ -1006,57 +1021,6 @@ fn run_mcode(prog: &[u32], max_cycles: u32) -> Cpurv
     cpu
 }
 
-//────────────────────────────────────────────────
-//  Cargar un programa desde un fichero binario
-//  Se devuelve como una lista de instrucciones
-//──────────────────────────────────────────────── 
-fn load_prog(fich: &str) -> Vec<u32> 
-{
-    //-- Abrir fichero
-    let ofile = File::open(fich);
-    let mut file = match ofile {
-        Ok(value) => {
-            value
-        }
-        Err(error) => {
-            println!("{}Error: {}{}", ansi::RED, error, ansi::RESET);
-            println!();
-            return vec![];
-        }
-    };
-
-    //-- Crear un buffer para almacenar los 4 bytes de la instruccion
-    let mut buffer = [0; 4];
-
-    //-- Buffer donde colocar las instrucciones
-    let mut buffer_insts: Vec<u32> = Vec::new();
-    
-    //-- Leer fichero de 4 en 4 bytes
-    while file.read_exact(&mut buffer).is_ok() {
-
-        // Convierte los 4 bytes a un entero de 32 bits sin signo (u32)
-        let instr = u32::from_le_bytes(buffer);
-
-        // Meter la instruccion en el buffer de instrucciones
-        buffer_insts.push(instr);
-    }
-    buffer_insts
-}
-
-
-fn sim(fich: &str, max_cycles: u32)
-{
-    println!("{}{}{}",ansi::BLUE, fich, ansi::RESET);
-
-    let insts = load_prog(fich);
-
-    println!("Tamaño: {} Instrucciones", insts.len());
-
-    let cpu = run_mcode(&insts, max_cycles);
-    assert_eq!(cpu.x1, 1);
-    cpu.show();
-    
-}
 
 fn sim2(fich: &str, max_cycles: u32)
 {
@@ -1140,12 +1104,13 @@ fn main()
     // };
 
     //-- Leer programa de prueba desde un fichero
-    //let fich = String::from("asm/addi.bin");
+    let fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim2("asm/ecall.bin", 5);
-
+    //sim2(&fich, 10);
+    sim2("asm/ecall.bin", 10);
 }
+
 
 #[test]
 fn test_addi() 
