@@ -31,9 +31,9 @@ fn main() {
         }
         None => {
             print!("{}", ansi::RED);
-            println!("Error: Fichero a volcar NO especificado");
+            println!("Error: Fichero a simular NO especificado");
             print!("{}", ansi::RESET);
-            println!("  Uso: rvli fichero");
+            println!("  Uso: sim fichero");
             return;
         }
     };

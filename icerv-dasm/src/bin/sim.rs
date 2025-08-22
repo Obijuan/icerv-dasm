@@ -1022,7 +1022,12 @@ impl Cpurv {
 }
 
 
-fn sim2(fich: &str, max_cycles: u32)
+//────────────────────────────────────────────────
+//  Simular un programa almacenado en un fichero
+//  Se devuelve la cpu creada para analizar su estado
+//  tras la simulacion
+//──────────────────────────────────────────────── 
+fn sim(fich: &str, max_cycles: u32) -> Cpurv
 {
     //-- Crear memoria e inicializarla desde un fichero
     let mem = Memory::from_file(fich);
@@ -1041,8 +1046,25 @@ fn sim2(fich: &str, max_cycles: u32)
 
     println!("PROGRAMA TERMINADO");
 
+    cpu
+}
+
+//────────────────────────────────────────────────
+//  Simular un programa de test y comprobar
+//  si lo ha pasado correctamente
+//────────────────────────────────────────────────
+fn sim_test(fich: &str, max_cycles: u32)
+{
+
+    //-- Simular el programa
+    let cpu = sim(fich, max_cycles);
+
+    //-- Comprobar si se ha pasado el test o no
+    //-- Esto lo sabemos examinando el valor del registro x1
+    //-- que debe ser 1 si el test ha pasado correctamente
     assert_eq!(cpu.x1, 1);
     cpu.show();
+    println!("✅ TEST PASSED!!");
 }
 
 fn main() 
@@ -1070,237 +1092,237 @@ fn main()
     let _fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    sim2(&fich, 10);
+    sim(&fich, 10);
 }
 
 
 #[test]
 fn test_addi() 
 {
-    sim2("asm/addi.bin", 210);
+    sim_test("asm/addi.bin", 210);
 }
 
 #[test]
 fn test_slli() 
 {
-    sim2("asm/slli.bin", 210);
+    sim_test("asm/slli.bin", 210);
 }
 
 #[test]
 fn test_slti() 
 {
-    sim2("asm/slti.bin", 210);
+    sim_test("asm/slti.bin", 210);
 }
 
 #[test]
 fn test_sltiu() 
 {
-    sim2("asm/sltiu.bin", 210);
+    sim_test("asm/sltiu.bin", 210);
 }
 
 #[test]
 fn test_srli() 
 {
-    sim2("asm/srli.bin", 220);
+    sim_test("asm/srli.bin", 220);
 }
 
 #[test]
 fn test_srai() 
 {
-    sim2("asm/srai.bin", 230);
+    sim_test("asm/srai.bin", 230);
 }
 
 #[test]
 fn test_xori() 
 {
-    sim2("asm/xori.bin", 170);
+    sim_test("asm/xori.bin", 170);
 }
 
 #[test]
 fn test_ori() 
 {
-    sim2("asm/ori.bin", 230);
+    sim_test("asm/ori.bin", 230);
 }
 
 #[test]
 fn test_andi() 
 {
-    sim2("asm/andi.bin", 230);
+    sim_test("asm/andi.bin", 230);
 }
 
 #[test]
 fn test_lb() 
 {
-    sim2("asm/lb.bin", 170);
+    sim_test("asm/lb.bin", 170);
 }
 
 #[test]
 fn test_lbu() 
 {
-    sim2("asm/lbu.bin", 185);
+    sim_test("asm/lbu.bin", 185);
 }
 
 #[test]
 fn test_lh() 
 {
-    sim2("asm/lh.bin", 195);
+    sim_test("asm/lh.bin", 195);
 }
 
 #[test]
 fn test_lhu() 
 {
-    sim2("asm/lhu.bin", 205);
+    sim_test("asm/lhu.bin", 205);
 }
 
 #[test]
 fn test_lw() 
 {
-    sim2("asm/lw.bin", 205);
+    sim_test("asm/lw.bin", 205);
 }
 
 #[test]
 fn test_add() 
 {
-    sim2("asm/add.bin", 425);
+    sim_test("asm/add.bin", 425);
 }
 
 #[test]
 fn test_sub() 
 {
-    sim2("asm/sub.bin", 415);
+    sim_test("asm/sub.bin", 415);
 }
 
 #[test]
 fn test_sll() 
 {
-    sim2("asm/sll.bin", 450);
+    sim_test("asm/sll.bin", 450);
 }
 
 #[test]
 fn test_slt() 
 {
-    sim2("asm/slt.bin", 415);
+    sim_test("asm/slt.bin", 415);
 }
 
 #[test]
 fn test_sltu() 
 {
-    sim2("asm/sltu.bin", 415);
+    sim_test("asm/sltu.bin", 415);
 }
 
 #[test]
 fn test_xor() 
 {
-    sim2("asm/xor.bin", 450);
+    sim_test("asm/xor.bin", 450);
 }
 
 #[test]
 fn test_srl() 
 {
-    sim2("asm/srl.bin", 470);
+    sim_test("asm/srl.bin", 470);
 }
 
 #[test]
 fn test_or() 
 {
-    sim2("asm/or.bin", 450);
+    sim_test("asm/or.bin", 450);
 }
 
 #[test]
 fn test_and() 
 {
-    sim2("asm/and.bin", 445);
+    sim_test("asm/and.bin", 445);
 }
 
 
 #[test]
 fn test_sra() 
 {
-    sim2("asm/sra.bin", 470);
+    sim_test("asm/sra.bin", 470);
 }
 
 #[test]
 fn test_sb() 
 {
-    sim2("asm/sb.bin", 345);
+    sim_test("asm/sb.bin", 345);
 }
 
 #[test]
 fn test_sh() 
 {
-    sim2("asm/sh.bin", 400);
+    sim_test("asm/sh.bin", 400);
 }
 
 #[test]
 fn test_sw() 
 {
-    sim2("asm/sw.bin", 415);
+    sim_test("asm/sw.bin", 415);
 }
 
 #[test]
 fn test_beq() 
 {
-    sim2("asm/beq.bin", 255);
+    sim_test("asm/beq.bin", 255);
 }
 
 #[test]
 fn test_bne() 
 {
-    sim2("asm/bne.bin", 255);
+    sim_test("asm/bne.bin", 255);
 }
 
 #[test]
 fn test_blt() 
 {
-    sim2("asm/blt.bin", 260);
+    sim_test("asm/blt.bin", 260);
 }
 
 #[test]
 fn test_bge() 
 {
-    sim2("asm/bge.bin", 300);
+    sim_test("asm/bge.bin", 300);
 }
 
 #[test]
 fn test_bltu() 
 {
-    sim2("asm/bltu.bin", 280);
+    sim_test("asm/bltu.bin", 280);
 }
 
 #[test]
 fn test_bgeu() 
 {
-    sim2("asm/bgeu.bin", 330);
+    sim_test("asm/bgeu.bin", 330);
 }
 
 #[test]
 fn test_lui() 
 {
-    sim2("asm/lui.bin", 25);
+    sim_test("asm/lui.bin", 25);
 }
 
 #[test]
 fn test_auipc() 
 {
-    sim2("asm/auipc.bin", 20);
+    sim_test("asm/auipc.bin", 20);
 }
 
 #[test]
 fn test_jal() 
 {
-    sim2("asm/jal.bin", 15);
+    sim_test("asm/jal.bin", 15);
 }
 
 #[test]
 fn test_jalr() 
 {
-    sim2("asm/jalr.bin", 80);
+    sim_test("asm/jalr.bin", 80);
 }
 
 #[test]
 fn test_ecall() 
 {
-    sim2("asm/ecall.bin", 5);
+    sim_test("asm/ecall.bin", 5);
 }
 
 #[test]
