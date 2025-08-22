@@ -16,6 +16,7 @@ use icerv_dasm::instructionrv::InstructionRV;
 
 #[cfg(test)]
 mod test;
+mod test_sim;
 
 
 //────────────────────────────────────────────────

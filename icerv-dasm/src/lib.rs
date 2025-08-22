@@ -23,3 +23,8 @@ pub mod graphics;
 //──────── Memoria
 pub mod memory;
 
+//──────── CPU RISCV
+pub mod cpurv;
+
+//──────── SIM
+pub mod sim;
