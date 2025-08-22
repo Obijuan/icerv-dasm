@@ -25,230 +25,230 @@ use icerv_dasm::cpurv::Cpurv;
 #[test]
 fn test_addi() 
 {
-    sim_test("asm/addi.bin", 210);
+    sim_test("asm/addi.bin", 1000);
 }
 
 #[test]
 fn test_slli() 
 {
-    sim_test("asm/slli.bin", 210);
+    sim_test("asm/slli.bin", 1000);
 }
 
 #[test]
 fn test_slti() 
 {
-    sim_test("asm/slti.bin", 210);
+    sim_test("asm/slti.bin", 1000);
 }
 
 #[test]
 fn test_sltiu() 
 {
-    sim_test("asm/sltiu.bin", 210);
+    sim_test("asm/sltiu.bin", 1000);
 }
 
 #[test]
 fn test_srli() 
 {
-    sim_test("asm/srli.bin", 220);
+    sim_test("asm/srli.bin", 1000);
 }
 
 #[test]
 fn test_srai() 
 {
-    sim_test("asm/srai.bin", 230);
+    sim_test("asm/srai.bin", 1000);
 }
 
 #[test]
 fn test_xori() 
 {
-    sim_test("asm/xori.bin", 170);
+    sim_test("asm/xori.bin", 1000);
 }
 
 #[test]
 fn test_ori() 
 {
-    sim_test("asm/ori.bin", 230);
+    sim_test("asm/ori.bin", 1000);
 }
 
 #[test]
 fn test_andi() 
 {
-    sim_test("asm/andi.bin", 230);
+    sim_test("asm/andi.bin", 1000);
 }
 
 #[test]
 fn test_lb() 
 {
-    sim_test("asm/lb.bin", 170);
+    sim_test("asm/lb.bin", 1000);
 }
 
 #[test]
 fn test_lbu() 
 {
-    sim_test("asm/lbu.bin", 185);
+    sim_test("asm/lbu.bin", 1000);
 }
 
 #[test]
 fn test_lh() 
 {
-    sim_test("asm/lh.bin", 195);
+    sim_test("asm/lh.bin", 1000);
 }
 
 #[test]
 fn test_lhu() 
 {
-    sim_test("asm/lhu.bin", 205);
+    sim_test("asm/lhu.bin", 1000);
 }
 
 #[test]
 fn test_lw() 
 {
-    sim_test("asm/lw.bin", 205);
+    sim_test("asm/lw.bin", 1000);
 }
 
 #[test]
 fn test_add() 
 {
-    sim_test("asm/add.bin", 425);
+    sim_test("asm/add.bin", 1000);
 }
 
 #[test]
 fn test_sub() 
 {
-    sim_test("asm/sub.bin", 415);
+    sim_test("asm/sub.bin", 1000);
 }
 
 #[test]
 fn test_sll() 
 {
-    sim_test("asm/sll.bin", 450);
+    sim_test("asm/sll.bin", 1000);
 }
 
 #[test]
 fn test_slt() 
 {
-    sim_test("asm/slt.bin", 415);
+    sim_test("asm/slt.bin", 1000);
 }
 
 #[test]
 fn test_sltu() 
 {
-    sim_test("asm/sltu.bin", 415);
+    sim_test("asm/sltu.bin", 1000);
 }
 
 #[test]
 fn test_xor() 
 {
-    sim_test("asm/xor.bin", 450);
+    sim_test("asm/xor.bin", 1000);
 }
 
 #[test]
 fn test_srl() 
 {
-    sim_test("asm/srl.bin", 470);
+    sim_test("asm/srl.bin", 1000);
 }
 
 #[test]
 fn test_or() 
 {
-    sim_test("asm/or.bin", 450);
+    sim_test("asm/or.bin", 1000);
 }
 
 #[test]
 fn test_and() 
 {
-    sim_test("asm/and.bin", 445);
+    sim_test("asm/and.bin", 1000);
 }
 
 
 #[test]
 fn test_sra() 
 {
-    sim_test("asm/sra.bin", 470);
+    sim_test("asm/sra.bin", 1000);
 }
 
 #[test]
 fn test_sb() 
 {
-    sim_test("asm/sb.bin", 345);
+    sim_test("asm/sb.bin", 1000);
 }
 
 #[test]
 fn test_sh() 
 {
-    sim_test("asm/sh.bin", 400);
+    sim_test("asm/sh.bin", 1000);
 }
 
 #[test]
 fn test_sw() 
 {
-    sim_test("asm/sw.bin", 415);
+    sim_test("asm/sw.bin", 1000);
 }
 
 #[test]
 fn test_beq() 
 {
-    sim_test("asm/beq.bin", 255);
+    sim_test("asm/beq.bin", 1000);
 }
 
 #[test]
 fn test_bne() 
 {
-    sim_test("asm/bne.bin", 255);
+    sim_test("asm/bne.bin", 1000);
 }
 
 #[test]
 fn test_blt() 
 {
-    sim_test("asm/blt.bin", 260);
+    sim_test("asm/blt.bin", 1000);
 }
 
 #[test]
 fn test_bge() 
 {
-    sim_test("asm/bge.bin", 300);
+    sim_test("asm/bge.bin", 1000);
 }
 
 #[test]
 fn test_bltu() 
 {
-    sim_test("asm/bltu.bin", 280);
+    sim_test("asm/bltu.bin", 1000);
 }
 
 #[test]
 fn test_bgeu() 
 {
-    sim_test("asm/bgeu.bin", 330);
+    sim_test("asm/bgeu.bin", 1000);
 }
 
 #[test]
 fn test_lui() 
 {
-    sim_test("asm/lui.bin", 25);
+    sim_test("asm/lui.bin", 1000);
 }
 
 #[test]
 fn test_auipc() 
 {
-    sim_test("asm/auipc.bin", 20);
+    sim_test("asm/auipc.bin", 1000);
 }
 
 #[test]
 fn test_jal() 
 {
-    sim_test("asm/jal.bin", 15);
+    sim_test("asm/jal.bin", 1000);
 }
 
 #[test]
 fn test_jalr() 
 {
-    sim_test("asm/jalr.bin", 80);
+    sim_test("asm/jalr.bin", 1000);
 }
 
 #[test]
 fn test_ecall() 
 {
-    sim_test("asm/ecall.bin", 5);
+    sim_test("asm/ecall.bin", 1000);
 }
 
 #[test]

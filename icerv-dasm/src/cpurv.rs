@@ -906,7 +906,6 @@ impl Cpurv {
             //──────────────────────────────────
             //  Instrucciones tipo J
             //──────────────────────────────────
-            //-- 🚧 TODO 🚧
             InstructionRV::Jal {rd, offs} => {
 
                 //-- Guardar direccion de retorno
@@ -914,6 +913,12 @@ impl Cpurv {
 
                 //-- Actualizar el pc
                 self.pc = (self.pc as i32 + *offs) as u32;
+
+                //-- Caso especial: Si el offset es 0, se trata de un 
+                //-- bucle infinito. Se detiene la CPU
+                if *offs == 0 {
+                    self.state = CpuState::HALT;
+                }    
             }
             InstructionRV::Jalr {rd, offs, rs1} => {
 
