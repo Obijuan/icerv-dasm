@@ -46,6 +46,9 @@ pub fn sim(fich: &str, max_cycles: u32) -> Cpurv
     cpu.run(max_cycles);
 
     println!("PROGRAMA TERMINADO");
+    
+    //-- Mostrar estado inicial de la cpu
+    cpu.show();
 
     cpu
 }

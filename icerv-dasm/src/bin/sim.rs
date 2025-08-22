@@ -27,7 +27,7 @@ fn main()
     };
 
     //-- Ejecutar programa
-    sim(&fich, 10);
+    sim(&fich, 1000);
 }
 
 
