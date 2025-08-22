@@ -1,3 +1,7 @@
+//────────────────────────────────────────────────
+//  TESTS PARA EL MODULO DE SIMULACION (SIM)
+//────────────────────────────────────────────────
+
 #[cfg(test)]
 use icerv_dasm::sim::sim_test;
 
@@ -12,6 +16,11 @@ use icerv_dasm::memory::Memory;
 
 #[cfg(test)]
 use icerv_dasm::cpurv::Cpurv;
+
+//──────────────────────────────────────────────────────────────────────────
+//  TESTS DE LOS PROGRAMAS OFICIALES DE PRUEBAS DE RISCV
+//  Tomados de # https://github.com/riscv-software-src/riscv-tests/
+//──────────────────────────────────────────────────────────────────────────
 
 #[test]
 fn test_addi() 

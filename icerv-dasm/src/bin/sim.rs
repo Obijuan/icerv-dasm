@@ -26,9 +26,6 @@ fn main()
         }
     };
 
-    //-- Leer programa de prueba desde un fichero
-    let _fich = String::from("asm/addi.bin");
-
     //-- Ejecutar programa
     sim(&fich, 10);
 }
