@@ -2,8 +2,6 @@
 //  SIMULADOR DE RV32I
 //────────────────────────────────────────────────
 
-use std::{fs::File, io::Read};
-
 use icerv_dasm::instructionrv::InstructionRV;
 use icerv_dasm::regs::Reg;
 use icerv_dasm::ansi;
@@ -80,21 +78,21 @@ impl Cpurv {
 
     //────────────────────────────────────────────────
     //  Constructor de CPU
+    //  Se crea una CPU inicializada y asociada a la memoria dada
     //  La CPU se lleva al estado de reset
     //  Todos los registros x se ponen a 0
-    //  La memoria asociada NO se inicializa ni se crea
     //────────────────────────────────────────────────    
-    fn new() -> Self {
+    fn new(mem: Memory) -> Self {
 
         //-- Por defecto se usa una memoria nula
-        let data:Vec<u8> = vec![0; 0];
+        //let data:Vec<u8> = vec![0; 0];
 
         Cpurv {
             pc: 0,
             cycle: 0,
             max_cycles: 0xFFFF_FFFF,
             state: CpuState::RESET,
-            mem: Memory::new(data),
+            mem: mem,
 
             x1: 0,
             x2: 0,
@@ -972,53 +970,55 @@ impl Cpurv {
 
     }
 
-
-
-}
-
-//────────────────────────────────────────────────
-//  Ejecutar un programa dado en código máquina
-//──────────────────────────────────────────────── 
-fn run_mcode(prog: &[u32], max_cycles: u32) -> Cpurv
-{
-    //-- Crear CPU
-    let mut cpu = Cpurv::new();
-
-    //-- Configurar los ciclos máximos
-    cpu.max_cycles = max_cycles;
-
-    //-- Mostrar estado inicial de la cpu
-    cpu.show();
-
-    loop {
-        //-- Obtener la direccion actual (de palabra)
-        let addr = (cpu.pc >> 2) as usize;
+    //────────────────────────────────────────────────
+    //  Realizar un paso de simulacion
+    //  * Leer instrucción actual
+    //  * Ejecutar instrucción
+    //──────────────────────────────────────────────── 
+    fn step(&mut self) {
+        //-- Obtener la direccion actual
+        let addr = self.pc;
 
         //-- Comprobar si la direccion está dentro del rango
-        if addr >= prog.len() {
-            break;
+        if addr >= self.mem.size() as u32 {
+            self.state = CpuState::HALT;
+            return;
         }
 
-        //-- Obtener instruccion en codigo maquina
-        let mcode = &prog[addr];
+        //-- Leer instruccion de memoria
+        let mcode = self.mem.read32(addr);
 
         //-- Convertir codigo maquina a tipo instruccion
-        let inst = InstructionRV::from_mcode(*mcode as u32);
+        let inst = InstructionRV::from_mcode(mcode as u32);
 
         //-- Ejecutar instruccion!
-        cpu.exec(&inst);
+        self.exec(&inst);
+    }
+    //────────────────────────────────────────────────
+    //  Ejecutar el programa que está en memoria
+    //──────────────────────────────────────────────── 
+    fn run(&mut self, max_cycles: u32) {
 
-        //-- Mostrar el estado actual
-        //cpu.show();
+        //-- Configurar los ciclos máximos
+        self.max_cycles = max_cycles;
 
-        //-- Terminar cuando han transcurrido el máximo de ciclos
-        if cpu.state == CpuState::HALT {
-            break;
+        //-- Bucle principal de Ejecucion!!
+        loop {
+
+            //-- Realizar un paso de simulacion
+            self.step();
+
+            //-- Mostrar el estado actual
+            //self.show();
+
+            //-- Terminar cuando han transcurrido el máximo de ciclos
+            if self.state == CpuState::HALT {
+                break;
+            }
         }
     }
 
-    println!("PROGRAMA TERMINADO");
-    cpu
+
 }
 
 
@@ -1032,54 +1032,17 @@ fn sim2(fich: &str, max_cycles: u32)
     println!("Tamaño: {} Instrucciones", mem.size()>>2);
 
     //-- Crear CPU
-    let mut cpu = Cpurv::new();
-
-    //-- Conectar la memoria con la cpu
-    cpu.mem = mem;
-
-    //-- Configurar los ciclos máximos
-    cpu.max_cycles = max_cycles;
+    let mut cpu = Cpurv::new(mem);
 
     //-- Mostrar estado inicial de la cpu
     cpu.show();
 
-    //-- Bucle principal de Ejecucion!!
-    loop {
-        //-- Obtener la direccion actual
-        let addr = cpu.pc;
-
-        //-- Comprobar si la direccion está dentro del rango
-        if addr >= cpu.mem.size() as u32 {
-            break;
-        }
-
-        //-- Leer instruccion de memoria
-        let mcode = cpu.mem.read32(addr);
-
-        //-- Convertir codigo maquina a tipo instruccion
-        let inst = InstructionRV::from_mcode(mcode as u32);
-
-        //-- Ejecutar instruccion!
-        cpu.exec(&inst);
-
-        //-- Mostrar el estado actual
-        //cpu.show();
-
-        //-- Terminar cuando han transcurrido el máximo de ciclos
-        if cpu.state == CpuState::HALT {
-            break;
-        }
-    }
+    cpu.run(max_cycles);
 
     println!("PROGRAMA TERMINADO");
 
     assert_eq!(cpu.x1, 1);
     cpu.show();
-
-
-    //-- Ejecutar programa
-    //sim("asm/lb.bin", 10);
-    //sim(&fich);
 }
 
 fn main() 
@@ -1089,26 +1052,25 @@ fn main()
     print!("{}", ansi::CLS);
 
     //-- Leer primer argumento
-    // let arg = std::env::args().nth(1);
-    // let fich = match arg {
-    //     Some(value) => {
-    //         value
-    //     }
-    //     None => {
-    //         print!("{}", ansi::RED);
-    //         println!("Error: Fichero ejecutable NO especificado");
-    //         print!("{}", ansi::RESET);
-    //         println!("  Uso: sim fichero");
-    //         return;
-    //     }
-    // };
+    let arg = std::env::args().nth(1);
+    let fich = match arg {
+        Some(value) => {
+            value
+        }
+        None => {
+            print!("{}", ansi::RED);
+            println!("Error: Fichero ejecutable NO especificado");
+            print!("{}", ansi::RESET);
+            println!("  Uso: sim fichero");
+            return;
+        }
+    };
 
     //-- Leer programa de prueba desde un fichero
-    let fich = String::from("asm/addi.bin");
+    let _fich = String::from("asm/addi.bin");
 
     //-- Ejecutar programa
-    //sim2(&fich, 10);
-    sim2("asm/ecall.bin", 10);
+    sim2(&fich, 10);
 }
 
 
@@ -1345,7 +1307,7 @@ fn test_ecall()
 fn test_addi_1()
 {
     //-- Programa de test a ejecutar
-    let prog = [
+    let prog: Vec<u32> = vec![
         InstructionRV::Addi { rd: Reg::X1, rs1: Reg::X0, imm: 1 }
             .to_mcode(), 
         InstructionRV::Addi { rd: Reg::X2, rs1: Reg::X0, imm: 2 }
@@ -1410,8 +1372,14 @@ fn test_addi_1()
             .to_mcode(),
     ];
 
+    //-- Crear la memoria con el programa
+    let mem = Memory::from_u32(prog);
+
+    //-- Crear CPU
+    let mut cpu = Cpurv::new(mem);
+
     //-- Ejecutar el programa!
-    let cpu = run_mcode(&prog, 100);
+    cpu.run(100);
 
     //-- Mostrar estado final
     cpu.show();
@@ -1463,7 +1431,7 @@ fn test_addi1()
 //  INSTRUCCION ADDI: TEST 2
 //────────────────────────────────────────────────
 {
-    let code = [
+    let code: Vec<u32> = vec![
 
         0x00200193,  // li x3, 2
         0x00000693,  // li x13, 0x00000000
@@ -1480,14 +1448,22 @@ fn test_addi1()
         0x0000006F,  //j .
     ];
 
-    let cpu = run_mcode(&code, 10);
+    //-- Crear la memoria con el programa
+    let mem = Memory::from_u32(code);
+
+    //-- Crear CPU
+    let mut cpu = Cpurv::new(mem);
+
+    //-- Ejecutar el programa!
+    cpu.run(10);
+
     assert_eq!(cpu.x1, 1);
 }
 
 #[test]
 fn test_addi2()
 {
-    let code = [
+    let code: Vec<u32> = vec![
         //-- li x3, 2
         InstructionRV::Addi { rd: Reg::X3, rs1: Reg::X0, imm: 2 }.to_mcode(),
 
@@ -1521,7 +1497,15 @@ fn test_addi2()
         InstructionRV::Jal {rd: Reg::X0, offs: 0}.to_mcode(),
     ];
 
-    run_mcode(&code, 10);
+    //-- Crear la memoria con el programa
+    let mem = Memory::from_u32(code);
+
+    //-- Crear CPU
+    let mut cpu = Cpurv::new(mem);
+
+    //-- Ejecutar el programa!
+    cpu.run(10);
+
 }
 
 

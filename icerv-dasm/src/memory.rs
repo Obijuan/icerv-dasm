@@ -18,6 +18,27 @@ impl Memory {
     }
 
     //────────────────────────────────────────────────
+    //  Constructor: Crear la memoria a partir de una
+    //  lista de palabras (u32)
+    //──────────────────────────────────────────────── 
+    pub fn from_u32(data: Vec<u32>) -> Self {
+
+        //-- Buffer donde almacenar los bytes
+        let mut bytes: Vec<u8> = Vec::new();
+
+        //-- Recorrer las palabras y convertirlas a bytes
+        for word in data {
+            let b = word.to_le_bytes();
+            bytes.push(b[0]);
+            bytes.push(b[1]);
+            bytes.push(b[2]);
+            bytes.push(b[3]);
+        }
+
+        Memory { data: bytes }
+    }
+
+    //────────────────────────────────────────────────
     //  Constructor: Crear la memoria a partir de un
     //  fichero
     //──────────────────────────────────────────────── 
